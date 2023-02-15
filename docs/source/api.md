@@ -1,8 +1,9 @@
 ## Interactive statistical data vizualization with Statsplot
 
-Contrary to `plotly.express` API, `statsplot` color coding scheme, slicer and plot dimensions are independent. 
+Compared to `plotly.express` API, `statsplot` color coding scheme, slicer and plot dimensions are independent. 
 
-This independence allows to leverage the powerful interactivity offered by plotly.js without compromising aesthetics or layout choices.
+This independence allows to leverage the powerful interactivity offered by plotly.js without compromising statistical intelligibility for aesthetics choices, or vice-versa.
+
 
 ### Functions signature
 
@@ -26,7 +27,7 @@ All plotting functions also accept:
 
 
    - an `axis` argument to specify axes limits and aspect ratio. The `equal` and `square` styles of [Matlab API](https://fr.mathworks.com/help/matlab/ref/axis.html#buk989s-1-limits) are supported.
-
+   - a `fig`, `row`, `col` triplet argument to draw on a pre-declared `Figure`object.
 
 Additional arguments depends on the visualisation selected.
 

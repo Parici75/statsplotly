@@ -2,13 +2,17 @@
 
 The development of this library paralleled the fantastic [plotly.express](https://plotly.com/python/plotly-express/) API.
 
+Philosophy
+-
 Compared to `plotly.express` API, StatsPlots :
 - respects common conventions of statistical vizualization (e.g., histograms are not barplots).
-- processes color coding scheme, trace slicer and plot dimensions independently. This flexibility allow to leverage the powerful interactivity offered by plotly.js without compromising aesthetics or layout choices.
+- processes color coding scheme, trace slicer and plot dimensions independently. 
+
+This flexibility allows to leverage the powerful interactivity offered by plotly.js without compromising statistical intelligibility for aesthetic choices, or vice-versa.
 
 Examples
 -
-Main features of the API are demonstrated in the notebook `notebook/statsplot_demo.ipynb`. 
+Main features of the API are demonstrated in a demo [notebook](notebooks/statsplot_demo.ipynb). 
 
 Installation
 -

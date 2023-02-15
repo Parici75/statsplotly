@@ -3,23 +3,22 @@ name: Sphinx build
 on: push
 
 jobs:
-  build:
+  sphinx-doc:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Build HTML
       uses: ammaraskar/sphinx-action@master
       with:
-        pre-build-command: "apt-get clean -y; apt-get update -y; apt-get install -y git; python -m pip install --upgrade pip"
         docs-folder: "docs/"
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: html-docs
-        path: docs/build/html/
+        path: docs/_build/
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/build/html
+        publish_dir: docs/_build/html
