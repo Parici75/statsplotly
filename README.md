@@ -12,7 +12,7 @@ This flexibility allows to leverage the powerful interactivity offered by plotly
 
 Examples
 -
-Main features of the API are demonstrated in a demo [notebook](notebooks/statsplot_demo.ipynb). 
+Main features of the API are demonstrated in a demo [notebook](https://nbviewer.org/github/Parici75/statsplot/blob/main/notebooks/statsplot_demo.ipynb). 
 
 Installation
 -
