@@ -10,7 +10,7 @@ jobs:
     - name: Build HTML
       uses: ammaraskar/sphinx-action@master
       with:
-        pre-build-command: "apt-get -y update; apt-get -y install git; python -m pip install --upgrade pip; pip install -r requirements.txt"
+        pre-build-command: "apt-get -y install git; python -m pip install --upgrade pip; pip install -r requirements.txt"
         docs-folder: "docs/"
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
