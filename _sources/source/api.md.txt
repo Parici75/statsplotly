@@ -1,4 +1,4 @@
-## Interactive statistical data vizualization with Statsplot
+## Interactive statistical data visualization with Statsplot
 
 Compared to `plotly.express` API, `statsplot` color coding scheme, slicer and plot dimensions are independent. 
 

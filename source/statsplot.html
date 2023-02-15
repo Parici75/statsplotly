@@ -239,11 +239,39 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">#</a></h2>
 </section>
-<section id="statsplot-constants-module">
-<h2>statsplot.constants module<a class="headerlink" href="#statsplot-constants-module" title="Permalink to this heading">#</a></h2>
+<section id="module-statsplot.constants">
+<span id="statsplot-constants-module"></span><h2>statsplot.constants module<a class="headerlink" href="#module-statsplot.constants" title="Permalink to this heading">#</a></h2>
 </section>
-<section id="statsplot-exceptions-module">
-<h2>statsplot.exceptions module<a class="headerlink" href="#statsplot-exceptions-module" title="Permalink to this heading">#</a></h2>
+<section id="module-statsplot.exceptions">
+<span id="statsplot-exceptions-module"></span><h2>statsplot.exceptions module<a class="headerlink" href="#module-statsplot.exceptions" title="Permalink to this heading">#</a></h2>
+<p>Custom exceptions.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="statsplot.exceptions.StatsPlotInvalidArgumentError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplot.exceptions.</span></span><span class="sig-name descname"><span class="pre">StatsPlotInvalidArgumentError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Enum</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#statsplot.exceptions.StatsPlotInvalidArgumentError" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
+<p>Raises when argument can not be parsed with the corresponding enum.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="statsplot.exceptions.StatsPlotMissingImplementationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplot.exceptions.</span></span><span class="sig-name descname"><span class="pre">StatsPlotMissingImplementationError</span></span><a class="headerlink" href="#statsplot.exceptions.StatsPlotMissingImplementationError" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="statsplot.exceptions.StatsPlotSpecificationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplot.exceptions.</span></span><span class="sig-name descname"><span class="pre">StatsPlotSpecificationError</span></span><a class="headerlink" href="#statsplot.exceptions.StatsPlotSpecificationError" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
+<p>Raises when plot arguments are incompatible.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="statsplot.exceptions.UnsupportedColormapError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplot.exceptions.</span></span><span class="sig-name descname"><span class="pre">UnsupportedColormapError</span></span><a class="headerlink" href="#statsplot.exceptions.UnsupportedColormapError" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raises when colormap is not supported.</p>
+</dd></dl>
+
 </section>
 </section>
 
@@ -305,8 +333,14 @@
 <li><a class="reference internal" href="#">statsplot package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#statsplot-constants-module">statsplot.constants module</a></li>
-<li><a class="reference internal" href="#statsplot-exceptions-module">statsplot.exceptions module</a></li>
+<li><a class="reference internal" href="#module-statsplot.constants">statsplot.constants module</a></li>
+<li><a class="reference internal" href="#module-statsplot.exceptions">statsplot.exceptions module</a><ul>
+<li><a class="reference internal" href="#statsplot.exceptions.StatsPlotInvalidArgumentError"><code class="docutils literal notranslate"><span class="pre">StatsPlotInvalidArgumentError</span></code></a></li>
+<li><a class="reference internal" href="#statsplot.exceptions.StatsPlotMissingImplementationError"><code class="docutils literal notranslate"><span class="pre">StatsPlotMissingImplementationError</span></code></a></li>
+<li><a class="reference internal" href="#statsplot.exceptions.StatsPlotSpecificationError"><code class="docutils literal notranslate"><span class="pre">StatsPlotSpecificationError</span></code></a></li>
+<li><a class="reference internal" href="#statsplot.exceptions.UnsupportedColormapError"><code class="docutils literal notranslate"><span class="pre">UnsupportedColormapError</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
