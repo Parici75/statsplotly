@@ -11,7 +11,7 @@ jobs:
       uses: ammaraskar/sphinx-action@master
       with:
         docs-folder: "docs/"
-        pre-build-command: "apt-get -y update; apt-get -y install git; python -m pip install --upgrade pip"
+        pre-build-command: "apt-get -y --allow-releaseinfo-change update; apt-get -y install git; python -m pip install --upgrade pip"
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
