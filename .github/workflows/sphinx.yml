@@ -15,8 +15,8 @@ jobs:
 
     - name: Upgrade pip, install requirements, build HTML documentation
       run: |
-        apt-get -y --allow-releaseinfo-change update
-        apt-get -y install git
+        sudo apt-get -y --allow-releaseinfo-change update
+        sudo apt-get -y install git
         python -m pip install --upgrade pip
         pip install -r ./docs/requirements.txt
         sphinx-build docs ./docs/_build/html/
