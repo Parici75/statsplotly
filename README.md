@@ -5,7 +5,7 @@ The development of this library paralleled the fantastic [plotly.express](https:
 Philosophy
 -
 Compared to `plotly.express` API, StatsPlots :
-- respects common conventions of statistical vizualization (e.g., histograms are not barplots).
+- respects common conventions of statistical visualization (e.g., histograms are not barplots).
 - processes color coding scheme, trace slicer and plot dimensions independently. 
 
 This flexibility allows to leverage the powerful interactivity offered by plotly.js without compromising statistical intelligibility for aesthetic choices, or vice-versa.
