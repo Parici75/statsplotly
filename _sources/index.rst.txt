@@ -14,7 +14,7 @@ Detailed API
 .. toctree::
    :maxdepth: 1
 
-   source/modules.rst
+   source/statsplot.rst
 
 
 Indices and tables
@@ -23,3 +23,9 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+Changelog
+=========
+.. toctree::
+   source/changelog_link.rst
