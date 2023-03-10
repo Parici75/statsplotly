@@ -78,7 +78,7 @@ def create_fig(
 
 def clean_subplots(
     fig: go.Figure,
-    title: str = None,
+    title: str | None = None,
     no_legend: bool = False,
     clean_yaxes_title: bool = True,
     row_titles: List | None = None,

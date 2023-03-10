@@ -44,7 +44,7 @@ def regress(
     x: np.ndarray,
     y: np.ndarray,
     func: Callable,
-    p0: float = None,
+    p0: float | None = None,
     maxfev: int = 1000,
 ) -> Tuple[np.ndarray, float, Tuple[np.ndarray, np.ndarray]]:
     """Regresses y on x using the curve fit method from Scipy."""
