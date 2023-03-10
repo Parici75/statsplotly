@@ -1,10 +1,10 @@
+import logging
 from typing import List, Dict, Any
 
 import numpy as np
 import pandas as pd
 from pandas.core.dtypes.common import (
     is_bool_dtype,
-    is_categorical_dtype,
     is_object_dtype,
 )
 from pydantic import validator
@@ -21,6 +21,8 @@ from statsplot.utils.colors_utils import (
     get_rgb_discrete_array,
 )
 from statsplot.utils.layout_utils import smart_legend
+
+logger = logging.getLogger(__name__)
 
 
 class ColorSpecifier(BaseModel):
@@ -63,12 +65,11 @@ class ColorSpecifier(BaseModel):
         if color_values is None:
             return None
 
-        if (
-            is_bool_dtype(color_values.dtype)
-            or is_categorical_dtype(color_values.dtype)
-            or is_object_dtype(color_values.dtype)
+        if is_bool_dtype(color_values.dtype) or is_object_dtype(
+            color_values.dtype
         ):
             unique_color_values = np.sort(color_values.astype(int).unique())
+
             ticklimits = np.linspace(
                 *unique_color_values[[0, -1]], len(unique_color_values) + 1  # type: ignore
             )
@@ -88,22 +89,6 @@ class ColorSpecifier(BaseModel):
             tickmode="auto",
         )
 
-    def build_coloraxis(
-        self, color_data: pd.Series | None, shared: bool = False
-    ) -> ColorAxis:
-        if shared and color_data is not None:
-            cmin = color_data.min() if self.cmin is None else self.cmin
-            cmax = color_data.max() if self.cmax is None else self.cmin
-        else:
-            cmin, cmax = self.cmin, self.cmax
-        return ColorAxis(
-            cmin=cmin,
-            cmax=cmax,
-            colorscale=self.build_colorscale(color_data),
-            colorbar=self.build_colorbar(color_data),
-            showscale=True if self.colorbar else False,
-        )
-
     def build_colorscale(
         self, color_data: pd.Series | None
     ) -> str | List | None:
@@ -111,11 +96,17 @@ class ColorSpecifier(BaseModel):
             return None
 
         # Select the appropriate color system
-        if (
-            is_bool_dtype(color_data.dtype)
-            or is_categorical_dtype(color_data.dtype)
-            or is_object_dtype(color_data.dtype)
+        if is_bool_dtype(color_data.dtype) or is_object_dtype(
+            color_data.dtype
         ):
+            try:
+                color_data.astype(int)
+            except ValueError:
+                logger.debug(
+                    f"{color_data.name} values are not numeric, assume direct color specification"
+                )
+                return None
+
             n_colors = len(unique_non_null(color_data))
             color_system = ColorSystem.DISCRETE
         else:
@@ -137,6 +128,28 @@ class ColorSpecifier(BaseModel):
         )
 
         return colorscale
+
+    def build_coloraxis(
+        self, color_data: pd.Series | None, shared: bool = False
+    ) -> ColorAxis:
+        if shared and color_data is not None:
+            cmin = color_data.min() if self.cmin is None else self.cmin
+            cmax = color_data.max() if self.cmax is None else self.cmin
+        else:
+            cmin, cmax = self.cmin, self.cmax
+
+        colorscale = self.build_colorscale(color_data)
+        colorbar = (
+            self.build_colorbar(color_data) if colorscale is not None else None
+        )
+
+        return ColorAxis(
+            cmin=cmin,
+            cmax=cmax,
+            colorscale=colorscale,
+            colorbar=colorbar,
+            showscale=self.colorbar if colorscale is not None else None,
+        )
 
     def get_color_hues(self, n_colors: int) -> List[str]:
         return get_rgb_discrete_array(

@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, List, Generator, Tuple
 import numpy as np
 import pandas as pd
 import scipy as sc
-from pandas.api.types import is_numeric_dtype
+from pandas.api.types import is_numeric_dtype, is_categorical_dtype
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import validator, root_validator
 
@@ -157,6 +157,16 @@ class DataHandler(BaseModel):
             raise ValueError(
                 "Multi-indexed columns are not supported, flatten the header before calling statsplot"
             )
+        return value
+
+    @validator("data")
+    def convert_categorical_dtype_columns(
+        cls, value: pd.DataFrame
+    ) -> pd.DataFrame:
+        for column in value.columns:
+            if is_categorical_dtype(value[column]):
+                logger.debug(f"Casting categorical {column} data to string")
+                value.loc[:, column] = value.loc[:, column].astype(str)
         return value
 
     @property
@@ -451,7 +461,10 @@ class AggregationSpecifier(BaseModel):
                     f"{aggregation_func} aggregation requires numeric type y data, got: `{y_dtype}`"
                 )
 
-        if value.text is not None and values.get("aggregation_func") is not None:
+        if (
+            value.text is not None
+            and values.get("aggregation_func") is not None
+        ):
             logger.warning(
                 f"Text data can not be displayed along aggregated data"
             )

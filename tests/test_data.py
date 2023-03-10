@@ -80,6 +80,16 @@ class TestDataHandler:
             if val is not None
         )
 
+    def test_categorical_dtype_cast(self, caplog):
+        data_handler = DataHandler.build_handler(
+            data=EXAMPLE_DATAFRAME.assign(
+                x=EXAMPLE_DATAFRAME["x"].astype("category")
+            ),
+            data_pointer=DataPointer(x="x", y="y", slicer="z"),
+        )
+        assert data_handler.data_types.x is np.dtype("object")
+        assert "Casting categorical x data to string" in caplog.text
+
     def test_slicer_groupby_mean_aggregation(self):
         agg_df = DataHandler.build_handler(
             data=EXAMPLE_DATAFRAME,
