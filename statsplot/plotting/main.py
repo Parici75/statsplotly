@@ -363,7 +363,6 @@ def barplot(
         data: A :obj:`pandas.DataFrame`
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
-        z: The name of the `z` dimension column in `data`.
         slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.
         slice_order: A list of identifiers to order and/or subset data slices specified by `slicer`.
         color: The name of the column in `data` with values to map onto the colormap.
