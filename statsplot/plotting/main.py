@@ -32,6 +32,7 @@ from statsplot.plot_objects.trace_objects import (
     HistogramLineTrace,
     HeatmapTrace,
 )
+
 # Specifiers
 from statsplot.plot_specifiers.color import ColorSpecifier
 from statsplot.plot_specifiers.data import (
@@ -52,6 +53,7 @@ from statsplot.plot_specifiers.layout import (
     AxesSpecifier,
     AxisFormat,
 )
+
 # Trace objects
 from statsplot.plot_specifiers.trace import (
     TraceMode,
@@ -62,6 +64,7 @@ from statsplot.plot_specifiers.trace import (
     HistogramSpecifier,
     JointplotSpecifier,
 )
+
 # Helpers
 from statsplot.plotting.helpers import (
     plot_scatter_traces,

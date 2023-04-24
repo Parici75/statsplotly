@@ -1,4 +1,4 @@
-[StatsPlot](https://github.com/Parici75/statsplot) is a Python data visualization library based on Plotly. It provides a high-level interface for drawing attractive and interactive statistical data vizualization plots.
+[StatsPlot](https://github.com/Parici75/statsplot) is a Python data visualization library based on Plotly. It provides a high-level interface for drawing attractive and interactive statistical data visualization plots.
 
 The development of this library paralleled the fantastic [plotly.express](https://plotly.com/python/plotly-express/) API.
 
@@ -9,6 +9,8 @@ Compared to `plotly.express` API, StatsPlots :
 - processes color coding scheme, trace slicer and plot dimensions independently. 
 
 This flexibility allows to leverage the powerful interactivity offered by plotly.js without compromising statistical intelligibility for aesthetic choices, or vice-versa.
+
+![statsplot-demo](statsplot-demo.gif)
 
 Examples
 -
@@ -22,7 +24,7 @@ Clone and install with pip :
 
 Documentation
 -
-Details of the public API can be be found in the [documentation](https://parici75.github.io/statsplot).
+Details of the public API can be found in the [documentation](https://parici75.github.io/statsplot).
 
 
 Requirements
