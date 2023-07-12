@@ -13,7 +13,7 @@ python = "^3.11"
 pydantic = "^2.0"
 seaborn = "^0.12.2"
 plotly = "^5.15.0"
-pymodules = {git = "https://github.com/Parici75/pymodules"}
+pymodules = {git = "https://github.com/Parici75/pymodules", tag = "0.1.0"}
 ipykernel = "^6.24.0"
 poetry-dynamic-versioning = {extras = ["plugin"], version = "^0.24.0"}
 jupyter = "^1.0.0"
@@ -29,6 +29,9 @@ pyclean = "^2.7.3"
 
 [tool.poetry-dynamic-versioning]
 enable = true
+vcs = "git"
+style = "semver"
+pattern  = "^(?P<base>\\d+\\.\\d+\\.\\d+)(-?((?P<stage>[a-zA-Z]+)\\.?(?P<revision>\\d+)?))?"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
