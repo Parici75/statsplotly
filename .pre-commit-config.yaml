@@ -1,0 +1,35 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    -   id: check-yaml
+    -   id: check-toml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+
+# Pyupgrade
+- repo: https://github.com/asottile/pyupgrade
+  rev: v3.9.0
+  hooks:
+      - id: pyupgrade
+
+# Ruff
+# We put it before Black hook, as autofix results may need to be reformatted by Black linter
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.277
+    hooks:
+    - id: ruff
+      args: [ --fix, --exit-non-zero-on-fix ]
+      files: ^statsplot/
+# Black
+-   repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+    -   id: black
+# MyPy
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.4.1  # Use the sha / tag you want to point at
+    hooks:
+    -   id: mypy
+        args: [--ignore-missing-imports]
+        files: ^statsplot/

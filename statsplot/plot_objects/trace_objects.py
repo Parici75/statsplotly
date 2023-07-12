@@ -1,65 +1,70 @@
+import logging
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 import numpy as np
 import pandas as pd
+from numpy.typing import NDArray
 from pydantic.utils import deep_update
-
 from pymodules.pandas_utils import unique_non_null
+
 from statsplot import constants
 from statsplot.plot_specifiers.color import ColorSpecifier
 from statsplot.plot_specifiers.data import (
-    BaseModel,
-    TraceData,
-    DataDimension,
-    RegressionType,
     TRACE_DIMENSION_MAP,
+    AggregationTraceData,
+    BaseModel,
+    DataDimension,
     HistogramNormType,
+    RegressionType,
+    TraceData,
 )
 from statsplot.plot_specifiers.trace import (
-    TraceMode,
-    JointplotType,
     HistogramSpecifier,
     JointplotSpecifier,
+    JointplotType,
+    TraceMode,
 )
 from statsplot.utils.colors_utils import set_rgb_alpha
 from statsplot.utils.stats_utils import (
-    regress,
-    exponential_regress,
     affine_func,
+    exponential_regress,
     inverse_func,
     kde_1d,
     kde_2d,
+    regress,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class BaseTrace(BaseModel):
-    x: pd.Series | np.ndarray | None
-    y: pd.Series | np.ndarray | None
+    x: pd.Series | NDArray[Any] | None = None
+    y: pd.Series | NDArray[Any] | None = None
     name: str
-    opacity: float | None
-    legendgroup: str | None
-    showlegend: bool | None
+    opacity: float | None = None
+    legendgroup: str | None = None
+    showlegend: bool | None = None
 
     @staticmethod
     def get_error_bars(
         trace_data: TraceData,
-    ) -> List[Dict[str, Any] | None]:
+    ) -> list[dict[str, Any] | None]:
         """Computes error bars.
         `Upper` and `lower` length are calculated relative to the underlying data.
         """
 
         error_parameters = [
-            {
-                "type": "data",
-                "array": np.array([error[1] for error in error_data])
-                - underlying_data,
-                "arrayminus": underlying_data
-                - np.array([error[0] for error in error_data]),
-                "visible": True,
-            }
-            if error_data is not None
-            else None
+            (
+                {
+                    "type": "data",
+                    "array": np.array([error[1] for error in error_data]) - underlying_data,
+                    "arrayminus": underlying_data - np.array([error[0] for error in error_data]),
+                    "visible": True,
+                }
+                if error_data is not None
+                else None
+            )
             for error_data, underlying_data in zip(
                 [trace_data.error_x, trace_data.error_y, trace_data.error_z],
                 [
@@ -67,6 +72,7 @@ class BaseTrace(BaseModel):
                     trace_data.y_values,
                     trace_data.z_values,
                 ],
+                strict=True,
             )
         ]
 
@@ -74,12 +80,12 @@ class BaseTrace(BaseModel):
 
 
 class _ScatterBaseTrace(BaseTrace):
-    marker: Dict[str, Any] | None
-    mode: TraceMode | None
-    error_x: Dict[str, Any] | None
-    error_y: Dict[str, Any] | None
-    text: str | pd.Series | None
-    textposition: str | None
+    marker: dict[str, Any] | None = None
+    mode: TraceMode | None = None
+    error_x: dict[str, Any] | None = None
+    error_y: dict[str, Any] | None = None
+    text: str | pd.Series | None = None
+    textposition: str | None = None
     hoverinfo: str = "x+y+name+text"
 
     @classmethod
@@ -104,9 +110,11 @@ class _ScatterBaseTrace(BaseTrace):
             error_y=error_y_data,
             marker={
                 "size": trace_data.size_data,
-                "color": trace_data.color_data
-                if trace_data.color_data is not None
-                else trace_color,
+                "color": (
+                    trace_data.formatted_color_data
+                    if trace_data.color_data is not None
+                    else trace_color
+                ),
                 "symbol": trace_data.marker_data,
                 "coloraxis": color_specifier.coloraxis_reference,
             },
@@ -115,18 +123,18 @@ class _ScatterBaseTrace(BaseTrace):
 
 
 class _DensityTrace(BaseTrace, metaclass=ABCMeta):
-    z: pd.Series | np.ndarray
-    coloraxis: str | None
-    zmin: float | None
-    zmax: float | None
-    text: str | pd.Series | None
+    z: pd.Series | NDArray[Any]
+    coloraxis: str | None = None
+    zmin: float | None = None
+    zmax: float | None = None
+    text: str | pd.Series | None = None
 
 
 class HeatmapTrace(_DensityTrace):
     hoverinfo: str = "x+y+z+text"
-    colorbar: Dict[str, Any] | None
-    colorscale: str | List | None
-    text: str | pd.Series | None
+    colorbar: dict[str, Any] | None = None
+    colorscale: str | list[list[str | float]] | None = None
+    text: str | pd.Series | None = None
 
     @classmethod
     def build_histmap_trace(
@@ -136,17 +144,19 @@ class HeatmapTrace(_DensityTrace):
         color_specifier: ColorSpecifier,
         jointplot_specifier: JointplotSpecifier,
     ) -> "HeatmapTrace":
-        anchor_values, hist, bin_centers = jointplot_specifier.compute_histmap(
-            trace_data
-        )
+        anchor_values, hist, bin_centers = jointplot_specifier.compute_histmap(trace_data)
 
         return cls(
-            x=anchor_values
-            if jointplot_specifier.plot_type is JointplotType.X_HISTMAP
-            else bin_centers,
-            y=bin_centers
-            if jointplot_specifier.plot_type is JointplotType.X_HISTMAP
-            else anchor_values,
+            x=(
+                anchor_values
+                if jointplot_specifier.plot_type is JointplotType.X_HISTMAP
+                else bin_centers
+            ),
+            y=(
+                bin_centers
+                if jointplot_specifier.plot_type is JointplotType.X_HISTMAP
+                else anchor_values
+            ),
             z=hist,
             name=f"{trace_name} {anchor_values.name} histmap",
             opacity=color_specifier.opacity,
@@ -181,14 +191,12 @@ class HeatmapTrace(_DensityTrace):
 
 class ScatterTrace(_ScatterBaseTrace):
     hoverinfo: str = "x+y+name+text"
-    line: Dict[str, Any] | None
-    fill: str | None
-    fillcolor: str | None
+    line: dict[str, Any] | None = None
+    fill: str | None = None
+    fillcolor: str | None = None
 
     @classmethod
-    def build_id_line(
-        cls, x_values: pd.Series, y_values: pd.Series
-    ) -> "ScatterTrace":
+    def build_id_line(cls, x_values: pd.Series, y_values: pd.Series) -> "ScatterTrace":
         line_data = pd.Series(
             (
                 min(x_values.min(), y_values.min()),
@@ -200,24 +208,26 @@ class ScatterTrace(_ScatterBaseTrace):
             y=line_data,
             name="45° id line",
             mode=TraceMode.LINES,
-            line=dict(
-                color=constants.DEFAULT_ID_LINE_COLOR,
-                width=constants.DEFAULT_ID_LINE_WIDTH,
-                dash=constants.DEFAULT_ID_LINE_DASH,
-            ),
+            line={
+                "color": constants.DEFAULT_ID_LINE_COLOR,
+                "width": constants.DEFAULT_ID_LINE_WIDTH,
+                "dash": constants.DEFAULT_ID_LINE_DASH,
+            },
         )
 
     @classmethod
     def build_lower_error_trace(
         cls, trace_data: TraceData, trace_name: str, trace_color: str
     ) -> "ScatterTrace":
-        assert trace_data.shaded_error is not None
+        if trace_data.shaded_error is None:
+            raise ValueError("`trace_data.shaded_error` can not be `None`")
+
         return cls(
             x=trace_data.x_values,
             y=trace_data.shaded_error.apply(lambda x: x[0]),
             name=f"{trace_name} {trace_data.shaded_error.name} lower bound",
             mode=TraceMode.LINES,
-            line=dict(width=0),
+            line={"width": 0},
             fill="tonexty",
             fillcolor=set_rgb_alpha(trace_color, constants.SHADED_ERROR_ALPHA),
             legendgroup=trace_name,
@@ -228,14 +238,15 @@ class ScatterTrace(_ScatterBaseTrace):
     def build_upper_error_trace(
         cls, trace_data: TraceData, trace_name: str, trace_color: str
     ) -> "ScatterTrace":
-        assert trace_data.shaded_error is not None
+        if trace_data.shaded_error is None:
+            raise ValueError("`trace_data.shaded_error` can not be `None`")
         return cls(
             x=trace_data.x_values,
             y=trace_data.shaded_error.apply(lambda x: x[1]),
             name=f"{trace_name} {trace_data.shaded_error.name} upper bound",
             mode=TraceMode.LINES,
             marker={"size": trace_data.size_data, "color": trace_color},
-            line=dict(width=0),
+            line={"width": 0},
             fillcolor=set_rgb_alpha(trace_color, constants.SHADED_ERROR_ALPHA),
             legendgroup=trace_name,
             showlegend=False,
@@ -249,29 +260,23 @@ class ScatterTrace(_ScatterBaseTrace):
         trace_color: str,
         regression_type: RegressionType,
     ) -> "ScatterTrace":
-        assert trace_data.x_values is not None
-        assert trace_data.y_values is not None
+        if trace_data.x_values is None or trace_data.y_values is None:
+            raise ValueError("`trace_data.x_values` and `trace_data.x_values` can not be `None`")
 
         if regression_type is RegressionType.LINEAR:
-            p, r2, (x_grid, y_fit) = regress(
-                trace_data.x_values, trace_data.y_values, affine_func
-            )
+            p, r2, (x_grid, y_fit) = regress(trace_data.x_values, trace_data.y_values, affine_func)
             regression_legend = f"alpha={p[0]:.2f}, r={np.sqrt(r2):.2f}"
         elif regression_type is RegressionType.EXPONENTIAL:
-            p, r2, (x_grid, y_fit) = exponential_regress(
-                trace_data.x_values, trace_data.y_values
-            )
+            p, r2, (x_grid, y_fit) = exponential_regress(trace_data.x_values, trace_data.y_values)
             regression_legend = f"R2={r2:.2f}"
         elif regression_type is RegressionType.INVERSE:
-            p, r2, (x_grid, y_fit) = regress(
-                trace_data.x_values, trace_data.y_values, inverse_func
-            )
+            p, r2, (x_grid, y_fit) = regress(trace_data.x_values, trace_data.y_values, inverse_func)
             regression_legend = f"R2={r2:.2f}"
 
         return cls(
             x=pd.Series(x_grid),
             y=pd.Series(y_fit),
-            name=f"{trace_name} {regression_type} fit: {regression_legend}",
+            name=f"{trace_name} {regression_type.value} fit: {regression_legend}",
             mode=TraceMode.LINES,
             marker={"color": trace_color},
             line={"dash": constants.DEFAULT_REGRESSION_LINE_DASH},
@@ -298,14 +303,14 @@ class ScatterTrace(_ScatterBaseTrace):
                 color_specifier=color_specifier,
                 mode=mode,
             )
-            .dict()
+            .model_dump()
         )
 
 
 class Scatter3DTrace(_ScatterBaseTrace):
     hoverinfo: str = "x+y+z+name+text"
-    z: pd.Series | np.ndarray
-    error_z: Dict[str, Any] | None
+    z: pd.Series | NDArray[Any]
+    error_z: dict[str, Any] | None = None
 
     @classmethod
     def build_trace(
@@ -328,7 +333,7 @@ class Scatter3DTrace(_ScatterBaseTrace):
         _, _, error_z_data = cls.get_error_bars(trace_data)
 
         scatter3d_trace = deep_update(
-            scatter_trace.dict(),
+            scatter_trace.model_dump(),
             {
                 "z": trace_data.z_values,
                 "error_z": error_z_data,
@@ -346,8 +351,8 @@ class Scatter3DTrace(_ScatterBaseTrace):
 
 class _CategoricalTrace(BaseTrace, metaclass=ABCMeta):
     hoverinfo: str = "x+y+name+text"
-    marker: Dict[str, Any] | None
-    text: str | pd.Series | None
+    marker: dict[str, Any] | None = None
+    text: str | pd.Series | None = None
 
     @classmethod
     @abstractmethod
@@ -366,9 +371,11 @@ class _CategoricalTrace(BaseTrace, metaclass=ABCMeta):
             opacity=color_specifier.opacity,
             marker={
                 "size": trace_data.size_data,
-                "color": trace_data.color_data
-                if trace_data.color_data is not None
-                else trace_color,
+                "color": (
+                    trace_data.formatted_color_data
+                    if trace_data.color_data is not None
+                    else trace_color
+                ),
             },
         )
 
@@ -377,12 +384,15 @@ class StripTrace(_CategoricalTrace):
     mode: str = TraceMode.MARKERS
 
     @staticmethod
-    def get_x_strip_map(x_values: pd.Series) -> Dict[str, Any]:
-        x_dict: Dict[str, Any] = {}
+    def get_x_strip_map(x_values: pd.Series) -> dict[str, Any]:
+        def _cast_strip_coordinates(x_coord: Any) -> Any:
+            if np.issubdtype(type(x_coord), np.datetime64):
+                return pd.Timestamp(x_coord)
+            return x_coord
+
+        x_dict: dict[str, Any] = {}
         for i, x_level in enumerate(np.sort(unique_non_null(x_values)), 1):
-            if np.issubdtype(type(x_level), np.datetime64):
-                x_level = pd.Timestamp(x_level)
-            x_dict[x_level] = i
+            x_dict[_cast_strip_coordinates(x_level)] = i
 
         return x_dict
 
@@ -395,14 +405,12 @@ class StripTrace(_CategoricalTrace):
         color_specifier: ColorSpecifier,
     ) -> "StripTrace":
         return cls(
-            **super()
-            .build_trace(trace_data, trace_name, trace_color, color_specifier)
-            .dict()
+            **super().build_trace(trace_data, trace_name, trace_color, color_specifier).model_dump()
         )
 
 
 class BoxTrace(_CategoricalTrace):
-    boxmean = True
+    boxmean: bool = True
 
     @classmethod
     def build_trace(
@@ -413,15 +421,13 @@ class BoxTrace(_CategoricalTrace):
         color_specifier: ColorSpecifier,
     ) -> "BoxTrace":
         return cls(
-            **super()
-            .build_trace(trace_data, trace_name, trace_color, color_specifier)
-            .dict()
+            **super().build_trace(trace_data, trace_name, trace_color, color_specifier).model_dump()
         )
 
 
 class ViolinTrace(_CategoricalTrace):
-    meanline_visible = True
-    scalemode = "width"
+    meanline_visible: bool = True
+    scalemode: str = "width"
 
     @classmethod
     def build_trace(
@@ -432,23 +438,21 @@ class ViolinTrace(_CategoricalTrace):
         color_specifier: ColorSpecifier,
     ) -> "ViolinTrace":
         return cls(
-            **super()
-            .build_trace(trace_data, trace_name, trace_color, color_specifier)
-            .dict()
+            **super().build_trace(trace_data, trace_name, trace_color, color_specifier).model_dump()
         )
 
 
 class BarTrace(BaseTrace):
     hoverinfo: str = "x+y+name+text"
-    marker: Dict[str, Any] | None
-    error_y: Dict[str, Any] | None
-    text: str | pd.Series | None
-    textposition: str | None
+    marker: dict[str, Any] | None = None
+    error_y: dict[str, Any] | None = None
+    text: str | pd.Series | None = None
+    textposition: str | None = None
 
     @classmethod
     def build_trace(
         cls,
-        trace_data: TraceData,
+        trace_data: TraceData | AggregationTraceData,
         trace_name: str,
         trace_color: str,
         color_specifier: ColorSpecifier,
@@ -463,9 +467,11 @@ class BarTrace(BaseTrace):
             text=trace_data.text_data,
             error_y=error_y_data,
             marker={
-                "color": trace_data.color_data
-                if trace_data.color_data is not None
-                else trace_color,
+                "color": (
+                    trace_data.formatted_color_data
+                    if trace_data.color_data is not None
+                    else trace_color
+                ),
                 "coloraxis": color_specifier.coloraxis_reference,
             },
             legendgroup=trace_name,
@@ -473,8 +479,9 @@ class BarTrace(BaseTrace):
 
 
 class StepHistogramTrace(BaseTrace):
-    line: Dict[str, Any]
-    hoverinfo = "all"
+    line: dict[str, Any]
+    hoverinfo: str = "all"
+    mode: TraceMode = TraceMode.LINES
 
     @classmethod
     def build_trace(
@@ -485,42 +492,31 @@ class StepHistogramTrace(BaseTrace):
         color_specifier: ColorSpecifier,
         histogram_specifier: HistogramSpecifier,
     ) -> "StepHistogramTrace":
-        assert histogram_specifier.dimension is not None
-        histogram_data = getattr(
-            trace_data, TRACE_DIMENSION_MAP[histogram_specifier.dimension]
-        )
-        hist, bin_edges, binsize = histogram_specifier.histogram(
-            histogram_data
-        )
+        histogram_data = getattr(trace_data, TRACE_DIMENSION_MAP[histogram_specifier.dimension])
+        hist, bin_edges, binsize = histogram_specifier.histogram(histogram_data)
         bin_centers = (bin_edges[1:] + bin_edges[:-1]) / 2
 
         return cls(
-            x=bin_centers
-            if histogram_specifier.dimension is DataDimension.X
-            else hist,
-            y=hist
-            if histogram_specifier.dimension is DataDimension.X
-            else bin_centers,
+            x=bin_centers if histogram_specifier.dimension is DataDimension.X else hist,
+            y=hist if histogram_specifier.dimension is DataDimension.X else bin_centers,
             name=f"{trace_name} {histogram_data.name}",
-            mode=TraceMode.LINES,
-            line=dict(
-                color=trace_data.color_data
-                if trace_data.color_data is not None
-                else trace_color,
-                shape="hvh"
-                if histogram_specifier.dimension is DataDimension.X
-                else "vhv",
-            ),
+            line={
+                "color": (
+                    trace_data.color_data if trace_data.color_data is not None else trace_color
+                ),
+                "shape": "hvh" if histogram_specifier.dimension is DataDimension.X else "vhv",
+            },
             opacity=color_specifier.opacity,
-            text=trace_data.text_data,
             legendgroup=trace_name,
         )
 
 
 class RugTrace(BaseTrace):
-    line: Dict[str, Any] | None
-    showlegend = False
-    text: str | pd.Series | None
+    hoverinfo: str
+    line: dict[str, Any] | None = None
+    mode: TraceMode = TraceMode.LINES
+    showlegend: bool = False
+    text: str | pd.Series | None = None
 
     @classmethod
     def build_trace(
@@ -531,10 +527,7 @@ class RugTrace(BaseTrace):
         color_specifier: ColorSpecifier,
         histogram_specifier: HistogramSpecifier,
     ) -> "RugTrace":
-        assert histogram_specifier.dimension is not None
-        rug_data = getattr(
-            trace_data, TRACE_DIMENSION_MAP[histogram_specifier.dimension]
-        )
+        rug_data = getattr(trace_data, TRACE_DIMENSION_MAP[histogram_specifier.dimension])
 
         rug_coord = np.tile(rug_data, (2, 1)).transpose()
         rug_coord_grid = np.concatenate(
@@ -544,9 +537,7 @@ class RugTrace(BaseTrace):
 
         hist, _, _ = histogram_specifier.histogram(data=rug_data)
 
-        rug_length_coord = np.tile(
-            np.array([0, 0.1 * max(hist)]), (len(rug_coord), 1)
-        )
+        rug_length_coord = np.tile(np.array([0, 0.1 * max(hist)]), (len(rug_coord), 1))
         rug_length_grid = np.concatenate(
             (
                 rug_length_coord,
@@ -556,33 +547,34 @@ class RugTrace(BaseTrace):
         ).ravel()
 
         return cls(
-            x=rug_coord_grid
-            if histogram_specifier.dimension is DataDimension.X
-            else rug_length_grid,
-            y=rug_length_grid
-            if histogram_specifier.dimension is DataDimension.X
-            else rug_coord_grid,
-            name=f"{trace_name} {rug_data.name} raw observations",
-            mode=TraceMode.LINES,
-            hoverinfo="x+text"
-            if histogram_specifier.dimension is DataDimension.X
-            else "y+text",
-            line=dict(
-                color=trace_data.color_data
-                if trace_data.color_data is not None
-                else trace_color,
-                width=1,
+            x=(
+                rug_coord_grid
+                if histogram_specifier.dimension is DataDimension.X
+                else rug_length_grid
             ),
+            y=(
+                rug_length_grid
+                if histogram_specifier.dimension is DataDimension.X
+                else rug_coord_grid
+            ),
+            name=f"{trace_name} {rug_data.name} raw observations",
+            hoverinfo="x+text" if histogram_specifier.dimension is DataDimension.X else "y+text",
+            line={
+                "color": (
+                    trace_data.color_data if trace_data.color_data is not None else trace_color
+                ),
+                "width": 1,
+            },
             legendgroup=trace_name,
         )
 
 
 class HistogramTrace(BaseTrace):
-    marker: Dict[str, Any] | None
-    cumulative: Dict[str, Any] | None
-    xbins: Dict[str, Any] | None
-    histnorm: HistogramNormType | None
-    hoverinfo = "all"
+    marker: dict[str, Any] | None = None
+    cumulative: dict[str, Any] | None = None
+    xbins: dict[str, Any] | None = None
+    histnorm: HistogramNormType | None = None
+    hoverinfo: str = "all"
 
     @classmethod
     def build_trace(
@@ -593,42 +585,32 @@ class HistogramTrace(BaseTrace):
         color_specifier: ColorSpecifier,
         histogram_specifier: HistogramSpecifier,
     ) -> "HistogramTrace":
-        histogram_data = getattr(
-            trace_data, TRACE_DIMENSION_MAP[histogram_specifier.dimension]
-        )
-        bin_edges, bin_size = histogram_specifier.histogram_bin_edges(
-            histogram_data
-        )
+        histogram_data = getattr(trace_data, TRACE_DIMENSION_MAP[histogram_specifier.dimension])
+        bin_edges, bin_size = histogram_specifier.histogram_bin_edges(histogram_data)
 
         return cls(
-            x=histogram_data
-            if histogram_specifier.dimension is DataDimension.X
-            else None,
-            y=histogram_data
-            if histogram_specifier.dimension is DataDimension.Y
-            else None,
-            name=f"{trace_name} {histogram_data.name}",
+            x=histogram_data if histogram_specifier.dimension is DataDimension.X else None,
+            y=histogram_data if histogram_specifier.dimension is DataDimension.Y else None,
+            name=f"{trace_name} distribution",
             opacity=color_specifier.opacity,
             legendgroup=trace_name,
             marker={
-                "color": trace_data.color_data
-                if trace_data.color_data is not None
-                else trace_color
+                "color": trace_data.color_data if trace_data.color_data is not None else trace_color
             },
-            cumulative=dict(enabled=histogram_specifier.cumulative),
-            xbins=dict(start=bin_edges[0], end=bin_edges[-1], size=bin_size),
+            cumulative={"enabled": histogram_specifier.cumulative},
+            xbins={"start": bin_edges[0], "end": bin_edges[-1], "size": bin_size},
             histnorm=histogram_specifier.histnorm,
         )
 
 
 class Histogram2dTrace(BaseTrace):
-    marker: Dict[str, Any] | None
-    xbins: Dict[str, Any] | None
-    ybins: Dict[str, Any] | None
-    colorbar: Dict[str, Any] | None
-    colorscale: str | List | None
-    histnorm: HistogramNormType | None
-    hoverinfo = "all"
+    marker: dict[str, Any] | None = None
+    xbins: dict[str, Any] | None = None
+    ybins: dict[str, Any] | None = None
+    colorbar: dict[str, Any] | None = None
+    colorscale: str | list[list[str | float]] | None = None
+    histnorm: HistogramNormType | None = None
+    hoverinfo: str = "all"
 
     @classmethod
     def build_trace(
@@ -650,32 +632,33 @@ class Histogram2dTrace(BaseTrace):
         return cls(
             x=trace_data.x_values,
             y=trace_data.y_values,
-            name=f"{trace_name}",
+            name=f"{trace_name} density",
             opacity=color_specifier.opacity,
             legendgroup=trace_name,
-            xbins=dict(
-                start=xbin_edges[0], end=xbin_edges[-1], size=xbin_size
-            ),
-            ybins=dict(
-                start=ybin_edges[0], end=ybin_edges[-1], size=ybin_size
-            ),
+            xbins={"start": xbin_edges[0], "end": xbin_edges[-1], "size": xbin_size},
+            ybins={"start": ybin_edges[0], "end": ybin_edges[-1], "size": ybin_size},
             coloraxis=color_specifier.coloraxis_reference,
-            colorscale=color_specifier.build_colorscale(hist)
-            if color_specifier.coloraxis_reference is None
-            else None,
-            colorbar=color_specifier.build_colorbar(hist)
-            if color_specifier.coloraxis_reference is None
-            else None,
-            histnorm=jointplot_specifier.histogram_specifier[ #type: ignore
+            colorscale=(
+                color_specifier.build_colorscale(hist)
+                if color_specifier.coloraxis_reference is None
+                else None
+            ),
+            colorbar=(
+                color_specifier.build_colorbar(hist)
+                if color_specifier.coloraxis_reference is None
+                else None
+            ),
+            histnorm=jointplot_specifier.histogram_specifier[  # type: ignore
                 DataDimension.X
             ].histnorm,
         )
 
 
 class KdeTrace(BaseTrace):
-    hoverinfo = "none"
-    line: Dict[str, Any]
-    showlegend = False
+    hoverinfo: str = "none"
+    line: dict[str, Any]
+    mode: TraceMode = TraceMode.LINES
+    showlegend: bool = False
 
     @classmethod
     def build_trace(
@@ -686,12 +669,8 @@ class KdeTrace(BaseTrace):
         color_specifier: ColorSpecifier,
         histogram_specifier: HistogramSpecifier,
     ) -> "KdeTrace":
-        histogram_data = getattr(
-            trace_data, TRACE_DIMENSION_MAP[histogram_specifier.dimension]
-        )
-        bin_edges, bin_size = histogram_specifier.histogram_bin_edges(
-            histogram_data
-        )
+        histogram_data = getattr(trace_data, TRACE_DIMENSION_MAP[histogram_specifier.dimension])
+        bin_edges, bin_size = histogram_specifier.histogram_bin_edges(histogram_data)
 
         grid = np.linspace(
             np.floor(bin_edges.min()),
@@ -699,30 +678,22 @@ class KdeTrace(BaseTrace):
             constants.N_GRID_POINTS,
         )
         kde = kde_1d(histogram_data, grid)
-        color = (
-            trace_data.color_data
-            if trace_data.color_data is not None
-            else trace_color
-        )
+        color = trace_data.color_data if trace_data.color_data is not None else trace_color
 
         return cls(
-            x=grid
-            if histogram_specifier.dimension is DataDimension.X
-            else kde,
-            y=kde
-            if histogram_specifier.dimension is DataDimension.X
-            else grid,
+            x=grid if histogram_specifier.dimension is DataDimension.X else kde,
+            y=kde if histogram_specifier.dimension is DataDimension.X else grid,
             name=f"{trace_name} pdf",
-            mode=TraceMode.LINES,
-            line=dict(color=set_rgb_alpha(color, color_specifier.opacity)),
+            line={"color": set_rgb_alpha(color, color_specifier.opacity)},
             legendgroup=trace_name,
         )
 
 
 class HistogramLineTrace(BaseTrace):
-    line: Dict[str, Any]
-    mode = TraceMode.LINES
-    showlegend = True
+    hoverinfo: str
+    line: dict[str, Any]
+    mode: TraceMode = TraceMode.LINES
+    showlegend: bool = True
 
     @classmethod
     def build_trace(
@@ -731,8 +702,8 @@ class HistogramLineTrace(BaseTrace):
         trace_name: str,
         trace_color: str,
         histogram_specifier: HistogramSpecifier,
-        hline_coordinates: Tuple[str, float] | None = None,
-        vline_coordinates: Tuple[str, float] | None = None,
+        hline_coordinates: tuple[str, float] | None = None,
+        vline_coordinates: tuple[str, float] | None = None,
     ) -> "HistogramLineTrace":
         if vline_coordinates is not None:
             vline_name, vline_data = vline_coordinates
@@ -741,7 +712,8 @@ class HistogramLineTrace(BaseTrace):
                 hist, _, _ = histogram_specifier.histogram(trace_data.x_values)
                 y_data = np.array([0, max(hist)])
             else:
-                assert trace_data.y_values is not None
+                if trace_data.y_values is None:
+                    raise ValueError("`trace_data.y_values` can not be `None`")
                 y_data = np.sort(trace_data.y_values)[[0, -1]]
             name = f"{trace_name} {vline_name}={vline_data:.2f}"
             hoverinfo = "x+name"
@@ -753,51 +725,48 @@ class HistogramLineTrace(BaseTrace):
                 hist, _, _ = histogram_specifier.histogram(trace_data.y_values)
                 x_data = np.array([0, max(hist)])
             else:
-                assert trace_data.x_values is not None
+                if trace_data.x_values is None:
+                    raise ValueError("`trace_data.x_values` can not be `None`")
                 x_data = np.sort(trace_data.x_values)[[0, -1]]
             name = f"{trace_name} {hline_name}={hline_data:.2f}"
             hoverinfo = "y+name"
         else:
-            raise Exception(
-                f"Missing line coordinates for {HistogramLineTrace.__name__} object"
-            )
+            raise Exception(f"Missing line coordinates for {HistogramLineTrace.__name__} object")
 
         return cls(
             x=x_data,
             y=y_data,
             name=name,
-            line=dict(
-                color=trace_data.color_data
-                if trace_data.color_data is not None
-                else trace_color,
-                dash="dot",
-            ),
+            line={
+                "color": (
+                    trace_data.color_data if trace_data.color_data is not None else trace_color
+                ),
+                "dash": "dot",
+            },
             hoverinfo=hoverinfo,
             legendgroup=trace_name,
         )
 
 
 class ContourTrace(_DensityTrace):
-    colorscale: str | List | None
+    colorscale: str | list[list[str | float]] | None = None
     hoverinfo: str = "all"
     ncontours: int
-    reversescale = True
-    showscale = False
+    reversescale: bool = True
+    showscale: bool = False
 
     @classmethod
     def build_trace(
         cls,
         trace_data: TraceData,
         trace_name: str,
-        trace_color: str,
         color_specifier: ColorSpecifier,
         jointplot_specifier: JointplotSpecifier,
     ) -> "ContourTrace":
-        assert trace_data.x_values is not None
-        assert trace_data.y_values is not None
-
+        if trace_data.x_values is None or trace_data.y_values is None:
+            raise ValueError("`trace_data.x_values` and `trace_data.x_values` can not be `None`")
         # X grid
-        bin_edges, binsize = jointplot_specifier.histogram_specifier[ #type: ignore
+        bin_edges, binsize = jointplot_specifier.histogram_specifier[  # type: ignore
             DataDimension.X
         ].histogram_bin_edges(trace_data.x_values)
         x_grid = np.linspace(
@@ -807,7 +776,7 @@ class ContourTrace(_DensityTrace):
         )
 
         # Y grid
-        bin_edges, binsize = jointplot_specifier.histogram_specifier[ #type: ignore
+        bin_edges, binsize = jointplot_specifier.histogram_specifier[  # type: ignore
             DataDimension.Y
         ].histogram_bin_edges(trace_data.y_values)
         y_grid = np.linspace(
@@ -816,9 +785,7 @@ class ContourTrace(_DensityTrace):
             constants.N_GRID_POINTS,
         )
 
-        z_data = kde_2d(
-            trace_data.x_values, trace_data.y_values, x_grid, y_grid
-        )
+        z_data = kde_2d(trace_data.x_values, trace_data.y_values, x_grid, y_grid)
 
         return cls(
             x=x_grid,
@@ -826,9 +793,11 @@ class ContourTrace(_DensityTrace):
             z=z_data,
             zmin=color_specifier.zmin,
             zmax=color_specifier.zmax,
-            coloraxis=color_specifier.coloraxis_reference
-            if color_specifier.coloraxis_reference is not None
-            else None,
+            coloraxis=(
+                color_specifier.coloraxis_reference
+                if color_specifier.coloraxis_reference is not None
+                else None
+            ),
             colorscale=color_specifier.build_colorscale(z_data),
             name=f"{trace_name} {trace_data.y_values.name} vs {trace_data.x_values.name} KDE",
             ncontours=constants.N_CONTOUR_LINES,

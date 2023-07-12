@@ -1,75 +1,75 @@
 """Main module for plotting functions."""
 
 import logging
+from collections.abc import Sequence
 from functools import partial
-from typing import Dict, List, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.io as pio
-from pandas.api.types import is_object_dtype, is_numeric_dtype
+from pandas.api.types import is_numeric_dtype, is_object_dtype
 from plotly.subplots import make_subplots
 
 from statsplot import constants
 from statsplot.exceptions import StatsPlotSpecificationError
 from statsplot.plot_objects.layout_objects import (
+    BarLayout,
     CategoricalLayout,
+    HeatmapLayout,
+    HistogramLayout,
     ScatterLayout,
     SceneLayout,
-    BarLayout,
-    HistogramLayout,
-    HeatmapLayout,
 )
 from statsplot.plot_objects.trace_objects import (
-    BaseTrace,
-    StripTrace,
-    BoxTrace,
-    ViolinTrace,
-    ScatterTrace,
-    Scatter3DTrace,
     BarTrace,
-    HistogramLineTrace,
+    BaseTrace,
+    BoxTrace,
     HeatmapTrace,
+    HistogramLineTrace,
+    Scatter3DTrace,
+    ScatterTrace,
+    StripTrace,
+    ViolinTrace,
 )
 
 # Specifiers
 from statsplot.plot_specifiers.color import ColorSpecifier
 from statsplot.plot_specifiers.data import (
-    TraceData,
-    AggregationTraceData,
+    AGG_TO_ERROR_MAPPING,
     AggregationSpecifier,
+    AggregationTraceData,
+    CentralTendencyType,
+    DataDimension,
+    DataHandler,
     DataPointer,
     DataProcessor,
-    DataHandler,
-    DataDimension,
-    CentralTendencyType,
-    AGG_TO_ERROR_MAPPING,
     SliceTraceType,
+    TraceData,
 )
 from statsplot.plot_specifiers.layout import (
-    LegendSpecifier,
-    ColoraxisReference,
     AxesSpecifier,
     AxisFormat,
+    ColoraxisReference,
+    LegendSpecifier,
 )
 
 # Trace objects
 from statsplot.plot_specifiers.trace import (
-    TraceMode,
     CategoricalPlotType,
-    MarginalPlotDimension,
-    JointplotType,
-    ScatterSpecifier,
     HistogramSpecifier,
     JointplotSpecifier,
+    JointplotType,
+    MarginalPlotDimension,
+    ScatterSpecifier,
+    TraceMode,
 )
 
 # Helpers
 from statsplot.plotting.helpers import (
-    plot_scatter_traces,
-    plot_marginal_traces,
     plot_jointplot_main_traces,
+    plot_marginal_traces,
+    plot_scatter_traces,
 )
 from statsplot.utils.figure_utils import create_fig
 from statsplot.utils.layout_utils import (
@@ -77,7 +77,7 @@ from statsplot.utils.layout_utils import (
     adjust_jointplot_legends,
 )
 
-pio.templates.default = "none"
+pio.templates.default = constants.DEFAULT_TEMPLATE
 np.seterr(invalid="ignore")
 
 logger = logging.getLogger(__name__)
@@ -90,9 +90,9 @@ def plot(
     y: str | None = None,
     z: str | None = None,
     slicer: str | None = None,
-    slice_order: List[str] | None = None,
+    slice_order: list[str] | None = None,
     color: str | None = None,
-    color_palette: List | str | None = None,
+    color_palette: list[str] | str | None = None,
     shared_coloraxis: bool = False,
     color_limits: Sequence[float] | None = None,
     logscale: float | None = None,
@@ -118,9 +118,9 @@ def plot(
     y_label: str | None = None,
     z_label: str | None = None,
     title: str | None = None,
-    x_range: Sequence | None = None,
-    y_range: Sequence | None = None,
-    z_range: Sequence | None = None,
+    x_range: Sequence[float] | None = None,
+    y_range: Sequence[float] | None = None,
+    z_range: Sequence[float] | None = None,
     fig: go.Figure = None,
     row: int = 1,
     col: int = 1,
@@ -187,9 +187,7 @@ def plot(
         raise ValueError("Size specification only applies to markers")
     if z is not None:
         if fit is not None:
-            raise ValueError(
-                "Regression can not be computed on a three-dimensional plot"
-            )
+            raise ValueError("Regression can not be computed on a three-dimensional plot")
         if size is None:
             size = constants.DEFAULT_MARKER_SIZE
 
@@ -250,34 +248,35 @@ def plot(
         },
     )
 
-    traces: Dict[str, BaseTrace] = {}
-    traces_data: List = []
-    for (trace_name, trace_data), trace_color in zip(
-        data_handler.traces_data(),
+    traces: dict[str, BaseTrace] = {}
+    traces_data: list[TraceData] = []
+    for (slice_name, slice_data), trace_color in zip(
+        data_handler.slices_data(),
         color_specifier.get_color_hues(n_colors=data_handler.n_slices),
+        strict=True,
     ):
-        logger.debug(f"Building {trace_name} trace data...")
+        logger.debug(f"Building {slice_name} trace data...")
         trace_data = TraceData.build_trace_data(
-            data=trace_data,
+            data=slice_data,
             pointer=data_handler.data_pointer,
             processor=data_processor,
         )
 
         if data_handler.data_pointer.z is not None:
-            traces[trace_name] = go.Scatter3d(
+            traces[slice_name] = go.Scatter3d(
                 Scatter3DTrace.build_trace(
                     trace_data=trace_data,
-                    trace_name=trace_name,
+                    trace_name=slice_name,
                     trace_color=trace_color,
                     color_specifier=color_specifier,
                     mode=scatter_specifier.mode,
-                ).dict()
+                ).model_dump()
             )
         else:
             traces.update(
                 plot_scatter_traces(
                     trace_data=trace_data,
-                    trace_name=trace_name,
+                    trace_name=slice_name,
                     trace_color=trace_color,
                     color_specifier=color_specifier,
                     scatter_specifier=scatter_specifier,
@@ -296,13 +295,14 @@ def plot(
     if axes_specifier.axis_format is AxisFormat.ID_LINE:
         if data_handler.data_pointer.z is not None:
             raise StatsPlotSpecificationError(
-                f"axis={axes_specifier.axis_format.value} is not compatible with three-dimensional plotting"
+                f"axis={axes_specifier.axis_format.value} is not compatible with three-dimensional"
+                " plotting"
             )
         traces["id_line"] = go.Scatter(
             ScatterTrace.build_id_line(
                 x_values=data_handler.get_data("x"),
                 y_values=data_handler.get_data("y"),
-            ).dict()
+            ).model_dump()
         )
 
     coloraxis = color_specifier.build_coloraxis(
@@ -311,13 +311,9 @@ def plot(
 
     layout: "SceneLayout" | "ScatterLayout"
     if data_handler.data_pointer.z is not None:
-        layout = SceneLayout.build_layout(
-            axes_specifier=axes_specifier, coloraxis=coloraxis
-        )
+        layout = SceneLayout.build_layout(axes_specifier=axes_specifier, coloraxis=coloraxis)
     else:
-        layout = ScatterLayout.build_layout(
-            axes_specifier=axes_specifier, coloraxis=coloraxis
-        )
+        layout = ScatterLayout.build_layout(axes_specifier=axes_specifier, coloraxis=coloraxis)
 
     # Create fig
     fig = create_fig(
@@ -338,9 +334,9 @@ def barplot(
     x: str | None = None,
     y: str | None = None,
     slicer: str | None = None,
-    slice_order: List[str] | None = None,
+    slice_order: list[str] | None = None,
     color: str | None = None,
-    color_palette: List | str | None = None,
+    color_palette: list[str] | str | None = None,
     shared_coloraxis: bool = False,
     color_limits: Sequence[float] | None = None,
     logscale: float | None = None,
@@ -354,8 +350,8 @@ def barplot(
     x_label: str | None = None,
     y_label: str | None = None,
     title: str | None = None,
-    x_range: Sequence | None = None,
-    y_range: Sequence | None = None,
+    x_range: Sequence[float] | None = None,
+    y_range: Sequence[float] | None = None,
     fig: go.Figure = None,
     row: int = 1,
     col: int = 1,
@@ -397,16 +393,13 @@ def barplot(
     Returns:
         A :obj:`plotly.graph_obj.Figure`.
     """
+
     if color is not None and aggregation_func is not None:
-        raise StatsPlotSpecificationError(
-            f"Color coding can not be used along aggregation"
-        )
+        raise StatsPlotSpecificationError("Color coding can not be used with aggregation")
 
     data_handler = DataHandler.build_handler(
         data=data,
-        data_pointer=DataPointer(
-            x=x, y=y, slicer=slicer, color=color, text=text
-        ),
+        data_pointer=DataPointer(x=x, y=y, slicer=slicer, color=color, text=text),
         slice_order=slice_order,
     )
 
@@ -426,29 +419,31 @@ def barplot(
         opacity=opacity,
     )
 
-    traces: Dict[str, BaseTrace] = {}
-    traces_data: List = []
-    for (trace_name, trace_data), trace_color in zip(
-        data_handler.traces_data(),
+    traces: dict[str, BaseTrace] = {}
+    traces_data: list[TraceData] = []
+    for (slice_name, slice_data), trace_color in zip(
+        data_handler.slices_data(),
         color_specifier.get_color_hues(n_colors=data_handler.n_slices),
+        strict=True,
     ):
+        trace_data: AggregationTraceData | TraceData
         if aggregation_specifier.aggregation_func is not None:
-            trace_data = AggregationTraceData.build_trace_data(
-                data=trace_data,
+            trace_data = AggregationTraceData.build_aggregation_trace_data(
+                data=slice_data,
                 aggregation_specifier=aggregation_specifier,
             )
         else:
             trace_data = TraceData.build_trace_data(
-                data=trace_data, pointer=data_handler.data_pointer
+                data=slice_data, pointer=data_handler.data_pointer
             )
 
-        traces[trace_name] = go.Bar(
+        traces[slice_name] = go.Bar(
             BarTrace.build_trace(
                 trace_data=trace_data,
-                trace_name=trace_name,
+                trace_name=slice_name,
                 trace_color=trace_color,
                 color_specifier=color_specifier,
-            ).dict()
+            ).model_dump()
         )
 
         traces_data.append(trace_data)
@@ -490,9 +485,9 @@ def catplot(
     x: str | None = None,
     y: str | None = None,
     slicer: str | None = None,
-    slice_order: List[str] | None = None,
+    slice_order: list[str] | None = None,
     color: str | None = None,
-    color_palette: List | str | None = None,
+    color_palette: list[str] | str | None = None,
     text: str | None = None,
     axis: str | None = None,
     opacity: float | None = None,
@@ -504,8 +499,8 @@ def catplot(
     x_label: str | None = None,
     y_label: str | None = None,
     title: str | None = None,
-    x_range: Sequence | None = None,
-    y_range: Sequence | None = None,
+    x_range: Sequence[float] | None = None,
+    y_range: Sequence[float] | None = None,
     fig: go.Figure = None,
     row: int = 1,
     col: int = 1,
@@ -550,66 +545,72 @@ def catplot(
 
     data_handler = DataHandler.build_handler(
         data=data,
-        data_pointer=DataPointer(
-            x=x, y=y, slicer=slicer, color=color, text=text, size=size
-        ),
+        data_pointer=DataPointer(x=x, y=y, slicer=slicer, color=color, text=text, size=size),
         slice_order=slice_order,
     )
 
-    color_specifier = ColorSpecifier(
-        color_palette=color_palette, opacity=opacity
-    )
+    color_specifier = ColorSpecifier(color_palette=color_palette, opacity=opacity)
 
-    if plot_type is CategoricalPlotType.STRIP and is_object_dtype(
-        data_handler.data_types.x
-    ):
-        x_values_mapping = StripTrace.get_x_strip_map(
-            x_values=data_handler.get_data("x")
-        )
+    if plot_type is CategoricalPlotType.STRIP and is_object_dtype(data_handler.data_types.x):
+        x_values_mapping = StripTrace.get_x_strip_map(x_values=data_handler.get_data("x"))
     else:
         x_values_mapping = None
     if jitter_y > 0 and plot_type is not CategoricalPlotType.STRIP:
-        logger.warning(f"Jitter parameters have no effect for {plot_type}")
+        logger.warning(f"Jitter parameters have no effect for {plot_type.value}")
 
     data_processor = DataProcessor(
         x_values_mapping=x_values_mapping,
-        jitter_settings={DataDimension.X: jitter_x, DataDimension.Y: jitter_y}
-        if plot_type is CategoricalPlotType.STRIP
-        else None,
+        jitter_settings=(
+            {DataDimension.X: jitter_x, DataDimension.Y: jitter_y}
+            if plot_type is CategoricalPlotType.STRIP
+            else None
+        ),
         normalizer={DataDimension.Y: normalizer},
     )
 
-    traces: Dict[str, BaseTrace] = {}
-    traces_data: List = []
-    for (trace_name, trace_data), trace_color in zip(
-        data_handler.traces_data(),
+    traces: dict[str, BaseTrace] = {}
+    traces_data: list[TraceData] = []
+    for (slice_name, slice_data), trace_color in zip(
+        data_handler.slices_data(),
         color_specifier.get_color_hues(n_colors=data_handler.n_slices),
+        strict=True,
     ):
         trace_data = TraceData.build_trace_data(
-            data=trace_data,
+            data=slice_data,
             pointer=data_handler.data_pointer,
             processor=data_processor,
         )
-        trace_kwargs = dict(
-            trace_data=trace_data,
-            trace_name=trace_name,
-            trace_color=trace_color,
-            color_specifier=color_specifier,
-        )
 
         if plot_type is CategoricalPlotType.STRIP:
-            traces[trace_name] = go.Scatter(
-                StripTrace.build_trace(**trace_kwargs).dict()
-            )
-        elif plot_type is CategoricalPlotType.VIOLIN:
-            traces[trace_name] = go.Violin(
-                ViolinTrace.build_trace(**trace_kwargs).dict()
-            )
-        elif plot_type is CategoricalPlotType.BOX:
-            traces[trace_name] = go.Box(
-                BoxTrace.build_trace(**trace_kwargs).dict()
+            trace = go.Scatter(
+                StripTrace.build_trace(
+                    trace_data=trace_data,
+                    trace_name=slice_name,
+                    trace_color=trace_color,
+                    color_specifier=color_specifier,
+                ).model_dump()
             )
 
+        elif plot_type is CategoricalPlotType.VIOLIN:
+            trace = go.Violin(
+                ViolinTrace.build_trace(
+                    trace_data=trace_data,
+                    trace_name=slice_name,
+                    trace_color=trace_color,
+                    color_specifier=color_specifier,
+                ).model_dump()
+            )
+
+        elif plot_type is CategoricalPlotType.BOX:
+            trace = go.Box(
+                BoxTrace.build_trace(
+                    trace_data=trace_data,
+                    trace_name=slice_name,
+                    trace_color=trace_color,
+                    color_specifier=color_specifier,
+                ).model_dump()
+            )
+        traces[slice_name] = trace
         traces_data.append(trace_data)
 
     legend_specifier = LegendSpecifier(
@@ -644,9 +645,8 @@ def distplot(
     x: str | None = None,
     y: str | None = None,
     slicer: str | None = None,
-    slice_order: List[str] | None = None,
-    color: str | None = None,
-    color_palette: List | str | None = None,
+    slice_order: list[str] | None = None,
+    color_palette: list[str] | str | None = None,
     axis: str | None = None,
     opacity: float = constants.DEFAULT_HISTOGRAM_OPACITY,
     hist: bool = True,
@@ -654,18 +654,18 @@ def distplot(
     kde: bool | None = None,
     step: bool | None = None,
     equal_bins: bool | None = None,
-    bins: Sequence | int | str = "scott",
+    bins: Sequence[float] | int | str = constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD,
     cumulative: bool | None = None,
     histnorm: str | None = None,
     central_tendency: str | None = None,
-    vlines: Dict[str, Tuple[str, float]] | None = None,
-    hlines: Dict[str, Tuple[str, float]] | None = None,
+    vlines: dict[str, tuple[str, float]] | None = None,
+    hlines: dict[str, tuple[str, float]] | None = None,
     barmode: str | None = None,
     x_label: str | None = None,
     y_label: str | None = None,
     title: str | None = None,
-    x_range: Sequence | None = None,
-    y_range: Sequence | None = None,
+    x_range: Sequence[float] | None = None,
+    y_range: Sequence[float] | None = None,
     fig: go.Figure = None,
     row: int = 1,
     col: int = 1,
@@ -678,13 +678,10 @@ def distplot(
         y: The name of the `y` dimension column in `data`. If not None, draws horizontal histograms.
         slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.
         slice_order: A list of identifiers to order and/or subset data slices specified by `slicer`.
-        color: The name of the column in `data` with values to map onto the colormap.
         color_palette:
             - A string refering to a built-in `plotly`, `seaborn` or `matplotlib` colormap.
             - A list of CSS color names or HTML color codes.
-            The color palette is used, by order of precedence :
-                - To map color data of the `color` parameter onto the corresponding colormap.
-                - To assign discrete colors to `slices` of data.
+            The color palette is used to assign discrete colors to `slices` of data.
         axis: One of :obj:`~statsplot.plot_specifiers.layout.AxisFormat` value.
         opacity: A numeric value in the (0, 1) interval to specify marker opacity.
         hist: If True, plot histogram bars.
@@ -714,14 +711,12 @@ def distplot(
 
     data_handler = DataHandler.build_handler(
         data=data,
-        data_pointer=DataPointer(x=x, y=y, slicer=slicer, color=color),
+        data_pointer=DataPointer(x=x, y=y, slicer=slicer),
         slice_order=slice_order,
     )
 
     histogram_dimension = (
-        DataDimension.X
-        if data_handler.data_pointer.x is not None
-        else DataDimension.Y
+        DataDimension.X if data_handler.data_pointer.x is not None else DataDimension.Y
     )
 
     histogram_specifier = HistogramSpecifier(
@@ -738,30 +733,25 @@ def distplot(
     )
     if equal_bins:
         # Call histogram on all data to set bin edge attribute
-        histogram_specifier.bin_edges = (
-            histogram_specifier.histogram_bin_edges(
-                data_handler.get_data(histogram_dimension)
-            )[0]
-        )
+        histogram_specifier.bin_edges = histogram_specifier.histogram_bin_edges(
+            data_handler.get_data(histogram_dimension)
+        )[0]
 
-    color_specifier = ColorSpecifier(
-        color_palette=color_palette, opacity=opacity
-    )
+    color_specifier = ColorSpecifier(color_palette=color_palette, opacity=opacity)
 
-    traces: Dict[str, BaseTrace] = {}
-    traces_data: List = []
-    for (trace_name, trace_data), trace_color in zip(
-        data_handler.traces_data(),
+    traces: dict[str, BaseTrace] = {}
+    traces_data: list[TraceData] = []
+    for (slice_name, slice_data), trace_color in zip(
+        data_handler.slices_data(),
         color_specifier.get_color_hues(n_colors=data_handler.n_slices),
+        strict=True,
     ):
-        trace_data = TraceData.build_trace_data(
-            data=trace_data, pointer=data_handler.data_pointer
-        )
+        trace_data = TraceData.build_trace_data(data=slice_data, pointer=data_handler.data_pointer)
 
         traces.update(
             plot_marginal_traces(
                 trace_data=trace_data,
-                trace_name=trace_name,
+                trace_name=slice_name,
                 trace_color=trace_color,
                 color_specifier=color_specifier,
                 histogram_specifier=histogram_specifier,
@@ -769,26 +759,26 @@ def distplot(
         )
 
         if vlines is not None:
-            if (vline := vlines.get(trace_name)) is not None:
+            if (vline := vlines.get(slice_name)) is not None:
                 line_trace = HistogramLineTrace.build_trace(
                     vline_coordinates=vline,
                     trace_data=trace_data,
-                    trace_name=trace_name,
+                    trace_name=slice_name,
                     trace_color=trace_color,
                     histogram_specifier=histogram_specifier,
                 )
-                traces[line_trace.name] = go.Scatter(line_trace.dict())
+                traces[line_trace.name] = go.Scatter(line_trace.model_dump())
 
         if hlines is not None:
-            if (hline := hlines.get(trace_name)) is not None:
+            if (hline := hlines.get(slice_name)) is not None:
                 line_trace = HistogramLineTrace.build_trace(
                     hline_coordinates=hline,
                     trace_data=trace_data,
-                    trace_name=trace_name,
+                    trace_name=slice_name,
                     trace_color=trace_color,
                     histogram_specifier=histogram_specifier,
                 )
-                traces[line_trace.name] = go.Scatter(line_trace.dict())
+                traces[line_trace.name] = go.Scatter(line_trace.model_dump())
 
         traces_data.append(trace_data)
 
@@ -797,12 +787,12 @@ def distplot(
         title=title,
         x_label=x_label,
         y_label=y_label,
-        y_transformation=histogram_specifier.histnorm
-        if histogram_dimension is DataDimension.X
-        else None,
-        x_transformation=histogram_specifier.histnorm
-        if histogram_dimension is DataDimension.Y
-        else None,
+        y_transformation=(
+            histogram_specifier.histnorm if histogram_dimension is DataDimension.X else None
+        ),
+        x_transformation=(
+            histogram_specifier.histnorm if histogram_dimension is DataDimension.Y else None
+        ),
     )
 
     axes_specifier = AxesSpecifier(
@@ -813,25 +803,18 @@ def distplot(
         y_range=y_range,
     )
 
-    layout = HistogramLayout.build_layout(
-        axes_specifier=axes_specifier, barmode=barmode
-    )
+    layout = HistogramLayout.build_layout(axes_specifier=axes_specifier, barmode=barmode)
 
     if histogram_specifier.central_tendency is not None:
-        subplot_col = (
-            col + 1 if histogram_dimension is DataDimension.Y else col
-        )
+        subplot_col = col + 1 if histogram_dimension is DataDimension.Y else col
         if histogram_specifier.central_tendency is CentralTendencyType.MEAN:
             central_tendency_data = data_handler.get_mean(histogram_dimension)
-        elif (
-            histogram_specifier.central_tendency is CentralTendencyType.MEDIAN
-        ):
-            central_tendency_data = data_handler.get_median(
-                histogram_dimension
-            )
+        elif histogram_specifier.central_tendency is CentralTendencyType.MEDIAN:
+            central_tendency_data = data_handler.get_median(histogram_dimension)
         else:
             raise ValueError(
-                f"Unsupported parameter for distribution central tendency: {histogram_specifier.central_tendency}"
+                "Unsupported parameter for distribution central tendency:"
+                f" {histogram_specifier.central_tendency.value}"
             )
 
         if histogram_dimension is DataDimension.X:
@@ -866,17 +849,24 @@ def distplot(
             slicer=slicer,
             mode=TraceMode.MARKERS,
             color_palette=color_palette,
-            error_x=AGG_TO_ERROR_MAPPING[histogram_specifier.central_tendency]
-            if histogram_dimension is DataDimension.X
-            else None,
-            error_y=None
-            if histogram_dimension is DataDimension.X
-            else AGG_TO_ERROR_MAPPING[histogram_specifier.central_tendency],
+            error_x=(
+                AGG_TO_ERROR_MAPPING[histogram_specifier.central_tendency]
+                if histogram_dimension is DataDimension.X
+                else None
+            ),
+            error_y=(
+                None
+                if histogram_dimension is DataDimension.X
+                else AGG_TO_ERROR_MAPPING[histogram_specifier.central_tendency]
+            ),
         )
         # Update name
         fig.for_each_trace(
             lambda trace: trace.update(
-                name=f"{trace.name} {histogram_specifier.central_tendency} +/- {AGG_TO_ERROR_MAPPING[histogram_specifier.central_tendency]}"
+                name=(
+                    f"{trace.name} {histogram_specifier.central_tendency.value} +/-"
+                    f" {AGG_TO_ERROR_MAPPING[histogram_specifier.central_tendency].value}"
+                )
             )
         )
         # Hide axes
@@ -893,10 +883,12 @@ def distplot(
         fig=fig,
         traces=traces,
         layout=layout,
-        row=row + 1
-        if histogram_specifier.central_tendency is not None
-        and histogram_dimension is DataDimension.X
-        else row,
+        row=(
+            row + 1
+            if histogram_specifier.central_tendency is not None
+            and histogram_dimension is DataDimension.X
+            else row
+        ),
         col=col,
     )
 
@@ -909,9 +901,8 @@ def jointplot(
     x: str | None = None,
     y: str | None = None,
     slicer: str | None = None,
-    slice_order: List[str] | None = None,
-    color: str | None = None,
-    color_palette: List | str | None = None,
+    slice_order: list[str] | None = None,
+    color_palette: list[str] | str | None = None,
     shared_coloraxis: bool = False,
     color_limits: Sequence[float] | None = None,
     logscale: float | None = None,
@@ -921,15 +912,15 @@ def jointplot(
     mode: str | None = TraceMode.MARKERS,
     axis: str | None = None,
     marginal_plot: str | None = MarginalPlotDimension.ALL,
-    kde_color_palette: List | str = constants.DEFAULT_KDE_COLOR_PALETTE,
+    kde_color_palette: list[str] | str = constants.DEFAULT_KDE_COLOR_PALETTE,
     hist: bool = True,
     rug: bool | None = None,
     kde: bool | None = None,
     step: bool | None = None,
     equal_bins_x: bool | None = None,
     equal_bins_y: bool | None = None,
-    bins_x: Sequence | int | str = "scott",
-    bins_y: Sequence | int | str = "scott",
+    bins_x: Sequence[float] | int | str = constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD,
+    bins_y: Sequence[float] | int | str = constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD,
     histnorm: str | None = None,
     central_tendency: str | None = None,
     barmode: str | None = None,
@@ -947,8 +938,8 @@ def jointplot(
     x_label: str | None = None,
     y_label: str | None = None,
     title: str | None = None,
-    x_range: Sequence | None = None,
-    y_range: Sequence | None = None,
+    x_range: Sequence[float] | None = None,
+    y_range: Sequence[float] | None = None,
     fig: go.Figure = None,
     row: int = 1,
     col: int = 1,
@@ -961,13 +952,10 @@ def jointplot(
         y: The name of the `y` dimension column in `data`.
         slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.
         slice_order: A list of identifiers to order and/or subset data slices specified by `slicer`.
-        color: The name of the column in `data` with values to map onto the colormap.
         color_palette:
             - A string refering to a built-in `plotly`, `seaborn` or `matplotlib` colormap.
             - A list of CSS color names or HTML color codes.
-            The color palette is used, by order of precedence :
-                - To map color data of the `color` parameter onto the corresponding colormap.
-                - To assign discrete colors to `slices` of data.
+            The color palette is used to assign discrete colors to `slices` of data.
         shared_coloraxis: If True, colorscale is shared across slices of data.
         color_limits: A tuple specifying the (min, max) values of the colormap.
         logscale: A float specifying the log base to use for colorscaling.
@@ -1023,7 +1011,6 @@ def jointplot(
             shaded_error=shaded_error,
             error_x=error_x,
             error_y=error_y,
-            color=color,
             text=text,
             marker=marker,
             size=size,
@@ -1031,12 +1018,9 @@ def jointplot(
         slice_order=slice_order,
     )
     if fit is not None and not (
-        is_numeric_dtype(data_handler.data_types.x)
-        and is_numeric_dtype(data_handler.data_types.y)
+        is_numeric_dtype(data_handler.data_types.x) and is_numeric_dtype(data_handler.data_types.y)
     ):
-        raise StatsPlotSpecificationError(
-            f"{fit} regression requires numeric dtypes"
-        )
+        raise StatsPlotSpecificationError(f"{fit} regression requires numeric dtypes")
 
     jointplot_specifier = JointplotSpecifier(
         plot_type=plot_type,
@@ -1044,9 +1028,9 @@ def jointplot(
         scatter_specifier=ScatterSpecifier(mode=mode, regression_type=fit),
     )
 
-    def specify_histogram(
+    def specify_marginal_histogram(
         dimension: DataDimension,
-        bins: Sequence | int | str,
+        bins: Sequence[float] | int | str,
         equal_bins: bool | None,
     ) -> HistogramSpecifier:
         histogram_specifier = HistogramSpecifier(
@@ -1061,22 +1045,23 @@ def jointplot(
             dimension=dimension,
         )
         if equal_bins:
-            histogram_specifier.bin_edges = (
-                histogram_specifier.histogram_bin_edges(
-                    data_handler.get_data(dimension)
-                )[0]
-            )
+            histogram_specifier.bin_edges = histogram_specifier.histogram_bin_edges(
+                data_handler.get_data(dimension)
+            )[0]
         return histogram_specifier
 
-    histogram_specifiers: Dict[DataDimension, HistogramSpecifier] = {}
+    histogram_specifiers: dict[DataDimension, HistogramSpecifier] = {}
     if jointplot_specifier.marginal_plot in (
         MarginalPlotDimension.ALL,
         MarginalPlotDimension.X,
     ) or jointplot_specifier.plot_type in (
+        JointplotType.SCATTER_KDE,
+        JointplotType.KDE,
+        JointplotType.SCATTER_KDE,
         JointplotType.HISTOGRAM,
         JointplotType.Y_HISTMAP,
     ):
-        histogram_specifiers[DataDimension.X] = specify_histogram(
+        histogram_specifiers[DataDimension.X] = specify_marginal_histogram(
             dimension=DataDimension.X, bins=bins_x, equal_bins=equal_bins_x
         )
 
@@ -1084,18 +1069,17 @@ def jointplot(
         MarginalPlotDimension.ALL,
         MarginalPlotDimension.Y,
     ) or jointplot_specifier.plot_type in (
+        JointplotType.SCATTER_KDE,
+        JointplotType.KDE,
         JointplotType.HISTOGRAM,
         JointplotType.X_HISTMAP,
     ):
-        histogram_specifiers[DataDimension.Y] = specify_histogram(
+        histogram_specifiers[DataDimension.Y] = specify_marginal_histogram(
             dimension=DataDimension.Y, bins=bins_y, equal_bins=equal_bins_y
         )
     jointplot_specifier.histogram_specifier = histogram_specifiers
 
-    if (
-        opacity is None
-        and jointplot_specifier.scatter_specifier.regression_type is not None
-    ):
+    if opacity is None and jointplot_specifier.scatter_specifier.regression_type is not None:
         logger.debug(
             f"Regression plot is on, setting opacity to {constants.DEFAULT_TRANSPARENCE_OPACITY}"
         )
@@ -1103,7 +1087,6 @@ def jointplot(
 
     sliced_data_color_specifier = ColorSpecifier(
         coloraxis_reference=ColoraxisReference.MAIN_COLORAXIS,
-        color=color,
         color_palette=color_palette,
         logscale=logscale,
         colorbar=colorbar,
@@ -1125,11 +1108,12 @@ def jointplot(
         },
     )
 
-    global_main_traces: Dict[str, BaseTrace] = {}
-    slices_main_traces: Dict[str, BaseTrace] = {}
-    slices_marginal_traces: Dict[str, BaseTrace] = {}
+    global_main_traces: dict[str, BaseTrace] = {}
+    slices_main_traces: dict[str, BaseTrace] = {}
+    slices_marginal_traces: dict[str, BaseTrace] = {}
+    preplotted_traces: dict[str, BaseTrace] = {}
 
-    traces_data: List = []
+    traces_data: list[TraceData] = []
 
     # Global trace
     if data_handler.n_slices > 1:
@@ -1140,7 +1124,7 @@ def jointplot(
                     pointer=data_handler.data_pointer,
                     processor=data_processor,
                 ),
-                trace_name=SliceTraceType.ALL_DATA,
+                trace_name=SliceTraceType.ALL_DATA.value,
                 trace_color="grey",
                 color_specifier=main_data_color_specifier,
                 jointplot_specifier=jointplot_specifier,
@@ -1148,14 +1132,13 @@ def jointplot(
         )
 
     # Slice trace
-    for (trace_name, trace_data), trace_color in zip(
-        data_handler.traces_data(),
-        sliced_data_color_specifier.get_color_hues(
-            n_colors=data_handler.n_slices
-        ),
+    for (slice_name, slice_data), trace_color in zip(
+        data_handler.slices_data(),
+        sliced_data_color_specifier.get_color_hues(n_colors=data_handler.n_slices),
+        strict=True,
     ):
         trace_data = TraceData.build_trace_data(
-            data=trace_data,
+            data=slice_data,
             pointer=data_handler.data_pointer,
             processor=data_processor,
         )
@@ -1163,7 +1146,7 @@ def jointplot(
         slices_main_traces.update(
             plot_jointplot_main_traces(
                 trace_data=trace_data,
-                trace_name=trace_name,
+                trace_name=slice_name,
                 trace_color=trace_color,
                 color_specifier=main_data_color_specifier,
                 jointplot_specifier=jointplot_specifier,
@@ -1174,7 +1157,7 @@ def jointplot(
             slices_main_traces.update(
                 plot_scatter_traces(
                     trace_data=trace_data,
-                    trace_name=trace_name,
+                    trace_name=slice_name,
                     trace_color=trace_color,
                     color_specifier=sliced_data_color_specifier,
                     scatter_specifier=jointplot_specifier.scatter_specifier,
@@ -1185,21 +1168,16 @@ def jointplot(
         for dimension in [DataDimension.X, DataDimension.Y]:
             if (
                 jointplot_specifier.marginal_plot == dimension
-                or jointplot_specifier.marginal_plot
-                is MarginalPlotDimension.ALL
+                or jointplot_specifier.marginal_plot is MarginalPlotDimension.ALL
             ):
-                jointplot_specifier.histogram_specifier[
-                    dimension
-                ].dimension = dimension
+                jointplot_specifier.histogram_specifier[dimension].dimension = dimension
                 slices_marginal_traces.update(
                     plot_marginal_traces(
                         trace_data=trace_data,
-                        trace_name=trace_name,
+                        trace_name=slice_name,
                         trace_color=trace_color,
                         color_specifier=sliced_data_color_specifier,
-                        histogram_specifier=jointplot_specifier.histogram_specifier[
-                            dimension
-                        ],
+                        histogram_specifier=jointplot_specifier.histogram_specifier[dimension],
                     )
                 )
 
@@ -1228,7 +1206,7 @@ def jointplot(
             ScatterTrace.build_id_line(
                 x_values=data_handler.get_data("x"),
                 y_values=data_handler.get_data("y"),
-            ).dict()
+            ).model_dump()
         )
 
     coloraxis = sliced_data_color_specifier.build_coloraxis(
@@ -1239,51 +1217,49 @@ def jointplot(
         fig = make_subplots(
             rows=2 if jointplot_specifier.plot_x_distribution else 1,
             cols=2 if jointplot_specifier.plot_y_distribution else 1,
-            row_heights=[0.2, 0.8]
-            if jointplot_specifier.plot_x_distribution
-            else [1],
-            column_widths=[0.8, 0.2]
-            if jointplot_specifier.plot_y_distribution
-            else [1],
+            row_heights=[0.2, 0.8] if jointplot_specifier.plot_x_distribution else [1],
+            column_widths=[0.8, 0.2] if jointplot_specifier.plot_y_distribution else [1],
             vertical_spacing=0.05,
             horizontal_spacing=0.05,
             shared_xaxes=True,
             shared_yaxes=True,
         )
+    else:
+        preplotted_traces.update({trace.name: trace for trace in fig.data})
 
     main_row = row + 1 if jointplot_specifier.plot_x_distribution else row
     # Plot main trace
     fig = create_fig(
         fig=fig,
         traces={**slices_main_traces, **global_main_traces},
-        layout=ScatterLayout.build_layout(
-            axes_specifier=axes_specifier, coloraxis=coloraxis
-        ),
+        layout=ScatterLayout.build_layout(axes_specifier=axes_specifier, coloraxis=coloraxis),
         row=main_row,
         col=col,
     )
     if data_handler.n_slices > 0:
         fig.update_traces(showlegend=True)
 
-    def add_marginal_distribution_to_layout(
-        dimension: DataDimension, fig: go.Figure
-    ) -> go.Figure:
+    def add_marginal_distribution_to_layout(dimension: DataDimension, fig: go.Figure) -> go.Figure:
         marginal_row = main_row if dimension is DataDimension.Y else row
         marginal_col = col + 1 if dimension is DataDimension.Y else col
 
         axes_specifier = AxesSpecifier(
             traces=traces_data,
             legend=legend_specifier(
-                x_transformation=jointplot_specifier.histogram_specifier[  # type: ignore
-                    DataDimension.Y
-                ].histnorm
-                if dimension is DataDimension.Y
-                else None,
-                y_transformation=jointplot_specifier.histogram_specifier[  # type: ignore
-                    DataDimension.X
-                ].histnorm
-                if dimension is DataDimension.X
-                else None,
+                x_transformation=(
+                    jointplot_specifier.histogram_specifier[  # type: ignore
+                        DataDimension.Y
+                    ].histnorm
+                    if dimension is DataDimension.Y
+                    else None
+                ),
+                y_transformation=(
+                    jointplot_specifier.histogram_specifier[  # type: ignore
+                        DataDimension.X
+                    ].histnorm
+                    if dimension is DataDimension.X
+                    else None
+                ),
             ),
             x_range=x_range,
             y_range=y_range,
@@ -1293,13 +1269,9 @@ def jointplot(
         fig = create_fig(
             fig=fig,
             traces={
-                name: trace
-                for name, trace in slices_marginal_traces.items()
-                if dimension in name
+                name: trace for name, trace in slices_marginal_traces.items() if dimension in name
             },
-            layout=HistogramLayout.build_layout(
-                axes_specifier=axes_specifier, barmode=barmode
-            ),
+            layout=HistogramLayout.build_layout(axes_specifier=axes_specifier, barmode=barmode),
             row=marginal_row,
             col=marginal_col,
         )
@@ -1320,38 +1292,30 @@ def jointplot(
 
     # Marginals
     if jointplot_specifier.plot_x_distribution:
-        fig = add_marginal_distribution_to_layout(
-            dimension=DataDimension.X, fig=fig
-        )
+        fig = add_marginal_distribution_to_layout(dimension=DataDimension.X, fig=fig)
 
     if jointplot_specifier.plot_y_distribution:
-        fig = add_marginal_distribution_to_layout(
-            dimension=DataDimension.Y, fig=fig
-        )
+        fig = add_marginal_distribution_to_layout(dimension=DataDimension.Y, fig=fig)
 
     # Add menus
     if len(global_main_traces) > 0:
         fig = add_update_menu(
             fig=fig,
             data_handler=data_handler,
-            slices_traces={
-                **slices_marginal_traces,
-                **{
-                    trace_name: trace_value
-                    for trace_name, trace_value in slices_main_traces.items()
-                    if isinstance(trace_value, go.Scatter)
-                },
-            }
-            if jointplot_specifier.plot_scatter
-            else slices_marginal_traces,
+            slices_traces=(
+                {
+                    **slices_marginal_traces,
+                    **{
+                        trace_name: trace_value
+                        for trace_name, trace_value in slices_main_traces.items()
+                        if isinstance(trace_value, go.Scatter)
+                    },
+                }
+                if jointplot_specifier.plot_scatter
+                else slices_marginal_traces
+            ),
+            preplotted_traces=preplotted_traces,
         )
-
-        # Adjust initial visibility
-        for trace, visibility in zip(
-            fig.data,
-            fig.layout.updatemenus[0]["buttons"][0]["args"][0]["visible"],
-        ):
-            trace.update({"visible": visibility})  # type: ignore
 
     return fig
 
@@ -1363,9 +1327,8 @@ def heatmap(
     y: str | None = None,
     z: str | None = None,
     slicer: str | None = None,
-    slice_order: List[str] | None = None,
-    color: str | None = None,
-    color_palette: List | str | None = None,
+    slice_order: list[str] | None = None,
+    color_palette: list[str] | str | None = None,
     shared_coloraxis: bool = False,
     color_limits: Sequence[float] | None = None,
     logscale: float | None = None,
@@ -1378,8 +1341,8 @@ def heatmap(
     y_label: str | None = None,
     z_label: str | None = None,
     title: str | None = None,
-    x_range: Sequence | None = None,
-    y_range: Sequence | None = None,
+    x_range: Sequence[float] | None = None,
+    y_range: Sequence[float] | None = None,
     fig: go.Figure = None,
     row: int = 1,
     col: int = 1,
@@ -1420,17 +1383,15 @@ def heatmap(
     Returns:
         A :obj:`plotly.graph_obj.Figure`.
     """
+
     data_handler = DataHandler.build_handler(
         data=data,
-        data_pointer=DataPointer(
-            x=x, y=y, z=z, slicer=slicer, color=color, text=text
-        ),
+        data_pointer=DataPointer(x=x, y=y, z=z, slicer=slicer, text=text),
         slice_order=slice_order,
     )
 
     color_specifier = ColorSpecifier(
         coloraxis_reference=ColoraxisReference.MAIN_COLORAXIS,
-        color=color,
         color_palette=color_palette,
         logscale=logscale,
         color_limits=color_limits,
@@ -1440,8 +1401,8 @@ def heatmap(
 
     data_processor = DataProcessor(normalizer={DataDimension.Z: normalizer})
 
-    traces: Dict[str, BaseTrace] = {}
-    traces_data: List = []
+    traces: dict[str, BaseTrace] = {}
+    traces_data: list[TraceData] = []
 
     if data_handler.n_slices > 1:
         global_trace = HeatmapTrace.build_trace(
@@ -1452,21 +1413,21 @@ def heatmap(
             trace_name=SliceTraceType.ALL_DATA,
             color_specifier=color_specifier,
         )
-        traces[global_trace.name] = go.Heatmap(global_trace.dict())
+        traces[global_trace.name] = go.Heatmap(global_trace.model_dump())
 
-    for trace_name, trace_data in data_handler.traces_data():
+    for slice_name, slice_data in data_handler.slices_data():
         trace_data = TraceData.build_trace_data(
-            data=trace_data,
+            data=slice_data,
             pointer=data_handler.data_pointer,
             processor=data_processor,
         )
 
-        traces[trace_name] = go.Heatmap(
+        traces[slice_name] = go.Heatmap(
             HeatmapTrace.build_trace(
                 trace_data=trace_data,
-                trace_name=trace_name,
+                trace_name=slice_name,
                 color_specifier=color_specifier,
-            ).dict()
+            ).model_dump()
         )
         traces_data.append(trace_data)
 

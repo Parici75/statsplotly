@@ -1,6 +1,6 @@
 ## Interactive statistical data visualization with Statsplot
 
-Compared to `plotly.express` API, `statsplot` color coding scheme, slicer and plot dimensions are independent. 
+Compared to `plotly.express` API, `statsplot` color coding scheme, slicer and plot dimensions are independent.
 
 This independence allows to leverage the powerful interactivity offered by plotly.js without compromising statistical intelligibility for aesthetics choices, or vice-versa.
 
@@ -30,4 +30,3 @@ All plotting functions also accept:
    - a `fig`, `row`, `col` triplet argument to draw on a pre-declared `Figure`object.
 
 Additional arguments depends on the visualisation selected.
-

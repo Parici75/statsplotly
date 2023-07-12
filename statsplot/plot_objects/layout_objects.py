@@ -1,54 +1,79 @@
+import datetime
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
-from pydantic import validator
+from pydantic import FieldValidationInfo, field_validator, model_validator
 from pydantic.utils import deep_update
 
-from statsplot.constants import AXIS_TITLEFONT, TICKFONT
+from statsplot.constants import AXIS_TITLEFONT, DEFAULT_HOVERMODE, TICKFONT
 from statsplot.exceptions import StatsPlotInvalidArgumentError
 from statsplot.plot_specifiers.data import BaseModel
 from statsplot.plot_specifiers.layout import AxesSpecifier, BarMode
 
 logger = logging.getLogger(__name__)
 
+axis_coordinates_type = float | datetime.datetime | str
+
 
 class ColorAxis(BaseModel):
     cmin: float | None = None
     cmax: float | None = None
-    colorbar: Dict[str, Any] | None
-    colorscale: str | List | None
-    showscale: bool | None
+    colorbar: dict[str, Any] | None = None
+    colorscale: str | list[list[float | str]] | None = None
+    showscale: bool | None = None
 
 
 class BaseAxisLayout(BaseModel):
     """Compatible properties with 2D and 3D (Scene) Layout."""
 
-    autorange: bool | str | None
-    title: str | None
-    titlefont: Dict[str, Any] = AXIS_TITLEFONT
-    tickfont: Dict[str, Any] = TICKFONT
-    range: List | None
-    type: str | None
-    showgrid: bool | None
-    tickmode: str | None
-    tickvals: List | None
-    ticktext: List | None
-    zeroline: bool | None
+    title: str | None = None
+    titlefont: dict[str, Any] = AXIS_TITLEFONT
+    tickfont: dict[str, Any] = TICKFONT
+    range: list[axis_coordinates_type] | None = None  # noqa: A003
+    type: str | None = None  # noqa: A003
+    autorange: bool | str | None = None
+    showgrid: bool | None = None
+    tickmode: str | None = None
+    tickvals: list[axis_coordinates_type] | None = None
+    ticktext: list[str] | None = None
+    zeroline: bool | None = None
+
+    @field_validator("autorange")
+    def validate_autorange(
+        cls, value: bool | str | None, info: FieldValidationInfo
+    ) -> bool | str | None:
+        if info.data.get("range") is not None:
+            return False
+        return value
+
+    @model_validator(mode="after")  # type: ignore
+    def validate_axis_consistency(cls, model: "BaseAxisLayout") -> "BaseAxisLayout":
+        if model.range is not None and model.tickvals is not None:
+            model.tickvals = model.range
+            if model.ticktext is not None:
+                try:
+                    model.ticktext = [
+                        model.ticktext[int(idx)] for idx in model.tickvals  # type: ignore
+                    ]
+                except TypeError:
+                    logger.error("Can not adjust tick text labels to tick values")
+
+        return model
 
 
 class AxisLayout(BaseAxisLayout):
     automargin: bool = True
-    scaleanchor: str | None
-    scaleratio: float | None
+    scaleanchor: str | None = None
+    scaleratio: float | None = None
 
 
 class BaseLayout(BaseModel):
-    autosize: bool | None
-    hovermode: str = "closest"
-    title: str | None
-    height: int | None
-    width: int | None
-    showlegend: bool | None
+    autosize: bool | None = None
+    hovermode: str = DEFAULT_HOVERMODE
+    title: str | None = None
+    height: int | None = None
+    width: int | None = None
+    showlegend: bool | None = None
 
 
 class XYLayout(BaseLayout):
@@ -77,13 +102,11 @@ class XYLayout(BaseLayout):
 
 
 class SceneLayout(BaseLayout):
-    scene: Dict[str, Any]
-    coloraxis: Dict[str, Any] | None
+    scene: dict[str, Any]
+    coloraxis: ColorAxis
 
     @classmethod
-    def build_layout(
-        cls, axes_specifier: AxesSpecifier, coloraxis: ColorAxis
-    ) -> "SceneLayout":
+    def build_layout(cls, axes_specifier: AxesSpecifier, coloraxis: ColorAxis) -> "SceneLayout":
         scene = {
             "xaxis": BaseAxisLayout(
                 title=axes_specifier.legend.xaxis_title,
@@ -113,49 +136,49 @@ class HeatmapLayout(XYLayout):
 
     @classmethod
     def update_axis_layout(cls, axis_layout: AxisLayout) -> AxisLayout:
-        axis_layout_dict = axis_layout.dict()
-        update_keys: Dict[str, Any] = {
+        axis_layout_dict = axis_layout.model_dump()
+        update_keys: dict[str, Any] = {
             "showgrid": False,
             "zeroline": False,
         }
         axis_layout_dict.update(update_keys)
 
-        return AxisLayout.parse_obj(axis_layout_dict)
+        return AxisLayout.model_validate(axis_layout_dict)
 
     @classmethod
     def update_yaxis_layout(cls, yaxis_layout: AxisLayout) -> AxisLayout:
-        yaxis_layout_dict = cls.update_axis_layout(yaxis_layout).dict()
+        yaxis_layout_dict = cls.update_axis_layout(yaxis_layout).model_dump()
 
-        update_keys: Dict[str, Any] = {
+        update_keys: dict[str, Any] = {
             "autorange": "reversed",
-            "range": yaxis_layout_dict.get("range")[::-1]  # type: ignore
-            if yaxis_layout_dict.get("range") is not None
-            else None,
+            "range": (
+                yaxis_layout_dict.get("range")[::-1]  # type: ignore
+                if yaxis_layout_dict.get("range") is not None
+                else None
+            ),
         }
         yaxis_layout_dict.update(update_keys)
 
-        return AxisLayout.parse_obj(yaxis_layout_dict)
+        return AxisLayout.model_validate(yaxis_layout_dict)
 
     @classmethod
-    def build_layout(
-        cls, axes_specifier: AxesSpecifier, coloraxis: ColorAxis
-    ) -> "HeatmapLayout":
+    def build_layout(cls, axes_specifier: AxesSpecifier, coloraxis: ColorAxis) -> "HeatmapLayout":
         base_layout = XYLayout.build_xy_layout(axes_specifier=axes_specifier)
 
         heatmap_layout = deep_update(
-            base_layout.dict(),
+            base_layout.model_dump(),
             {
                 "xaxis": cls.update_axis_layout(
                     base_layout.xaxis,
-                ).dict(),
+                ).model_dump(),
                 "yaxis": cls.update_yaxis_layout(
                     base_layout.yaxis,
-                ).dict(),
+                ).model_dump(),
             },
         )
         heatmap_layout.update({"coloraxis": coloraxis})
 
-        return cls.parse_obj(heatmap_layout)
+        return cls.model_validate(heatmap_layout)
 
 
 class CategoricalLayout(XYLayout):
@@ -164,22 +187,18 @@ class CategoricalLayout(XYLayout):
 
     @classmethod
     def set_array_tick_mode(
-        cls, axis_layout: AxisLayout, x_values_map: Dict[str, Any]
+        cls, axis_layout: AxisLayout, x_values_map: dict[str, Any]
     ) -> AxisLayout:
-        updated_dict = dict.fromkeys(
-            ["tickmode", "tickvals", "ticktext"], None
-        )
+        updated_dict = dict.fromkeys(["tickmode", "tickvals", "ticktext"], None)
         updated_dict["tickmode"] = "array"
         updated_dict["tickvals"] = [k + 1 for k in range(len(x_values_map))]
         updated_dict["ticktext"] = list(x_values_map.keys())
 
-        return AxisLayout.parse_obj(
-            deep_update(axis_layout.dict(), updated_dict)
-        )
+        return AxisLayout.model_validate(deep_update(axis_layout.model_dump(), updated_dict))
 
     @classmethod
     def build_layout(
-        cls, axes_specifier: AxesSpecifier, x_values_map: Dict[str, Any] | None
+        cls, axes_specifier: AxesSpecifier, x_values_map: dict[str, Any] | None
     ) -> "CategoricalLayout":
         base_layout = XYLayout.build_xy_layout(axes_specifier=axes_specifier)
 
@@ -187,15 +206,15 @@ class CategoricalLayout(XYLayout):
             xaxis_layout = cls.set_array_tick_mode(
                 axis_layout=base_layout.xaxis, x_values_map=x_values_map
             )
-            return cls.parse_obj(
-                deep_update(base_layout.dict(), {"xaxis": xaxis_layout.dict()})
+            return cls.model_validate(
+                deep_update(base_layout.model_dump(), {"xaxis": xaxis_layout.model_dump()})
             )
 
-        return cls.parse_obj(base_layout)
+        return cls.model_validate(base_layout.model_dump())
 
 
 class ScatterLayout(XYLayout):
-    coloraxis: Dict[str, Any]
+    coloraxis: ColorAxis
 
     @classmethod
     def build_layout(
@@ -204,21 +223,19 @@ class ScatterLayout(XYLayout):
         coloraxis: ColorAxis,
     ) -> "ScatterLayout":
         base_layout = XYLayout.build_xy_layout(axes_specifier=axes_specifier)
-        return cls(**base_layout.dict(), coloraxis=coloraxis)
+        return cls(**base_layout.model_dump(), coloraxis=coloraxis)
 
 
 class BarLayout(XYLayout):
-    barmode: BarMode | None
-    coloraxis: Dict[str, Any]
+    barmode: BarMode | None = None
+    coloraxis: ColorAxis
 
-    @validator("barmode", pre=True)
+    @field_validator("barmode", mode="before")
     def check_barmode(cls, value: str | None) -> BarMode | None:
         try:
             return BarMode(value) if value is not None else None
         except ValueError as exc:
-            raise StatsPlotInvalidArgumentError(
-                value, BarMode  # type: ignore
-            ) from exc
+            raise StatsPlotInvalidArgumentError(value, BarMode) from exc  # type: ignore
 
     @classmethod
     def build_layout(
@@ -227,21 +244,15 @@ class BarLayout(XYLayout):
         coloraxis: ColorAxis,
         barmode: str | None,
     ) -> "BarLayout":
-        scatter_layout = XYLayout.build_xy_layout(
-            axes_specifier=axes_specifier
-        )
-        return cls(
-            **scatter_layout.dict(), coloraxis=coloraxis, barmode=barmode
-        )
+        scatter_layout = XYLayout.build_xy_layout(axes_specifier=axes_specifier)
+        return cls(**scatter_layout.model_dump(), coloraxis=coloraxis, barmode=barmode)
 
 
 class HistogramLayout(XYLayout):
-    barmode: BarMode | None
+    barmode: BarMode | None = None
 
     @classmethod
-    def build_layout(
-        cls, axes_specifier: AxesSpecifier, barmode: str | None
-    ) -> "HistogramLayout":
+    def build_layout(cls, axes_specifier: AxesSpecifier, barmode: str | None) -> "HistogramLayout":
         base_layout = XYLayout.build_xy_layout(axes_specifier=axes_specifier)
 
-        return cls(**base_layout.dict(), barmode=barmode)
+        return cls(**base_layout.model_dump(), barmode=barmode)

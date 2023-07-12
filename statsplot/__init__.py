@@ -1,11 +1,10 @@
-
 from statsplot.plotting.main import (
-    heatmap,
-    catplot,
-    plot,
     barplot,
+    catplot,
     distplot,
+    heatmap,
     jointplot,
+    plot,
 )
 
 __all__ = [
