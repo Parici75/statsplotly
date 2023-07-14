@@ -1,0 +1,23 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  run tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Set up Poetry environment
+        uses: abatilo/actions-poetry@v2
+        run: poetry install --without docs
+
+      - name: Run ci
+        run: make ci
+
