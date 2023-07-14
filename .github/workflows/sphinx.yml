@@ -15,7 +15,7 @@ jobs:
 
     - uses: abatilo/actions-poetry@v2
     - name: Set up Poetry environment
-      run: poetry install -E docs
+      run: poetry install --with docs
 
     - name: Build HTML documentation
       run: poetry run sphinx-build docs ./docs/_build/html/
