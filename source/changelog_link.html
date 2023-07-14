@@ -2,13 +2,13 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="statsplot.utils package" href="statsplot.utils.html" />
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="statsplotly.utils package" href="statsplotly.utils.html" />
 
-    <!-- Generated with Sphinx 6.2.0 and Furo 2023.03.27 -->
-        <title>Version 0.1.1 - StatsPlot documentation</title>
+    <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
+        <title>Version 0.1.2 - statsplotly documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">StatsPlot  documentation</div></a>
+      <a href="../index.html"><div class="brand">statsplotly  documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">StatsPlot  documentation</span>
+  <span class="sidebar-brand-text">statsplotly  documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -155,16 +155,17 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="statsplot.html">statsplot package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="statsplot.plot_objects.html">statsplot.plot_objects package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="statsplot.plot_specifiers.html">statsplot.plot_specifiers package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="statsplot.plotting.html">statsplot.plotting package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="statsplot.utils.html">statsplot.utils package</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="statsplotly.html">statsplotly package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of statsplotly package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="statsplotly.plot_objects.html">statsplotly.plot_objects package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsplotly.plot_specifiers.html">statsplotly.plot_specifiers package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsplotly.plotting.html">statsplotly.plotting package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsplotly.utils.html">statsplotly.utils package</a></li>
 </ul>
 </li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.1.1</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.1.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#version-0-1-1">Version 0.1.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-1-0">Version 0.1.0</a></li>
 </ul>
 
@@ -200,10 +201,31 @@
           </label>
         </div>
         <article role="main">
-          <section id="version-0-1-1">
+          <section id="version-0-1-2">
+<h1>Version 0.1.2<a class="headerlink" href="#version-0-1-2" title="Permalink to this heading">#</a></h1>
+<p><strong>2023-07-11</strong></p>
+<p>The 0.1.2 version allows to combine several subplots with different <code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorAxis</span></code> on the same figure, and improve axes management.</p>
+<section id="feature-improvements">
+<h2>Feature improvements<a class="headerlink" href="#feature-improvements" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Update <cite>layout</cite> and <cite>marker</cite> attributes to preserve each subplot original coloraxis upon adding new traces with <code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorAxis</span></code> specification on an existing <code class="xref py py-obj docutils literal notranslate"><span class="pre">Figure</span></code>.</p></li>
+<li><p>Improve consistency between axis range and axis format.</p></li>
+<li><p>Harmonize plot styling arguments.</p></li>
+</ul>
+</section>
+<section id="cleaning">
+<h2>Cleaning<a class="headerlink" href="#cleaning" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Remove the <cite>color</cite> argument of <code class="xref py py-func docutils literal notranslate"><span class="pre">distplot()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">jointplot()</span></code> functions because they require unidimensional trace color scheme.</p></li>
+<li><p>Bump to Pydantic V2.</p></li>
+<li><p>Remove dependency on <code class="xref py py-mod docutils literal notranslate"><span class="pre">pymodules</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="version-0-1-1">
 <h1>Version 0.1.1<a class="headerlink" href="#version-0-1-1" title="Permalink to this heading">#</a></h1>
 <p><strong>2022-03-10</strong></p>
-<p>The 0.1.1 version fixes a bug in the <a class="reference internal" href="statsplot.plot_specifiers.html#module-statsplot.plot_specifiers.color" title="statsplot.plot_specifiers.color"><code class="xref py py-mod docutils literal notranslate"><span class="pre">color</span></code></a> module.</p>
+<p>The 0.1.1 version fixes a bug in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">color</span></code> module.</p>
 <section id="bug-fixes">
 <h2>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
@@ -223,14 +245,14 @@
         
         <div class="related-pages">
           
-          <a class="prev-page" href="statsplot.utils.html">
+          <a class="prev-page" href="statsplotly.utils.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">statsplot.utils package</div>
+                <div class="title">statsplotly.utils package</div>
                 
               </div>
             </a>
@@ -264,7 +286,12 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Version 0.1.1</a><ul>
+<li><a class="reference internal" href="#">Version 0.1.2</a><ul>
+<li><a class="reference internal" href="#feature-improvements">Feature improvements</a></li>
+<li><a class="reference internal" href="#cleaning">Cleaning</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-1-1">Version 0.1.1</a><ul>
 <li><a class="reference internal" href="#bug-fixes">Bug fixes</a></li>
 </ul>
 </li>

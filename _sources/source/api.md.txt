@@ -1,6 +1,6 @@
-## Interactive statistical data visualization with Statsplot
+### A high-level, tidy API for drawing statistical visualization with `plotly`.
 
-Compared to `plotly.express` API, `statsplot` color coding scheme, slicer and plot dimensions are independent. 
+Compared to `plotly.express` API, `statsplotly` color coding scheme, slicer and plot dimensions are independent.
 
 This independence allows to leverage the powerful interactivity offered by plotly.js without compromising statistical intelligibility for aesthetics choices, or vice-versa.
 
@@ -18,7 +18,7 @@ All plotting functions also accept:
    - a `slicer` argument to slice the data along a particular dimension. Depending on the graphic representation, slices of data are plotted as independent traces (scatter-like representation), or as dropdown items (heatmap).
    - a `color_palette` argument which can be :
         - a string refering to a built-in `plotly`, `seaborn` or `matplotlib` colormap.
-        - a `List` of CSS color names or HTML color codes.
+        - a list of CSS color names or HTML color codes.
         The color palette is used, by order of precedence :
             - to map color data of the `color` parameter onto colors.
             - to assign discrete colors to `slices` of data.
@@ -29,5 +29,4 @@ All plotting functions also accept:
    - an `axis` argument to specify axes limits and aspect ratio. The `equal` and `square` styles of [Matlab API](https://fr.mathworks.com/help/matlab/ref/axis.html#buk989s-1-limits) are supported.
    - a `fig`, `row`, `col` triplet argument to draw on a pre-declared `Figure`object.
 
-Additional arguments depends on the visualisation selected.
-
+Additional arguments can be provided, depending on the visualisation selected.
