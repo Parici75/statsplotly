@@ -14,17 +14,22 @@ Compared to `plotly.express` API, `statsplotly` :
 
 This flexibility takes advantage of the powerful interactivity offered by `plotly.js` without compromising statistical intelligibility for aesthetic choices, or vice-versa.
 
-![statsplotly-demo](statsplotly-demo.gif)
-
 Examples
 -
 Main features of the API are demonstrated in a demo [notebook](https://nbviewer.org/github/parici75/statsplotly/blob/main/docs/notebooks/statsplotly_demo.ipynb).
+
+![statsplotly-demo](statsplotly-demo.gif)
+
 
 Installation
 -
 ### Using Pip
 
 `pip install statsplotly`
+
+Documentation
+-
+Details of the public API can be found in the [documentation](https://parici75.github.io/statsplotly).
 
 
 Development
@@ -51,14 +56,10 @@ The Makefile provides several targets to assist in development and code quality 
 - `clean` clears bytecode, poetry/pip caches. Use with caution.
 
 
-Documentation
--
-Details of the public API can be found in the [documentation](https://parici75.github.io/statsplotly).
-
-
 Requirements
 -
 - [Plotly](https://plotly.com/python/)
+- [SciPy](https://scipy.org/)
 
 
 Author
