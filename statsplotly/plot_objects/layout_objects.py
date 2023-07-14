@@ -3,7 +3,7 @@ import logging
 from typing import Any
 
 from pydantic import FieldValidationInfo, field_validator, model_validator
-from pydantic.utils import deep_update
+from pydantic.v1.utils import deep_update
 
 from statsplotly.constants import AXIS_TITLEFONT, DEFAULT_HOVERMODE, TICKFONT
 from statsplotly.exceptions import StatsPlotInvalidArgumentError

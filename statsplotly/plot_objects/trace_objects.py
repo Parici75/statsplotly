@@ -5,7 +5,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
-from pydantic.utils import deep_update
+from pydantic.v1.utils import deep_update
 
 from statsplotly import constants
 from statsplotly.plot_specifiers.color import ColorSpecifier
