@@ -61,7 +61,7 @@ clean-cache:
 
 clean-hooks:
 	@echo "🧹 Cleaning hooks..."
-	@rm -r ".git/hooks"
+	@rm -r ".git/hooks" ||:
 
 # Global
 clean: confirm clean-cache clean-python clean-hooks

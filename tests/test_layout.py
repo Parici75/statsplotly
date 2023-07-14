@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from statsplot.plot_specifiers.data import TraceData, DataPointer
-from statsplot.plot_specifiers.layout import AxesSpecifier, LegendSpecifier
+from statsplotly.plot_specifiers.data import TraceData, DataPointer
+from statsplotly.plot_specifiers.layout import AxesSpecifier, LegendSpecifier
 
 EXAMPLE_DATAFRAME = pd.DataFrame(
     zip(["a", "b", "c"], np.arange(3), np.arange(3)),

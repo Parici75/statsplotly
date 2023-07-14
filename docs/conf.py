@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath("../"))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "StatsPlot"
+project = "statsplotly"
 copyright = "2023, Benjamin Roland"
 author = "Benjamin Roland"
 

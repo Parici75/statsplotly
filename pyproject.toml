@@ -1,19 +1,18 @@
 [tool.poetry]
-name = "statsplot"
+name = "statsplotly"
 version = "0.0.0"
-description = "Interactive statistical visualization in Python"
+description = "Tidy API for statistical visualization with Plotly"
 authors = ["Benjamin Roland <benjamin.roland@hotmail.fr>"]
 license = "BSD-3-Clause"
 readme = "README.md"
-homepage = "https://github.com/Parici75/statsplot"
-documentation = "https://parici75.github.io/statsplot/"
+homepage = "https://github.com/parici75/statsplotly"
+documentation = "https://parici75.github.io/statsplotly/"
 
 [tool.poetry.dependencies]
 python = "^3.11"
 pydantic = "^2.0"
 seaborn = "^0.12.2"
 plotly = "^5.15.0"
-pymodules = {git = "https://github.com/Parici75/pymodules", tag = "0.1.0"}
 ipykernel = "^6.24.0"
 poetry-dynamic-versioning = {extras = ["plugin"], version = "^0.24.0"}
 jupyter = "^1.0.0"
@@ -26,6 +25,11 @@ black = "^23.3.0"
 pyupgrade = "^3.8.0"
 pre-commit = "^3.3.3"
 pyclean = "^2.7.3"
+
+[tool.poetry.group.docs]
+[tool.poetry.group.docs.dependencies]
+m2r2 = "^0.3.3"
+furo = "^2023.5.20"
 
 [tool.poetry-dynamic-versioning]
 enable = true

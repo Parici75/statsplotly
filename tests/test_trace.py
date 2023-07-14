@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from statsplot.plot_specifiers.trace import (
+from statsplotly.plot_specifiers.trace import (
     DataDimension,
     HistogramSpecifier,
     JointplotSpecifier,
@@ -21,8 +21,7 @@ def test_scatter_specifier():
         ScatterSpecifier(mode="circles")
         assert (
             "Invalid value: 'circles'. Value must be one of"
-            f" {[member.value for member in TraceMode]}"
-            in str(excinfo.value)
+            f" {[member.value for member in TraceMode]}" in str(excinfo.value)
         )
 
 
