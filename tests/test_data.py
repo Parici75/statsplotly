@@ -4,18 +4,18 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from statsplot import constants
-from statsplot.plot_specifiers.data import (
-    DataPointer,
-    DataHandler,
-    DataProcessor,
+from statsplotly import constants
+from statsplotly.plot_specifiers.data import (
+    AggregationSpecifier,
+    AggregationTraceData,
     DataDimension,
+    DataHandler,
+    DataPointer,
+    DataProcessor,
     NormalizationType,
     TraceData,
-    AggregationTraceData,
-    AggregationSpecifier,
 )
-from statsplot.utils.stats_utils import sem
+from statsplotly.utils.stats_utils import sem
 
 EXAMPLE_DATAFRAME = pd.DataFrame(
     zip(["a", "b", "c"], np.arange(3), np.arange(3)),
@@ -45,9 +45,7 @@ class TestDataHandler:
         assert data_handler.n_slices == 3
         assert (data_handler.get_data("y").values == np.arange(3)).all()
         assert data_handler.slice_levels == [str(x) for x in [0, 2, 1]]
-        assert [
-            level for level, trace in list(data_handler.traces_data())
-        ] == ["0", "2", "1"]
+        assert [level for level, trace in list(data_handler.slices_data())] == ["0", "2", "1"]
 
     def test_slice_partition(self, caplog):
         data_handler = DataHandler.build_handler(
@@ -58,13 +56,8 @@ class TestDataHandler:
         assert data_handler.n_slices == 2
         assert (data_handler.get_data("y").values == np.arange(3)).all()
         assert data_handler.slice_levels == [str(x) for x in [0, 1]]
-        assert [
-            level for level, trace in list(data_handler.traces_data())
-        ] == ["0", "1"]
-        assert (
-            f"[2] slices are not present in slices [0, 1] and will not be plotted"
-            in caplog.text
-        )
+        assert [level for level, trace in list(data_handler.slices_data())] == ["0", "1"]
+        assert "[2] slices are not present in slices [0, 1] and will not be plotted" in caplog.text
 
     def test_data_types(self):
         data_handler = DataHandler.build_handler(
@@ -72,19 +65,14 @@ class TestDataHandler:
             data_pointer=DataPointer(x="x", y="y", slicer="z"),
         )
         assert all(
-            EXAMPLE_DATAFRAME.dtypes.to_dict()[
-                getattr(data_handler.data_pointer, key)
-            ]
-            == val
-            for (key, val) in data_handler.data_types.dict().items()
+            EXAMPLE_DATAFRAME.dtypes.to_dict()[getattr(data_handler.data_pointer, key)] == val
+            for (key, val) in data_handler.data_types.model_dump().items()
             if val is not None
         )
 
     def test_categorical_dtype_cast(self, caplog):
         data_handler = DataHandler.build_handler(
-            data=EXAMPLE_DATAFRAME.assign(
-                x=EXAMPLE_DATAFRAME["x"].astype("category")
-            ),
+            data=EXAMPLE_DATAFRAME.assign(x=EXAMPLE_DATAFRAME["x"].astype("category")),
             data_pointer=DataPointer(x="x", y="y", slicer="z"),
         )
         assert data_handler.data_types.x is np.dtype("object")
@@ -113,41 +101,30 @@ class TestDataHandler:
                 data_pointer=DataPointer(x="u"),
                 slice_order=None,
             )
-            assert f"u is not present in {EXAMPLE_DATAFRAME.columns}" in str(
-                excinfo.value
-            )
+            assert f"u is not present in {EXAMPLE_DATAFRAME.columns}" in str(excinfo.value)
 
     def test_invalid_dataframe(self, caplog):
         with pytest.raises(ValueError):
             DataHandler.build_handler(
-                data=pd.DataFrame(
-                    columns=pd.MultiIndex.from_arrays(
-                        (np.arange(3), np.arange(3))
-                    )
-                ),
+                data=pd.DataFrame(columns=pd.MultiIndex.from_arrays((np.arange(3), np.arange(3)))),
                 data_pointer=DataPointer(),
                 slice_order=None,
             )
             assert (
-                "Multi-indexed columns are not supported, flatten the header before calling statsplot"
-                in caplog.text
+                "Multi-indexed columns are not supported, flatten the header before calling"
+                " statsplotly" in caplog.text
             )
 
 
 class TestDataProcessor:
     def test_valid_processor(self):
         data_processor = DataProcessor(
-            x_values_mapping=dict(
-                zip(EXAMPLE_DATAFRAME.x, np.arange(len(EXAMPLE_DATAFRAME.x)))
-            ),
+            x_values_mapping=dict(zip(EXAMPLE_DATAFRAME.x, np.arange(len(EXAMPLE_DATAFRAME.x)))),
             jitter_settings={DataDimension.X: 0.2},
             normalizer={DataDimension.X: "zscore"},
         )
         assert len(data_processor.normalizer) == 1
-        assert (
-            data_processor.normalizer[DataDimension.X]
-            is NormalizationType.ZSCORE
-        )
+        assert data_processor.normalizer[DataDimension.X] is NormalizationType.ZSCORE
 
     def test_invalid_normalizer(self):
         with pytest.raises(ValueError) as excinfo:
@@ -162,30 +139,37 @@ class TestDataProcessor:
                 normalizer={DataDimension.X: "awesome_scaling"},
             )
         assert (
-            f"Invalid value: 'awesome_scaling'. Value must be one of {[member.value for member in NormalizationType]}"
-        ) in str(excinfo.value)
+            "Invalid value: 'awesome_scaling'. Value must be one of"
+            f" {[member.value for member in NormalizationType]}" in str(excinfo.value)
+        )
+
+    def test_unnormalizable_data(self, caplog):
+        data_processor = DataProcessor(
+            normalizer={DataDimension.X: "zscore"},
+        )
+        processed_data = data_processor.process_trace_data({"x_values": EXAMPLE_DATAFRAME.x})
+        assert (processed_data["x_values"] == EXAMPLE_DATAFRAME.x).all()
+        assert (
+            f"Dimension {DataDimension.X.value} of type {EXAMPLE_DATAFRAME.x.dtype} can not be"
+            f" normalized with {NormalizationType.ZSCORE.value}" in caplog.text
+        )
 
     def test_unjitterable_data(self, caplog):
         data_processor = DataProcessor(
             jitter_settings={DataDimension.X: 0.2},
-            normalizer={DataDimension.X: "zscore"},
         )
-        processed_data = data_processor.process_trace_data(
-            {"x_values": EXAMPLE_DATAFRAME.x}
-        )
+        processed_data = data_processor.process_trace_data({"x_values": EXAMPLE_DATAFRAME.x})
         assert (processed_data["x_values"] == EXAMPLE_DATAFRAME.x).all()
         assert (
-            f"Dimension {DataDimension.X.value} of type {EXAMPLE_DATAFRAME.x.dtype} can not be jittered"
-            in caplog.text
+            f"Dimension {DataDimension.X.value} of type {EXAMPLE_DATAFRAME.x.dtype} can not be"
+            " jittered" in caplog.text
         )
 
     def test_normalize_data(self):
         data_processor = DataProcessor(
             normalizer={DataDimension.Y: "zscore"},
         )
-        processed_data = data_processor.process_trace_data(
-            {"y_values": EXAMPLE_DATAFRAME.y}
-        )
+        processed_data = data_processor.process_trace_data({"y_values": EXAMPLE_DATAFRAME.y})
         assert processed_data["y_values"].mean() == 0
 
 
@@ -199,9 +183,7 @@ class TestTraceData:
         assert trace_data.z_values is None
         assert (
             trace_data.text_data
-            == EXAMPLE_DATAFRAME.z.apply(
-                lambda x: f"{EXAMPLE_DATAFRAME.z.name}: {x}"
-            )
+            == EXAMPLE_DATAFRAME.z.apply(lambda x: f"{EXAMPLE_DATAFRAME.z.name}: {x}")
         ).all()
 
     def test_invalid_error_data(self):
@@ -210,7 +192,7 @@ class TestTraceData:
                 data=EXAMPLE_DATAFRAME,
                 pointer=DataPointer(x="x", y="y", error_x="x"),
             )
-        assert f"x error data must be numeric" in str(excinfo.value)
+        assert "x error data must be numeric" in str(excinfo.value)
 
         with pytest.raises(ValueError) as excinfo:
             TraceData.build_trace_data(
@@ -220,14 +202,14 @@ class TestTraceData:
                 pointer=DataPointer(y="y", z="z", error_z="error_z"),
             )
         assert (
-            f"error_z error data must be bidirectional to be plotted relative to the underlying data"
+            "error_z error data must be bidirectional to be plotted relative to the underlying data"
             in str(excinfo.value)
         )
 
 
 class TestAggregationTraceData:
     def test_build_trace_data_with_sem(self):
-        trace_data = AggregationTraceData.build_trace_data(
+        trace_data = AggregationTraceData.build_aggregation_trace_data(
             data=EXAMPLE_DATAFRAME,
             aggregation_specifier=AggregationSpecifier(
                 aggregation_func="mean",
@@ -239,9 +221,7 @@ class TestAggregationTraceData:
                 ).data_types,
             ),
         )
-        assert (
-            trace_data.y_values == EXAMPLE_DATAFRAME.groupby("x")["y"].mean()
-        ).all()
+        assert (trace_data.y_values == EXAMPLE_DATAFRAME.groupby("x")["y"].mean()).all()
         assert (
             trace_data.error_y.tolist()
             == EXAMPLE_DATAFRAME.groupby("x")["y"]
@@ -266,7 +246,4 @@ class TestAggregationTraceData:
                     data_pointer=data_pointer,
                 ).data_types,
             )
-        assert (
-            f"mean aggregation requires numeric type y data, got: `object`"
-            in str(excinfo.value)
-        )
+        assert "mean aggregation requires numeric type y data, got: `object`" in str(excinfo.value)

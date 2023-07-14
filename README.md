@@ -1,36 +1,65 @@
-[StatsPlot](https://github.com/Parici75/statsplot) is a Python data visualization library based on Plotly. It provides a high-level interface for drawing attractive and interactive statistical data visualization plots.
+[Statsplotly](https://github.com/parici75/statsplotly) is a Python data visualization library based on Plotly. It provides a high-level interface for drawing attractive and interactive statistical data visualization plots.
 
-The development of this library paralleled the fantastic [plotly.express](https://plotly.com/python/plotly-express/) API.
+The inception of this library predated the fantastic [plotly.express](https://plotly.com/python/plotly-express/) API.
+
 
 Philosophy
 -
-Compared to `plotly.express` API, StatsPlots :
+Compared to `plotly.express` API, `statsplotly` :
 - respects common conventions of statistical visualization (e.g., histograms are not barplots).
-- processes color coding scheme, trace slicer and plot dimensions independently. 
+- processes color coding scheme, trace slicer and plot dimensions independently.
+- can perform standard statistical processing procedure (e.g., zscore normalization) of data under the hood.
+- leverages the tidy DataFrame structure to easily style plot cues to be used as visual discriminators (e.g., marker color, symbol, size, and opacity).
 
-This flexibility allows to leverage the powerful interactivity offered by plotly.js without compromising statistical intelligibility for aesthetic choices, or vice-versa.
 
-![statsplot-demo](statsplot-demo.gif)
+This flexibility takes advantage of the powerful interactivity offered by `plotly.js` without compromising statistical intelligibility for aesthetic choices, or vice-versa.
 
 Examples
 -
-Main features of the API are demonstrated in a demo [notebook](https://nbviewer.org/github/Parici75/statsplot/blob/main/docs/notebooks/statsplot_demo.ipynb). 
+Main features of the API are demonstrated in a demo [notebook](https://nbviewer.org/github/parici75/statsplotly/blob/main/docs/notebooks/statsplotly_demo.ipynb).
+
+![statsplotly-demo](statsplotly-demo.gif)
+
 
 Installation
 -
-Clone and install with pip :
+### Using Pip
 
-`pip install .`
+`pip install statsplotly`
 
 Documentation
 -
-Details of the public API can be found in the [documentation](https://parici75.github.io/statsplot).
+Details of the public API can be found in the [documentation](https://parici75.github.io/statsplotly).
+
+
+Development
+-
+### Using Poetry
+First make sure you have Poetry installed on your system (see [instruction](https://python-poetry.org/docs/#installing-with-the-official-installer)).
+
+Then, assuming you have a Unix shell with make, create and set up a new Poetry environment :
+
+`make init`
+
+To make the Poetry-managed kernel available for a globally installed Jupyter :
+```
+$ poetry run ipython kernel install --user --name=<KERNEL_NAME>
+$ jupyter notebook
+```
+On the Jupyter Server, select the created kernel in “Kernel” -> “Change kernel”.
+
+### Dissecting Makefile
+The Makefile provides several targets to assist in development and code quality :
+- `init` creates a project-specific virtual environment and installs the dependencies of the .lock file.
+- `ci` launches Black, Ruff, mypy and pytest on your source code.
+- `pre-commit` set up pre-commit hooks (see pre-commit [documentation](https://pre-commit.com/)).
+- `clean` clears bytecode, poetry/pip caches. Use with caution.
 
 
 Requirements
 -
 - [Plotly](https://plotly.com/python/)
-- [Pymodules](https://github.com/Parici75/pymodules), a collection of general purpose utility functions.
+- [SciPy](https://scipy.org/)
 
 
 Author
