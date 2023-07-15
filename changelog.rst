@@ -1,20 +1,24 @@
 Version 0.1.2
 =============
 **2023-07-11**
+The 0.1.2 version allows to combine several subplots with different `ColorAxis` on the same figure, and improve axes management.
 
-The 0.1.2 version allows to combine several subplots with different :obj:`ColorAxis` on the same figure, and improve axes management.
+✨ New features
+- Update `layout` and `marker` attributes to preserve each subplot original coloraxis upon adding new traces with `ColorAxis` specification on an existing `Figure`.
 
-Feature improvements
---------------------
-- Update `layout` and `marker` attributes to preserve each subplot original coloraxis upon adding new traces with :obj:`ColorAxis` specification on an existing :obj:`Figure`.
+🎨 Feature improvements
 - Improve consistency between axis range and axis format.
 - Harmonize plot styling arguments.
 
-Cleaning
---------
-- Remove the `color` argument of :func:`distplot` and :func:`jointplot` functions because they require unidimensional trace color scheme.
+💥 Breaking Changes
+- Rename package to `statsplotly`.
 - Bump to Pydantic V2.
-- Remove dependency on :mod:`pymodules`
+
+🚀 Set up Poetry management and Github Actions CI/CD.
+
+🧹 Remove the `color` argument of `distplot` and `jointplot` functions because they require unidimensional trace color scheme.
+
+➖ Remove dependency on `pymodules`.
 
 
 Version 0.1.1
