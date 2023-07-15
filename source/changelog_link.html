@@ -134,7 +134,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -195,7 +195,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -203,24 +203,19 @@
         <article role="main">
           <section id="version-0-1-2">
 <h1>Version 0.1.2<a class="headerlink" href="#version-0-1-2" title="Permalink to this heading">#</a></h1>
-<p><strong>2023-07-11</strong></p>
-<p>The 0.1.2 version allows to combine several subplots with different <code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorAxis</span></code> on the same figure, and improve axes management.</p>
-<section id="feature-improvements">
-<h2>Feature improvements<a class="headerlink" href="#feature-improvements" title="Permalink to this heading">#</a></h2>
-<ul class="simple">
-<li><p>Update <cite>layout</cite> and <cite>marker</cite> attributes to preserve each subplot original coloraxis upon adding new traces with <code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorAxis</span></code> specification on an existing <code class="xref py py-obj docutils literal notranslate"><span class="pre">Figure</span></code>.</p></li>
-<li><p>Improve consistency between axis range and axis format.</p></li>
-<li><p>Harmonize plot styling arguments.</p></li>
-</ul>
-</section>
-<section id="cleaning">
-<h2>Cleaning<a class="headerlink" href="#cleaning" title="Permalink to this heading">#</a></h2>
-<ul class="simple">
-<li><p>Remove the <cite>color</cite> argument of <code class="xref py py-func docutils literal notranslate"><span class="pre">distplot()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">jointplot()</span></code> functions because they require unidimensional trace color scheme.</p></li>
-<li><p>Bump to Pydantic V2.</p></li>
-<li><p>Remove dependency on <code class="xref py py-mod docutils literal notranslate"><span class="pre">pymodules</span></code></p></li>
-</ul>
-</section>
+<p><strong>2023-07-11</strong>
+The 0.1.2 version allows to combine several subplots with different <cite>ColorAxis</cite> on the same figure, and improve axes management.</p>
+<p>✨ New features
+- Update <cite>layout</cite> and <cite>marker</cite> attributes to preserve each subplot original coloraxis upon adding new traces with <cite>ColorAxis</cite> specification on an existing <cite>Figure</cite>.</p>
+<p>🎨 Feature improvements
+- Improve consistency between axis range and axis format.
+- Harmonize plot styling arguments.</p>
+<p>💥 Breaking Changes
+- Rename package to <cite>statsplotly</cite>.
+- Bump to Pydantic V2.</p>
+<p>🚀 Set up Poetry management and Github Actions CI/CD.</p>
+<p>🧹 Remove the <cite>color</cite> argument of <cite>distplot</cite> and <cite>jointplot</cite> functions because they require unidimensional trace color scheme.</p>
+<p>➖ Remove dependency on <cite>pymodules</cite>.</p>
 </section>
 <section id="version-0-1-1">
 <h1>Version 0.1.1<a class="headerlink" href="#version-0-1-1" title="Permalink to this heading">#</a></h1>
@@ -274,33 +269,8 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Version 0.1.2</a><ul>
-<li><a class="reference internal" href="#feature-improvements">Feature improvements</a></li>
-<li><a class="reference internal" href="#cleaning">Cleaning</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#version-0-1-1">Version 0.1.1</a><ul>
-<li><a class="reference internal" href="#bug-fixes">Bug fixes</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#version-0-1-0">Version 0.1.0</a></li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
