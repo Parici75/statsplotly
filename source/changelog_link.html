@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="statsplotly.utils package" href="statsplotly.utils.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>Version 0.1.2 - statsplotly documentation</title>
+        <title>Version 0.1.3 - statsplotly documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -164,7 +164,8 @@
 </li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.1.2</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.1.3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#version-0-1-2">Version 0.1.2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-1-1">Version 0.1.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-1-0">Version 0.1.0</a></li>
 </ul>
@@ -201,18 +202,27 @@
           </label>
         </div>
         <article role="main">
-          <section id="version-0-1-2">
+          <section id="version-0-1-3">
+<h1>Version 0.1.3<a class="headerlink" href="#version-0-1-3" title="Permalink to this heading">#</a></h1>
+<p><strong>2023-09-20</strong></p>
+<p>The 0.1.3 version fixes a bug when processing color coding arrays.</p>
+<p>🐛 Handle <cite>null</cite> values when casting color coding array to integer data type.</p>
+<p>💚 Set up pre-commit hooks.</p>
+<p>🔨 Clean up deprecated Pandas code.</p>
+<p>👕 Linting</p>
+</section>
+<section id="version-0-1-2">
 <h1>Version 0.1.2<a class="headerlink" href="#version-0-1-2" title="Permalink to this heading">#</a></h1>
-<p><strong>2023-07-11</strong>
-The 0.1.2 version allows to combine several subplots with different <cite>ColorAxis</cite> on the same figure, and improve axes management.</p>
+<p><strong>2023-07-11</strong></p>
+<p>The 0.1.2 version allows to combine several subplots with different <cite>ColorAxis</cite> on the same figure, and improve axes management.</p>
 <p>✨ New features
 - Update <cite>layout</cite> and <cite>marker</cite> attributes to preserve each subplot original coloraxis upon adding new traces with <cite>ColorAxis</cite> specification on an existing <cite>Figure</cite>.</p>
 <p>🎨 Feature improvements
 - Improve consistency between axis range and axis format.
 - Harmonize plot styling arguments.</p>
 <p>💥 Breaking Changes
-- Rename package to <cite>statsplotly</cite>.
 - Bump to Pydantic V2.</p>
+<p>🚚 Rename package to <cite>statsplotly</cite>.</p>
 <p>🚀 Set up Poetry management and Github Actions CI/CD.</p>
 <p>🧹 Remove the <cite>color</cite> argument of <cite>distplot</cite> and <cite>jointplot</cite> functions because they require unidimensional trace color scheme.</p>
 <p>➖ Remove dependency on <cite>pymodules</cite>.</p>
@@ -222,7 +232,7 @@ The 0.1.2 version allows to combine several subplots with different <cite>ColorA
 <p><strong>2022-03-10</strong></p>
 <p>The 0.1.1 version fixes a bug in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">color</span></code> module.</p>
 <section id="bug-fixes">
-<h2>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this heading">#</a></h2>
+<h2>🐛 Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorAxis</span></code> specification when using direct color assignments (i.e., CSS or hex color codes). The <cite>colorscale</cite> and <cite>colorbar</cite> attributes are now set to None.</p></li>
 </ul>
