@@ -72,10 +72,7 @@ from statsplotly.plotting.helpers import (
     plot_scatter_traces,
 )
 from statsplotly.utils.figure_utils import create_fig
-from statsplotly.utils.layout_utils import (
-    add_update_menu,
-    adjust_jointplot_legends,
-)
+from statsplotly.utils.layout_utils import add_update_menu, adjust_jointplot_legends
 
 pio.templates.default = constants.DEFAULT_TEMPLATE
 np.seterr(invalid="ignore")

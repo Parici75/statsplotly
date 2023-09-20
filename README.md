@@ -25,7 +25,9 @@ Installation
 -
 ### Using Pip
 
-`pip install statsplotly`
+```bash
+pip install statsplotly
+```
 
 Documentation
 -
@@ -39,20 +41,22 @@ First make sure you have Poetry installed on your system (see [instruction](http
 
 Then, assuming you have a Unix shell with make, create and set up a new Poetry environment :
 
-`make init`
+```bash
+make init
+```
 
 To make the Poetry-managed kernel available for a globally installed Jupyter :
+```bash
+poetry run ipython kernel install --user --name=<KERNEL_NAME>
+jupyter notebook
 ```
-$ poetry run ipython kernel install --user --name=<KERNEL_NAME>
-$ jupyter notebook
-```
-On the Jupyter Server, select the created kernel in “Kernel” -> “Change kernel”.
+On the Jupyter server, select the created kernel in “Kernel” -> “Change kernel”.
 
 ### Dissecting Makefile
 The Makefile provides several targets to assist in development and code quality :
 - `init` creates a project-specific virtual environment and installs the dependencies of the .lock file.
 - `ci` launches Black, Ruff, mypy and pytest on your source code.
-- `pre-commit` set up pre-commit hooks (see pre-commit [documentation](https://pre-commit.com/)).
+- `pre-commit` set up and run pre-commit hooks (see pre-commit [documentation](https://pre-commit.com/)).
 - `clean` clears bytecode, poetry/pip caches. Use with caution.
 
 
@@ -60,6 +64,7 @@ Requirements
 -
 - [Plotly](https://plotly.com/python/)
 - [SciPy](https://scipy.org/)
+- [Pydantic >=2.0](https://docs.pydantic.dev/)
 
 
 Author

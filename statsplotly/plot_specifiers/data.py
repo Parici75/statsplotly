@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import scipy as sc
 from numpy.typing import NDArray
-from pandas.api.types import is_categorical_dtype, is_numeric_dtype
+from pandas.api.types import is_numeric_dtype
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import ConfigDict, FieldValidationInfo, field_validator, model_validator
 
@@ -166,7 +166,7 @@ class DataHandler(BaseModel):
     @field_validator("data")
     def convert_categorical_dtype_columns(cls, value: pd.DataFrame) -> pd.DataFrame:
         for column in value.columns:
-            if is_categorical_dtype(value[column]):
+            if isinstance(value[column].dtype, pd.CategoricalDtype):
                 logger.debug(f"Casting categorical {column} data to string")
                 value[column] = value[column].astype(str)
         return value

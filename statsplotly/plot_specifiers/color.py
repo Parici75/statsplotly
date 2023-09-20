@@ -3,10 +3,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from pandas.core.dtypes.common import (
-    is_bool_dtype,
-    is_object_dtype,
-)
+from pandas.core.dtypes.common import is_bool_dtype, is_object_dtype
 from pydantic import field_validator
 
 from statsplotly import constants
@@ -98,7 +95,9 @@ class ColorSpecifier(BaseModel):
         # Select the appropriate color system
         if is_bool_dtype(color_data.dtype) or is_object_dtype(color_data.dtype):
             try:
-                color_data = color_data.astype(int)
+                color_data = color_data.astype(pd.Float64Dtype()).astype(
+                    pd.Int64Dtype()
+                )  # Cast to float to resolve float literals, followed by Int64D to leverage Pandas's nullable integer data type  # noqa: E501
             except ValueError:
                 logger.debug(
                     f"{color_data.name} values are not numeric, assuming direct color specification"

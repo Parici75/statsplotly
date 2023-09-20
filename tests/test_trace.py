@@ -21,7 +21,8 @@ def test_scatter_specifier():
         ScatterSpecifier(mode="circles")
         assert (
             "Invalid value: 'circles'. Value must be one of"
-            f" {[member.value for member in TraceMode]}" in str(excinfo.value)
+            f" {[member.value for member in TraceMode]}"
+            in str(excinfo.value)
         )
 
 

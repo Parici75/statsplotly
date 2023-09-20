@@ -6,7 +6,12 @@ import seaborn as sns
 
 from statsplotly import constants
 from statsplotly.plot_specifiers.color import ColorSpecifier
-from statsplotly.utils.colors_utils import ColorSystem, cmap_to_array, compute_colorscale, to_rgb
+from statsplotly.utils.colors_utils import (
+    ColorSystem,
+    cmap_to_array,
+    compute_colorscale,
+    to_rgb,
+)
 
 EXAMPLE_VALID_COLOR_DATA = pd.Series(np.random.randint(1, 100, 100), name="color_data")
 EXAMPLE_DIRECT_COLOR_ARRAY = pd.Series(["green", "red", "blue"], name="colors")
@@ -38,7 +43,8 @@ class TestColorSpecifier:
         assert color_axis.colorscale is None and color_axis.colorbar is None
         assert (
             f"{EXAMPLE_DIRECT_COLOR_ARRAY.name} values are not numeric, assuming direct color"
-            " specification" in caplog.text
+            " specification"
+            in caplog.text
         )
 
     def test_builtin_colormap(self):

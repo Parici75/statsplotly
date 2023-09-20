@@ -18,7 +18,6 @@ jobs:
         uses: abatilo/actions-poetry@v2
 
       - name: Run ci
-        run: | 
+        run: |
           poetry install --without docs
           make ci
-

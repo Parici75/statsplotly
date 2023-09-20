@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from statsplotly.plot_specifiers.data import TraceData, DataPointer
+from statsplotly.plot_specifiers.data import DataPointer, TraceData
 from statsplotly.plot_specifiers.layout import AxesSpecifier, LegendSpecifier
 
 EXAMPLE_DATAFRAME = pd.DataFrame(

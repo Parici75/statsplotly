@@ -112,7 +112,8 @@ class TestDataHandler:
             )
             assert (
                 "Multi-indexed columns are not supported, flatten the header before calling"
-                " statsplotly" in caplog.text
+                " statsplotly"
+                in caplog.text
             )
 
 
@@ -140,7 +141,8 @@ class TestDataProcessor:
             )
         assert (
             "Invalid value: 'awesome_scaling'. Value must be one of"
-            f" {[member.value for member in NormalizationType]}" in str(excinfo.value)
+            f" {[member.value for member in NormalizationType]}"
+            in str(excinfo.value)
         )
 
     def test_unnormalizable_data(self, caplog):
@@ -151,7 +153,8 @@ class TestDataProcessor:
         assert (processed_data["x_values"] == EXAMPLE_DATAFRAME.x).all()
         assert (
             f"Dimension {DataDimension.X.value} of type {EXAMPLE_DATAFRAME.x.dtype} can not be"
-            f" normalized with {NormalizationType.ZSCORE.value}" in caplog.text
+            f" normalized with {NormalizationType.ZSCORE.value}"
+            in caplog.text
         )
 
     def test_unjitterable_data(self, caplog):
@@ -162,7 +165,8 @@ class TestDataProcessor:
         assert (processed_data["x_values"] == EXAMPLE_DATAFRAME.x).all()
         assert (
             f"Dimension {DataDimension.X.value} of type {EXAMPLE_DATAFRAME.x.dtype} can not be"
-            " jittered" in caplog.text
+            " jittered"
+            in caplog.text
         )
 
     def test_normalize_data(self):

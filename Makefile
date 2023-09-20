@@ -1,3 +1,4 @@
+# Python env
 PYTHON_SHELL_VERSION := $(shell python --version | cut -d " " -f 2)
 POETRY_AVAILABLE := $(shell which poetry > /dev/null && echo 1 || echo 0)
 
@@ -25,11 +26,14 @@ endif
 	@poetry config virtualenvs.create true
 	@poetry install
 
+	pre-commit
+
 # CI targets
 lint-%:
 	@echo lint-"$*"
-	@poetry run ruff "$*" --fix
-	@poetry run black "$*"
+	@poetry run black --check "$*"
+	@poetry run isort --check "$*"
+	@poetry run ruff "$*"
 	@echo "    ✅ All good"
 
 lint: $(addprefix lint-, $(CI_DIRECTORIES))
@@ -41,15 +45,31 @@ typecheck-%:
 typecheck: $(addprefix typecheck-, $(CI_DIRECTORIES))
 
 test:
-	@poetry run pytest -o log-cli=true --rootdir ./  --cache-clear tests
+	@poetry run pytest -s -o log-cli=true --rootdir ./  --cache-clear tests
 
 ci: lint typecheck test
 
-pre-commit:
+# Pre-commit hooks
+set-pre-commit:
 	@echo "Setting up pre-commit hooks..."
 	@poetry run pre-commit install
 	@poetry run pre-commit autoupdate
 
+run-pre-commit:
+	@poetry run pre-commit run --all-files
+
+pre-commit: set-pre-commit run-pre-commit
+
+
+# Documentation
+update-doc:
+	@poetry run sphinx-apidoc --module-first --no-toc -o docs/source statsplotly
+
+build-doc:
+	@poetry run sphinx-build docs ./docs/_build/html/
+
+
+# Cleaning
 clean-python:
 	@echo "🧹 Cleaning Python bytecode..."
 	@poetry run pyclean . --quiet
@@ -62,6 +82,7 @@ clean-cache:
 clean-hooks:
 	@echo "🧹 Cleaning hooks..."
 	@rm -r ".git/hooks" ||:
+
 
 # Global
 clean: confirm clean-cache clean-python clean-hooks

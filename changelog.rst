@@ -1,6 +1,22 @@
+Version 0.1.3
+=============
+**2023-09-20**
+
+The 0.1.3 version fixes a bug when processing color coding arrays.
+
+🐛 Handle `null` values when casting color coding array to integer data type.
+
+💚 Set up pre-commit hooks.
+
+🔨 Clean up deprecated Pandas code.
+
+👕 Linting
+
+
 Version 0.1.2
 =============
 **2023-07-11**
+
 The 0.1.2 version allows to combine several subplots with different `ColorAxis` on the same figure, and improve axes management.
 
 ✨ New features
@@ -11,8 +27,9 @@ The 0.1.2 version allows to combine several subplots with different `ColorAxis` 
 - Harmonize plot styling arguments.
 
 💥 Breaking Changes
-- Rename package to `statsplotly`.
 - Bump to Pydantic V2.
+
+🚚 Rename package to `statsplotly`.
 
 🚀 Set up Poetry management and Github Actions CI/CD.
 
@@ -27,7 +44,7 @@ Version 0.1.1
 
 The 0.1.1 version fixes a bug in the :mod:`~statsplot.plot_specifiers.color` module.
 
-Bug fixes
+🐛 Bug fixes
 ---------
 - Bug in :obj:`ColorAxis` specification when using direct color assignments (i.e., CSS or hex color codes). The `colorscale` and `colorbar` attributes are now set to None.
 
