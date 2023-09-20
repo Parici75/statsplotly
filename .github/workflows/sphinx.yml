@@ -24,6 +24,7 @@ jobs:
 
     - name: Build HTML documentation
       run: |
+        poetry self add "poetry-dynamic-versioning[plugin]"
         poetry install --with docs
         poetry run sphinx-build docs ./docs/_build/html/
 

@@ -24,6 +24,7 @@ jobs:
       env:
         POETRY_PYPI_TOKEN_PYPI: ${{ secrets.POETRY_PYPI_TOKEN_PYPI}}
       run: |
+        poetry self add "poetry-dynamic-versioning[plugin]"
         poetry install
         poetry build
         poetry publish
