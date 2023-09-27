@@ -1,14 +1,20 @@
+import logging
 import re
 from enum import Enum
-from typing import Any
+from typing import Any, TypeAlias
 
 import matplotlib
 import numpy as np
+import plotly
 import seaborn as sns
 from numpy.typing import NDArray
 
 from statsplotly import constants
 from statsplotly.exceptions import UnsupportedColormapError
+
+logger = logging.getLogger(__name__)
+
+Cmap_specs: TypeAlias = str | list[str] | list[tuple[float, float, float]]
 
 
 class ColorSystem(str, Enum):
@@ -25,44 +31,61 @@ def rand_jitter(arr: NDArray[Any], jitter_amount: float = 1) -> NDArray[Any]:
     return arr + np.random.randn(len(arr)) * spread
 
 
+def get_colorarray_from_seaborn(cmap: Cmap_specs | None, n_colors: int) -> NDArray[Any]:
+    try:
+        return sns.color_palette(cmap, n_colors=n_colors)
+    except ValueError as exc:
+        if isinstance(cmap, str):
+            return sns.color_palette(cmap.lower(), n_colors=n_colors)
+        raise exc
+
+
+def get_colorarray_from_matplotlib(
+    cmap: Cmap_specs | None,
+    n_colors: int,
+) -> NDArray[Any]:
+    try:
+        mpl_cmap = matplotlib.pyplot.get_cmap(cmap, n_colors)
+    except ValueError as exc:
+        if isinstance(cmap, str):
+            mpl_cmap = matplotlib.pyplot.get_cmap(cmap.lower(), n_colors)
+        raise exc
+    return mpl_cmap(np.linspace(0, 1, n_colors))
+
+
+def get_colorarray_from_plotly(cmap: Cmap_specs, n_colors: int) -> NDArray[Any]:
+    if n_colors == 1:
+        return plotly.colors.sample_colorscale(cmap, samplepoints=0.5, colortype="tuple")
+
+    return plotly.colors.sample_colorscale(cmap, samplepoints=n_colors, colortype="tuple")
+
+
 def cmap_to_array(
     n_colors: int,
-    cmap: str | matplotlib.colors.Colormap | list[str] | None,
-    discrete: bool = False,
+    cmap: Cmap_specs | matplotlib.colors.Colormap | None,
 ) -> NDArray[Any]:
     """Returns n_colors linearly spaced values on the colormap specified from cmap."""
 
-    if cmap is None or discrete:
+    # If cmap is a matplotlib colormap, get color values from it
+    if isinstance(cmap, matplotlib.colors.Colormap):
+        return cmap(np.linspace(0, 1, n_colors))
+
+    # Plotly
+    if cmap is not None:
         try:
-            return sns.color_palette(cmap, n_colors)
+            return get_colorarray_from_plotly(cmap, n_colors=n_colors)
+        except Exception as exc:
+            logger.debug(f"Plotly error processing {cmap} colormap: \n{exc}")
+
+    try:
+        # Try seaborn first
+        return get_colorarray_from_seaborn(cmap, n_colors=n_colors)
+    except ValueError:
+        try:
+            # Then matplotlib
+            return get_colorarray_from_matplotlib(cmap, n_colors=n_colors)
         except ValueError as exc:
-            if isinstance(cmap, str):
-                return sns.color_palette(cmap.lower(), n_colors)
-            raise UnsupportedColormapError(
-                f"{cmap} is not a Matplotlib-supported colormap"
-            ) from exc
-
-    # If color_palette is a list, then construct a colormap from it
-    if isinstance(cmap, list):
-        cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", cmap)
-
-    # If cmap is a string refering to a colormap, retrieve it
-    if isinstance(cmap, str):
-        try:
-            cmap = sns.color_palette(cmap, as_cmap=True)
-        except ValueError:
-            try:
-                cmap = matplotlib.pyplot.get_cmap(cmap, n_colors)
-            except ValueError:
-                try:
-                    cmap = matplotlib.pyplot.get_cmap(cmap.lower(), n_colors)
-                except ValueError as exc:
-                    raise UnsupportedColormapError(
-                        f"{cmap} is not a Matplotlib-supported colormap"
-                    ) from exc
-
-    # Return a linearly-spaced array of colors
-    return cmap(np.linspace(0, 1, n_colors))
+            raise UnsupportedColormapError(f"{cmap} is not a supported colormap") from exc
 
 
 def to_rgb(numeric_array: NDArray[Any]) -> list[str]:
@@ -74,9 +97,11 @@ def to_rgb(numeric_array: NDArray[Any]) -> list[str]:
     return rgb_array
 
 
-def get_rgb_discrete_array(n_colors: int, color_palette: list[str] | str | None) -> list[str]:
+def get_rgb_discrete_array(
+    n_colors: int, color_palette: str | matplotlib.colors.Colormap | list[str | tuple[float]] | None
+) -> list[str]:
     """Color list/Seaborn color_palette wrapper."""
-    rgb_array = cmap_to_array(n_colors, color_palette, discrete=True)
+    rgb_array = cmap_to_array(n_colors, color_palette)
 
     # Convert the RGB value array to a RGB plotly_friendly string array
     return to_rgb(rgb_array)

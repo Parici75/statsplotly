@@ -110,7 +110,7 @@ class _ScatterBaseTrace(BaseTrace):
             marker={
                 "size": trace_data.size_data,
                 "color": (
-                    trace_data.formatted_color_data
+                    color_specifier.format_color_data(trace_data.color_data)
                     if trace_data.color_data is not None
                     else trace_color
                 ),
@@ -372,7 +372,7 @@ class _CategoricalTrace(BaseTrace, metaclass=ABCMeta):
             marker={
                 "size": trace_data.size_data,
                 "color": (
-                    trace_data.formatted_color_data
+                    color_specifier.format_color_data(trace_data.color_data)
                     if trace_data.color_data is not None
                     else trace_color
                 ),
@@ -470,7 +470,7 @@ class BarTrace(BaseTrace):
             error_y=error_y_data,
             marker={
                 "color": (
-                    trace_data.formatted_color_data
+                    color_specifier.format_color_data(trace_data.color_data)
                     if trace_data.color_data is not None
                     else trace_color
                 ),

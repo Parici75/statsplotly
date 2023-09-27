@@ -60,12 +60,23 @@ class ColorSpecifier(BaseModel):
     def cmax(self) -> float | None:
         return self.zmax
 
+    @staticmethod
+    def format_color_data(color_data: pd.Series) -> pd.Series:
+        if is_bool_dtype(color_data.dtype) or is_object_dtype(color_data.dtype):
+            try:
+                color_data = pd.to_numeric(color_data, downcast="integer")
+            except ValueError:
+                pass
+        return color_data
+
     def build_colorbar(self, color_values: pd.Series | None) -> dict[str, Any] | None:
         if color_values is None:
             return None
 
         if is_bool_dtype(color_values.dtype) or is_object_dtype(color_values.dtype):
-            unique_color_values = np.sort(color_values.astype(int).unique())
+            unique_color_values = np.sort(
+                pd.to_numeric(color_values, downcast="integer").dropna().unique()
+            )
 
             ticklimits = np.linspace(
                 *unique_color_values[[0, -1]], len(unique_color_values) + 1  # type: ignore
@@ -95,9 +106,7 @@ class ColorSpecifier(BaseModel):
         # Select the appropriate color system
         if is_bool_dtype(color_data.dtype) or is_object_dtype(color_data.dtype):
             try:
-                color_data = color_data.astype(pd.Float64Dtype()).astype(
-                    pd.Int64Dtype()
-                )  # Cast to float to resolve float literals, followed by Int64D to leverage Pandas's nullable integer data type  # noqa: E501
+                color_data = pd.to_numeric(color_data, downcast="integer")
             except ValueError:
                 logger.debug(
                     f"{color_data.name} values are not numeric, assuming direct color specification"
@@ -142,7 +151,7 @@ class ColorSpecifier(BaseModel):
             cmax=cmax,
             colorscale=colorscale,
             colorbar=colorbar,
-            showscale=self.colorbar if colorscale is not None else None,
+            showscale=self.colorbar,
         )
 
     def get_color_hues(self, n_colors: int) -> list[str]:

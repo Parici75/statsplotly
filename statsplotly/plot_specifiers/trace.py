@@ -300,13 +300,13 @@ class JointplotSpecifier(_TraceSpecifier):
                 trace_data.x_values,
                 trace_data.y_values,
             )
-            histogram_specifier = self.histogram_specifier[DataDimension.Y].copy()
+            histogram_specifier = self.histogram_specifier[DataDimension.Y].model_copy()
         elif self.plot_type is JointplotType.Y_HISTMAP:
             anchor_values, histogram_data = (
                 trace_data.y_values,
                 trace_data.x_values,
             )
-            histogram_specifier = self.histogram_specifier[DataDimension.X].copy()
+            histogram_specifier = self.histogram_specifier[DataDimension.X].model_copy()
 
         # Get and set uniform bin edges along anchor values
         bin_edges, bin_size = histogram_specifier.histogram_bin_edges(histogram_data)

@@ -528,20 +528,6 @@ class _BaseTraceData(BaseModel):
 
         return trace_data
 
-    @property
-    def formatted_color_data(self) -> str | pd.Series | None:
-        if self.color_data is None:
-            return None
-        if isinstance(self.color_data, str):
-            return self.color_data
-        if not is_numeric_dtype(self.color_data.dtype):
-            try:
-                return self.color_data.astype(int)
-            except ValueError:
-                pass
-
-        return self.color_data
-
 
 class TraceData(_BaseTraceData):
     @classmethod
