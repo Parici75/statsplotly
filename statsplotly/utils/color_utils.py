@@ -4,13 +4,14 @@ from enum import Enum
 from typing import Any, TypeAlias
 
 import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import plotly
 import seaborn as sns
 from numpy.typing import NDArray
 
 from statsplotly import constants
-from statsplotly.exceptions import UnsupportedColormapError
+from statsplotly.exceptions import StatsPlotSpecificationError, UnsupportedColormapError
 
 logger = logging.getLogger(__name__)
 
@@ -44,11 +45,13 @@ def get_colorarray_from_matplotlib(
     cmap: Cmap_specs | None,
     n_colors: int,
 ) -> NDArray[Any]:
+    if isinstance(cmap, list):
+        raise StatsPlotSpecificationError("Colormap specification is not matplotlib-compatible")
     try:
-        mpl_cmap = matplotlib.pyplot.get_cmap(cmap, n_colors)
+        mpl_cmap = plt.get_cmap(cmap, n_colors)
     except ValueError as exc:
         if isinstance(cmap, str):
-            mpl_cmap = matplotlib.pyplot.get_cmap(cmap.lower(), n_colors)
+            mpl_cmap = plt.get_cmap(cmap.lower(), n_colors)
         raise exc
     return mpl_cmap(np.linspace(0, 1, n_colors))
 
@@ -98,7 +101,7 @@ def to_rgb(numeric_array: NDArray[Any]) -> list[str]:
 
 
 def get_rgb_discrete_array(
-    n_colors: int, color_palette: str | matplotlib.colors.Colormap | list[str | tuple[float]] | None
+    n_colors: int, color_palette: Cmap_specs | matplotlib.colors.Colormap | None
 ) -> list[str]:
     """Color list/Seaborn color_palette wrapper."""
     rgb_array = cmap_to_array(n_colors, color_palette)
@@ -111,7 +114,7 @@ def compute_colorscale(  # noqa PLR0912 C901
     n_colors: int,
     color_system: ColorSystem,
     logscale: float | None = 10,
-    color_palette: str | list[str] | None = None,
+    color_palette: Cmap_specs | matplotlib.colors.Colormap | None = None,
 ) -> str | list[list[float | str]]:
     """Returns a plotly-compatible colorscale depending on color system
     chosen by user."""

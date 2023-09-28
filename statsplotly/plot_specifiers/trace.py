@@ -9,7 +9,7 @@ import pandas as pd
 from numpy.typing import NDArray
 from pandas.api.types import is_numeric_dtype
 from pydantic import field_validator
-from pydantic_core.core_schema import FieldValidationInfo
+from pydantic_core.core_schema import ValidationInfo
 
 from statsplotly import constants
 from statsplotly.exceptions import (
@@ -102,7 +102,7 @@ class HistogramSpecifier(_TraceSpecifier):
     dimension: DataDimension
 
     @field_validator("cumulative")
-    def check_cumulative(cls, value: bool | None, info: FieldValidationInfo) -> bool | None:
+    def check_cumulative(cls, value: bool | None, info: ValidationInfo) -> bool | None:
         if value and not info.data.get("hist"):
             raise StatsPlotSpecificationError(
                 "Cumulative histogram requires histogram bins plotting"
@@ -110,7 +110,7 @@ class HistogramSpecifier(_TraceSpecifier):
         return value
 
     @field_validator("kde")
-    def check_kde(cls, value: bool | None, info: FieldValidationInfo) -> bool | None:
+    def check_kde(cls, value: bool | None, info: ValidationInfo) -> bool | None:
         if value and info.data.get("cumulative"):
             raise StatsPlotSpecificationError(
                 "KDE is incompatible with cumulative histogram plotting"
@@ -124,7 +124,7 @@ class HistogramSpecifier(_TraceSpecifier):
         return value if value is not None else constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD
 
     @field_validator("histnorm", mode="before")
-    def check_histnorm(cls, value: str | None, info: FieldValidationInfo) -> HistogramNormType:
+    def check_histnorm(cls, value: str | None, info: ValidationInfo) -> HistogramNormType:
         if info.data.get("kde"):
             if value is None:
                 logger.info(
@@ -151,7 +151,7 @@ class HistogramSpecifier(_TraceSpecifier):
             raise StatsPlotInvalidArgumentError(value, CentralTendencyType) from exc  # type: ignore
 
     @field_validator("dimension")
-    def check_dimension(cls, value: DataDimension, info: FieldValidationInfo) -> DataDimension:
+    def check_dimension(cls, value: DataDimension, info: ValidationInfo) -> DataDimension:
         if not is_numeric_dtype(dtype := info.data.get("data_type")):
             raise StatsPlotSpecificationError(
                 f"Distribution of {value} values of type: `{dtype}` can not be computed"
@@ -219,7 +219,7 @@ class JointplotSpecifier(_TraceSpecifier):
 
     @field_validator("scatter_specifier")
     def check_scatter_specifier(
-        cls, value: ScatterSpecifier, info: FieldValidationInfo
+        cls, value: ScatterSpecifier, info: ValidationInfo
     ) -> ScatterSpecifier:
         if value.regression_type is not None and (plot_type := info.data["plot_type"]) not in (
             JointplotType.SCATTER,

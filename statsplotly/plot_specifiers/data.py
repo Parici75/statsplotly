@@ -10,7 +10,7 @@ import scipy as sc
 from numpy.typing import NDArray
 from pandas.api.types import is_numeric_dtype
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import ConfigDict, FieldValidationInfo, field_validator, model_validator
+from pydantic import ConfigDict, ValidationInfo, field_validator, model_validator
 
 from statsplotly import constants
 from statsplotly.exceptions import (
@@ -18,7 +18,7 @@ from statsplotly.exceptions import (
     StatsPlotMissingImplementationError,
     StatsPlotSpecificationError,
 )
-from statsplotly.utils.colors_utils import rand_jitter
+from statsplotly.utils.color_utils import rand_jitter
 from statsplotly.utils.stats_utils import range_normalize, sem
 
 logger = logging.getLogger(__name__)
@@ -391,7 +391,7 @@ class AggregationSpecifier(BaseModel):
             raise StatsPlotInvalidArgumentError(value, AggregationType) from exc  # type: ignore
 
     @field_validator("error_bar", mode="before")
-    def check_error_bar(cls, value: str | None, info: FieldValidationInfo) -> ErrorBarType | None:
+    def check_error_bar(cls, value: str | None, info: ValidationInfo) -> ErrorBarType | None:
         if value is not None and (
             (agg_func := info.data.get("aggregation_func")) is None
             or agg_func is AggregationType.COUNT
@@ -407,7 +407,7 @@ class AggregationSpecifier(BaseModel):
             raise StatsPlotInvalidArgumentError(value, ErrorBarType) from exc  # type: ignore
 
     @field_validator("data_pointer")
-    def check_data_pointer(cls, value: DataPointer, info: FieldValidationInfo) -> DataPointer:
+    def check_data_pointer(cls, value: DataPointer, info: ValidationInfo) -> DataPointer:
         # x dimension
         if value.x is None:
             value.x = "index"

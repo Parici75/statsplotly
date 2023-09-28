@@ -22,14 +22,14 @@ repos:
 
 # Pyupgrade
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.11.1
+  rev: v3.13.0
   hooks:
       - id: pyupgrade
 
 # Ruff
 # We put this hook before Black hook, as autofix results may need to be reformatted by Black linter
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.290
+    rev: v0.0.291
     hooks:
     -   id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
@@ -53,5 +53,5 @@ repos:
         args: [--ignore-missing-imports]
         files: ^statsplotly/
         additional_dependencies:
-            - "pydantic>=2.0"
+            - "pydantic>=2.4"
             - "numpy"

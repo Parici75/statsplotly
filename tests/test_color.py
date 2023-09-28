@@ -6,7 +6,7 @@ import seaborn as sns
 
 from statsplotly import constants
 from statsplotly.plot_specifiers.color import ColorSpecifier
-from statsplotly.utils.colors_utils import (
+from statsplotly.utils.color_utils import (
     ColorSystem,
     cmap_to_array,
     compute_colorscale,

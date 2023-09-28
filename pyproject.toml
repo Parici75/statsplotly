@@ -10,7 +10,7 @@ documentation = "https://parici75.github.io/statsplotly/"
 
 [tool.poetry.dependencies]
 python = ">=3.11, <3.13"
-pydantic = "^2.0"
+pydantic = "^2.4"
 seaborn = "^0.12.2"
 scipy = "^1.11.1"
 plotly = "^5.15.0"
@@ -19,7 +19,7 @@ jupyter = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
-mypy = "^1.4.1"
+mypy = "v1.5.1"
 ruff = "^0.0.276"
 black = "^23.3.0"
 isort = "^5.12.0"
@@ -97,5 +97,5 @@ warn_required_dynamic_aliases = true
 
 # mypy per-module options
 [[tool.mypy.overrides]]
-module = ["dateutil.*", "numpy.*", "scipy.*", "pandas.*", "matplotlib.*", "seaborn.*", "plotly.*", "pymodules.*"]
+module = ["dateutil.*", "numpy.*", "scipy.*", "pandas.*", "seaborn.*", "plotly.*", "pymodules.*"]
 ignore_missing_imports = true

@@ -1,3 +1,16 @@
+Version 0.1.4
+=============
+**2023-09-27**
+
+The 0.1.4 fix inconsistencies in color coding.
+
+🐛 Make casting color coding string array to integer consistent.
+
+🎨 Add support for all Plotly / Seaborn and Matplotlib colorscales.
+
+💥 Bump to pydantic==v2.4
+
+
 Version 0.1.3
 =============
 **2023-09-20**

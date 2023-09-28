@@ -24,7 +24,7 @@ from statsplotly.plot_specifiers.trace import (
     JointplotType,
     TraceMode,
 )
-from statsplotly.utils.colors_utils import set_rgb_alpha
+from statsplotly.utils.color_utils import set_rgb_alpha
 from statsplotly.utils.stats_utils import (
     affine_func,
     exponential_regress,

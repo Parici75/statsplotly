@@ -2,7 +2,7 @@ import datetime
 import logging
 from typing import Any
 
-from pydantic import FieldValidationInfo, field_validator, model_validator
+from pydantic import ValidationInfo, field_validator, model_validator
 from pydantic.v1.utils import deep_update
 
 from statsplotly.constants import AXIS_TITLEFONT, DEFAULT_HOVERMODE, TICKFONT
@@ -40,7 +40,7 @@ class BaseAxisLayout(BaseModel):
 
     @field_validator("autorange")
     def validate_autorange(
-        cls, value: bool | str | None, info: FieldValidationInfo
+        cls, value: bool | str | None, info: ValidationInfo
     ) -> bool | str | None:
         if info.data.get("range") is not None:
             return False

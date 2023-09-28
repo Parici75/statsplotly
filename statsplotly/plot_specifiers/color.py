@@ -11,7 +11,7 @@ from statsplotly.exceptions import StatsPlotSpecificationError
 from statsplotly.plot_objects.layout_objects import ColorAxis
 from statsplotly.plot_specifiers.data import BaseModel
 from statsplotly.plot_specifiers.layout import ColoraxisReference
-from statsplotly.utils.colors_utils import (
+from statsplotly.utils.color_utils import (
     ColorSystem,
     compute_colorscale,
     get_rgb_discrete_array,

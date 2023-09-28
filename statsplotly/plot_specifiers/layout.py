@@ -170,7 +170,7 @@ class AxesSpecifier(BaseModel):
         if value is not None:
             if any(isinstance(limit, str) for limit in value):
                 try:
-                    parse_date(value)
+                    [parse_date(limit) for limit in value if limit is not None]
                 except Exception as exc:
                     raise ValueError("Axis range must be numeric or `datetime`") from exc
         return value
@@ -197,7 +197,7 @@ class AxesSpecifier(BaseModel):
                 ]
             return [np.min(values_span), np.max(values_span)]
         except TypeError:
-            logger.debug("Can not calculate data range of non-numeric dimensions")
+            logger.debug("Can not calculate a common range for axes")
             return None
 
     @property
