@@ -40,7 +40,7 @@ pattern  = "^(?P<base>\\d+\\.\\d+\\.\\d+)(-?((?P<stage>[a-zA-Z]+)\\.?(?P<revisio
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
-build-backend = ["poetry.core.masonry.api", "poetry_dynamic_versioning.backend"]
+build-backend = "poetry_dynamic_versioning.backend"
 
 ## Tools
 [tool.black]
@@ -79,7 +79,6 @@ sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 
 [tool.mypy]
 python_version = 3.11
-allow_untyped_defs = false
 exclude = ["tests"]
 plugins = [
   "pydantic.mypy", "numpy.typing.mypy_plugin"
@@ -87,6 +86,7 @@ plugins = [
 follow_imports = "silent"
 warn_redundant_casts = true
 warn_unused_ignores = true
+disallow_untyped_defs = true
 disallow_any_generics = true
 no_implicit_reexport = true
 
@@ -99,3 +99,8 @@ warn_required_dynamic_aliases = true
 [[tool.mypy.overrides]]
 module = ["dateutil.*", "numpy.*", "scipy.*", "pandas.*", "seaborn.*", "plotly.*", "pymodules.*"]
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = 10
+testpaths = ["tests"]
