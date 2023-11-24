@@ -86,9 +86,9 @@ def create_fig(  # noqa: PLR0912 PLR0913 C901
                 axis_number = axis_number_pattern.group()
                 if (scaleanchor := layout_dict[axis_ref].get("scaleanchor")) is not None:
                     scaleanchor_root = re.sub(r"\d", axis_number_pattern.group(), scaleanchor)
-                    layout_dict[axis_ref].update(
-                        {"scaleanchor": f"{scaleanchor_root}{axis_number}"}
-                    )
+                    layout_dict[axis_ref].update({
+                        "scaleanchor": f"{scaleanchor_root}{axis_number}"
+                    })
 
         # Remove axes titles
         if row < len(fig._grid_ref):
@@ -105,41 +105,37 @@ def create_fig(  # noqa: PLR0912 PLR0913 C901
 def _clean_col_titles(titles: list[str], fig: go.Figure) -> go.Figure:
     for i, col_title in enumerate(titles, 1):
         x_unit = 1 / len(fig._grid_ref[0])
-        fig.add_annotation(
-            {
-                "font": {"size": 16},
-                "showarrow": False,
-                "text": col_title,
-                "x": x_unit * i - x_unit / 2,
-                "xanchor": "center",
-                "xref": "paper",
-                "y": 1,
-                "yanchor": "top",
-                "yref": "paper",
-                "yshift": +30,
-            }
-        )
+        fig.add_annotation({
+            "font": {"size": 16},
+            "showarrow": False,
+            "text": col_title,
+            "x": x_unit * i - x_unit / 2,
+            "xanchor": "center",
+            "xref": "paper",
+            "y": 1,
+            "yanchor": "top",
+            "yref": "paper",
+            "yshift": +30,
+        })
     return fig
 
 
 def _clean_row_titles(titles: list[str], fig: go.Figure) -> go.Figure:
     for i, row_title in enumerate(titles[::-1], 1):
         y_unit = 1 / len(fig._grid_ref)
-        fig.add_annotation(
-            {
-                "font": {"size": 16},
-                "showarrow": False,
-                "text": row_title,
-                "x": 0,
-                "textangle": 0,
-                "xanchor": "right",
-                "xref": "paper",
-                "xshift": -40,
-                "y": y_unit * i - y_unit / 2,
-                "yanchor": "middle",
-                "yref": "paper",
-            }
-        )
+        fig.add_annotation({
+            "font": {"size": 16},
+            "showarrow": False,
+            "text": row_title,
+            "x": 0,
+            "textangle": 0,
+            "xanchor": "right",
+            "xref": "paper",
+            "xshift": -40,
+            "y": y_unit * i - y_unit / 2,
+            "yanchor": "middle",
+            "yref": "paper",
+        })
 
     # Add some left margin
     try:

@@ -880,12 +880,10 @@ def distplot(
         )
         # Hide axes
         axis_idx = str(row * subplot_col) if row * subplot_col > 1 else ""
-        fig.update_layout(
-            {
-                f"xaxis{axis_idx}": {"visible": False},
-                f"yaxis{axis_idx}": {"visible": False},
-            }
-        )
+        fig.update_layout({
+            f"xaxis{axis_idx}": {"visible": False},
+            f"yaxis{axis_idx}": {"visible": False},
+        })
 
     # Create fig
     fig = create_fig(
