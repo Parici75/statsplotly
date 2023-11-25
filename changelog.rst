@@ -1,3 +1,10 @@
+Version 0.1.5
+=============
+**2023-11-25**
+
+The 0.1.5 ensures compatibility with Python>=3.10.
+
+
 Version 0.1.4
 =============
 **2023-09-27**

@@ -168,22 +168,19 @@ class AxesSpecifier(BaseModel):
         cls, value: list[float | str] | None
     ) -> list[float | str] | None:
         if value is not None:
-            if any(isinstance(limit, str) for limit in value):
-                try:
-                    [parse_date(limit) for limit in value if limit is not None]
-                except Exception as exc:
-                    raise ValueError("Axis range must be numeric or `datetime`") from exc
+            try:
+                [parse_date(limit) for limit in value if isinstance(limit, str)]
+            except Exception as exc:
+                raise ValueError("Axis range must be numeric or `datetime`") from exc
         return value
 
     def get_axes_range(self) -> list[Any] | None:
-        values_span = np.concatenate(
-            [
-                data
-                for trace in self.traces
-                for data in [trace.x_values, trace.y_values, trace.z_values]
-                if data is not None
-            ]
-        )
+        values_span = np.concatenate([
+            data
+            for trace in self.traces
+            for data in [trace.x_values, trace.y_values, trace.z_values]
+            if data is not None
+        ])
         axes_span = [
             axis_span
             for axis_span in [self.x_range, self.y_range, self.z_range]
