@@ -6,21 +6,21 @@ statsplotly.plot\_objects package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   statsplotly.plot_objects.layout
+
 Submodules
 ----------
 
-statsplotly.plot\_objects.layout\_objects module
-------------------------------------------------
+statsplotly.plot\_objects.trace module
+--------------------------------------
 
-.. automodule:: statsplotly.plot_objects.layout_objects
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-statsplotly.plot\_objects.trace\_objects module
------------------------------------------------
-
-.. automodule:: statsplotly.plot_objects.trace_objects
+.. automodule:: statsplotly.plot_objects.trace
    :members:
    :undoc-members:
    :show-inheritance:

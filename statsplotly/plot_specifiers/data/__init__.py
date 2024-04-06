@@ -1,0 +1,41 @@
+"""This subpackage defines objects and utility methods for data properties."""
+
+from ._core import (
+    AGG_TO_ERROR_MAPPING,
+    TRACE_DIMENSION_MAP,
+    AggregationSpecifier,
+    AggregationTraceData,
+    AggregationType,
+    CentralTendencyType,
+    DataDimension,
+    DataHandler,
+    DataPointer,
+    DataProcessor,
+    DataTypes,
+    ErrorBarType,
+    HistogramNormType,
+    NormalizationType,
+    RegressionType,
+    SliceTraceType,
+    TraceData,
+)
+
+__all__ = [
+    "AGG_TO_ERROR_MAPPING",
+    "TRACE_DIMENSION_MAP",
+    "AggregationSpecifier",
+    "AggregationTraceData",
+    "AggregationType",
+    "CentralTendencyType",
+    "DataDimension",
+    "DataHandler",
+    "DataPointer",
+    "DataProcessor",
+    "DataTypes",
+    "ErrorBarType",
+    "HistogramNormType",
+    "NormalizationType",
+    "RegressionType",
+    "SliceTraceType",
+    "TraceData",
+]

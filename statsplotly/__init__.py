@@ -1,11 +1,4 @@
-from statsplotly.plotting.main import (
-    barplot,
-    catplot,
-    distplot,
-    heatmap,
-    jointplot,
-    plot,
-)
+from ._plotting.main import barplot, catplot, distplot, heatmap, jointplot, plot
 
 __all__ = [
     "heatmap",

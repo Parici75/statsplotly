@@ -3,14 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Statsplotly documentation
-========================
 
-.. mdinclude:: source/api.md
+.. mdinclude:: source/getting_started.md
 
 
-Detailed API
-------------
+API
+---
 .. toctree::
    :maxdepth: 1
 
@@ -18,7 +16,7 @@ Detailed API
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
@@ -26,6 +24,6 @@ Indices and tables
 
 
 Changelog
-=========
+---------
 .. toctree::
    source/changelog_link.rst

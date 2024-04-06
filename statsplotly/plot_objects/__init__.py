@@ -1,3 +1,3 @@
-"""This subpackage defines Plotly graph_objects-compatible data models with custom
+"""This subpackage defines data models wrapping `plotly.graph_objects` with custom
 methods and attributes.
 """
