@@ -191,7 +191,7 @@ class DataHandler(BaseModel):
     @property
     def slicer_groupby_data(self) -> pd.DataFrame | pd.Grouper:
         if self.data_pointer.slicer is not None:
-            return self.data.groupby(self.data_pointer.slicer)
+            return self.data.groupby(self.data_pointer.slicer, sort=False)
         return self.data
 
     @staticmethod
