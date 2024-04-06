@@ -881,8 +881,10 @@ def distplot(
                 name=(
                     f"{trace.name} {histogram_specifier.central_tendency.value} +/-"
                     f" {AGG_TO_ERROR_MAPPING[histogram_specifier.central_tendency].value}"
-                )
-            )
+                ),
+            ),
+            row=figure_plot.row,
+            col=figure_plot.central_tendency_col,
         )
         # Hide axes
         axis_idx = (
