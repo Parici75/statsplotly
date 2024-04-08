@@ -101,22 +101,22 @@ class LegendSpecifier(BaseModel):
 
     @property
     def xaxis_title(self) -> str:
-        return smart_legend(
-            self.x_label or self._get_axis_title_from_dimension_pointer(DataDimension.X)
+        return self.x_label or smart_legend(
+            self._get_axis_title_from_dimension_pointer(DataDimension.X)
         )
 
     @property
     def yaxis_title(self) -> str:
-        return smart_legend(
-            self.y_label or self._get_axis_title_from_dimension_pointer(DataDimension.Y)
+        return self.y_label or smart_legend(
+            self._get_axis_title_from_dimension_pointer(DataDimension.Y)
         )
 
     @property
     def zaxis_title(self) -> str | None:
         if self.data_pointer.z is None:
             return None
-        return smart_legend(
-            self.z_label or self._get_axis_title_from_dimension_pointer(DataDimension.Z)
+        return self.z_label or smart_legend(
+            self._get_axis_title_from_dimension_pointer(DataDimension.Z)
         )
 
     @property
