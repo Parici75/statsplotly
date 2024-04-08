@@ -1,6 +1,19 @@
 import re
 
+import plotly.io as pio
+from plotly import graph_objects as go
+
 from statsplotly import constants
+
+
+def register_statsplotly_template() -> None:
+    pio.templates["statsplotly_template"] = {
+        "layout": go.Layout(
+            title_font=constants.FIGURE_TITLEFONT,
+            xaxis={"title_font": constants.AXIS_TITLEFONT, "tickfont": constants.TICKFONT},
+            yaxis={"title_font": constants.AXIS_TITLEFONT, "tickfont": constants.TICKFONT},
+        ),
+    }
 
 
 def smart_title(title_string: str) -> str:

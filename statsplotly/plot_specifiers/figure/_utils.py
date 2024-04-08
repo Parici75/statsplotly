@@ -13,7 +13,6 @@ import numpy as np
 import plotly
 import plotly.graph_objs as go
 from numpy.typing import NDArray
-from pandas.api.types import is_numeric_dtype
 from plotly.exceptions import PlotlyKeyError
 from pydantic import ValidationInfo, field_validator
 
@@ -371,21 +370,33 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
             )
         return value
 
+    @staticmethod
+    def _check_numeric_cast(data: NDArray[Any]) -> bool:
+        try:
+            data.astype("float")
+            return True
+        except (ValueError, AttributeError):
+            return False
+
     def _get_trace_axis_limit(
         self, trace: plotly.basedatatypes.BaseTraceType
     ) -> tuple[float, float] | None:
 
-        if trace[AXIS_TO_DATA_MAP[self.dimension]] is None:  # type: ignore
-            logger.info(f"Axis limits of {trace.name} of type {type(trace)} not be extracted")
+        if (trace_data := trace[AXIS_TO_DATA_MAP[self.dimension]]) is None:  # type: ignore
+            logger.info(f"Axis limits of {trace.name} of type {type(trace)} can not be extracted")
             return None
 
-        sanitized_trace = [
-            value for value in trace[AXIS_TO_DATA_MAP[self.dimension]] if value is not None and is_numeric_dtype(value)  # type: ignore
-        ]
-        if len(sanitized_trace) == 0:
+        if not self._check_numeric_cast(trace_data):
+            logger.debug(
+                f"Can not be cast {trace.name} data of type {trace_data.dtype} to numeric dtype"
+            )
             return None
 
-        return np.min(sanitized_trace), np.max(sanitized_trace)
+        sanitized_trace_data = [datum for datum in trace_data if datum is not None]
+        if len(sanitized_trace_data) == 0:
+            return None
+
+        return np.min(sanitized_trace_data), np.max(sanitized_trace_data)
 
     def get_target_traces(
         self, plot_group: list[plotly.subplots.SubplotRef]
@@ -413,12 +424,19 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
         axis_limits: list[tuple[float, float] | None],
     ) -> tuple[float, float] | None:
         try:
-            return (
-                np.min([limit[0] for limit in axis_limits if limit is not None])
-                * (1 - constants.RANGE_PADDING_FACTOR),
-                np.max([limit[1] for limit in axis_limits if limit is not None])
-                * (1 + constants.RANGE_PADDING_FACTOR),
-            )
+            min_value, max_value = [
+                np.min([limit[0] for limit in axis_limits if limit is not None]),
+                np.max([limit[1] for limit in axis_limits if limit is not None]),
+            ]
+            if min_value < 0:
+                min_value *= 1 + constants.RANGE_PADDING_FACTOR
+            else:
+                min_value *= 1 - constants.RANGE_PADDING_FACTOR
+
+            max_value *= 1 + constants.RANGE_PADDING_FACTOR
+
+            return [min_value, max_value]  # type: ignore
+
         except ValueError:
             # No computable limits
             return None

@@ -96,7 +96,10 @@ class JointplotPlot(BasePlot[JointplotSpecifier]):
     def main_row(self) -> int:
         return self.row + 1 if self.plot_specifier.plot_x_distribution else self.row
 
-    def tidy_axes(self) -> None:
+    def tidy_plot(self) -> JointplotPlot:
+        # We are limited to formatting only axes in the figure, as in the current implementation of jointplot,
+        # coloraxes are managed at the trace level instead of the layout level.
+        # TODO: Define coloraxes at the layout level and  use _SubplotGridCommonColoraxisFormatter class for formatting.
         subplot_grid_formatter = SubplotGridFormatter(fig=self.fig)
         if self.plot_specifier.plot_x_distribution:
             subplot_grid_formatter.set_common_axis_limit(
@@ -106,8 +109,9 @@ class JointplotPlot(BasePlot[JointplotSpecifier]):
             subplot_grid_formatter.set_common_axis_limit(
                 shared_grid_axis=SharedGridAxis.ROWS, link_axes=True
             )
-
         subplot_grid_formatter.tidy_subplots()
+
+        return self
 
     @classmethod
     def initialize(

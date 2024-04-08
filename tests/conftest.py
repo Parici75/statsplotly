@@ -22,6 +22,16 @@ EXAMPLE_DATETIME_DATAFRAME = pd.DataFrame(
 
 
 @pytest.fixture(scope="module")
+def example_raw_data():
+    return EXAMPLE_DATAFRAME
+
+
+@pytest.fixture(scope="module")
+def example_raw_datetime_data():
+    return EXAMPLE_DATETIME_DATAFRAME
+
+
+@pytest.fixture(scope="module")
 def example_trace_data():
     return TraceData.build_trace_data(
         data=EXAMPLE_DATAFRAME, pointer=DataPointer(x="x", y="y", text="z")

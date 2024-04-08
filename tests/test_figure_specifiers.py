@@ -46,7 +46,7 @@ def example_figure_layout_traces():
 def example_heatmap_subplots():
     data = pd.concat(
         [
-            pd.DataFrame({"x": np.arange(5), "y": np.arange(5), "z": np.arange(5) * i})
+            pd.DataFrame({"x": np.arange(5), "y": np.arange(5) - 2, "z": np.arange(5) * i})
             for i in np.arange(4)
         ],
         keys=np.arange(4),
@@ -246,7 +246,7 @@ class TestSetCommonAxisLimits:
             shared_grid_axis="cols", plot_axis="yaxis"
         )
         assert all(
-            example_heatmap_subplots.layout[layout_key]["range"] == (0.0, 4.4)
+            example_heatmap_subplots.layout[layout_key]["range"] == (-2.2, 2.2)
             for layout_key in example_heatmap_subplots.layout
             if "yaxis" in layout_key
         )

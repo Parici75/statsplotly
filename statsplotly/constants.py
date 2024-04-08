@@ -1,7 +1,7 @@
 import plotly
 
 # Template
-DEFAULT_TEMPLATE = "none"
+DEFAULT_TEMPLATE = "statsplotly_template"
 
 # Colorscale
 N_COLORSCALE_COLORS = 256
@@ -187,6 +187,7 @@ DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD = "scott"
 DEFAULT_KDE_BANDWIDTH = 0.2
 
 # Axis parameters
+FIGURE_TITLEFONT = {"family": "Arial", "size": 20}
 AXIS_TITLEFONT = {"family": "Arial", "size": 20}
 TICKFONT = {"family": "Arial", "size": 18}
 AXES_HEIGHT = 600

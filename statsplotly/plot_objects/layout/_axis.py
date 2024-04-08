@@ -7,7 +7,6 @@ from typing import Any, TypeAlias
 from pydantic import ValidationInfo, field_validator, model_validator
 
 from statsplotly._base import BaseModel
-from statsplotly.constants import AXIS_TITLEFONT, TICKFONT
 
 axis_coordinates_type: TypeAlias = float | datetime.datetime | str
 
@@ -26,8 +25,6 @@ class BaseAxis(BaseModel):
     """Compatible properties with 2D and 3D (Scene) Layout."""
 
     title: str | None = None
-    titlefont: dict[str, Any] = AXIS_TITLEFONT
-    tickfont: dict[str, Any] = TICKFONT
     range: list[axis_coordinates_type] | None = None  # noqa: A003
     type: str | None = None  # noqa: A003
     autorange: bool | str | None = None

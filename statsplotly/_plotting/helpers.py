@@ -67,6 +67,7 @@ def plot_jointplot_main_traces(
             jointplot_specifier=jointplot_specifier,
         )
         # Make colorbars horizontal
+        # TODO: Get read of this one we use _SubplotGridCommonColoraxisFormatter class for managing coloraxis
         if heatmap_trace.colorbar is not None:
             heatmap_trace.colorbar = set_horizontal_colorbar(heatmap_trace.colorbar)
 

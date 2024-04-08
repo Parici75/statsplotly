@@ -1337,7 +1337,7 @@ def jointplot(
         )
 
     # Finalize figure
-    figure_plot.tidy_axes()
+    figure_plot.tidy_plot()
 
     # Add menus
     if len(global_main_traces) > 0:
