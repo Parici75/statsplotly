@@ -122,17 +122,21 @@ class TestHistogramSpecifier:
         assert len(bin_edges) == bins + 1
         assert bin_size == 9.9
 
-    def test_histogram(self):
+    @pytest.mark.parametrize(
+        "cumulative_option, hist_expected", [(False, 10), (True, np.cumsum(np.repeat(10, 10)))]
+    )
+    def test_compute_histogram(self, cumulative_option, hist_expected):
         bins = 10
         histogram_specifier = HistogramSpecifier(
             hist=True,
+            cumulative=cumulative_option,
             dimension=DataDimension.X,
             histnorm="",
             bins=bins,
             data_type=np.dtype("int"),
         )
         hist, bin_edges, bin_size = histogram_specifier.compute_histogram(pd.Series(np.arange(100)))
-        assert (hist == 10).all()
+        assert all(hist == hist_expected)
 
 
 class TestJointplotSpecifier:

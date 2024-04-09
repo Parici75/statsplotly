@@ -205,6 +205,9 @@ class HistogramSpecifier(_TraceSpecifier):
             if self.histnorm is HistogramNormType.PERCENT:
                 hist = hist * 100
 
+        if self.cumulative:
+            hist = np.cumsum(hist)
+
         return (
             pd.Series(hist, name=self.histnorm if len(self.histnorm) > 0 else "count"),
             bin_edges,
