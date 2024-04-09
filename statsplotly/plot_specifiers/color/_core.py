@@ -6,7 +6,11 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from matplotlib.colors import is_color_like
-from pandas.core.dtypes.common import is_bool_dtype, is_object_dtype
+from pandas.core.dtypes.common import (
+    is_bool_dtype,
+    is_datetime64_any_dtype,
+    is_object_dtype,
+)
 from pydantic import ValidationInfo, field_validator
 
 from statsplotly import constants
@@ -24,7 +28,7 @@ logger = logging.getLogger(__name__)
 class ColorSpecifier(BaseModel):
     barmode: BarMode | None = None
     coloraxis_reference: ColoraxisReference | None = None
-    colormap: dict[str, Any] | None = None
+    colormap: dict[str | np.datetime64, Any] | None = None
     logscale: float | None = None
     color_palette: str | list[str] | None = None
     color_limits: list[float] | None = None
@@ -73,8 +77,19 @@ class ColorSpecifier(BaseModel):
 
         return False
 
+    @staticmethod
+    def _check_is_datetime_color_data_type(color_data: pd.Series) -> bool:
+        return is_datetime64_any_dtype(color_data)
+
+    @staticmethod
+    def convert_datetime_to_timestamp(x: np.datetime64) -> float:
+        try:
+            return x.timestamp()  # type: ignore
+        except ValueError:
+            return np.nan
+
     @classmethod
-    def _register_colormap(cls, color_data: pd.Series) -> dict[str, Any] | None:
+    def _register_colormap(cls, color_data: pd.Series) -> dict[str | np.datetime64, Any] | None:
         if color_data is None:
             return None
 
@@ -101,10 +116,12 @@ class ColorSpecifier(BaseModel):
             )
             return color_data
 
-        if self._check_is_discrete_color_data_type(color_data):
+        if self._check_is_datetime_color_data_type(color_data):
+            return color_data.map(self.convert_datetime_to_timestamp)  # type: ignore
 
+        if self._check_is_discrete_color_data_type(color_data):
             logger.debug(
-                f"{color_data.name} values are not continuous type, statsplotly will map it to colormap"  # type: ignore
+                f"{color_data.name} values of type='{color_data.dtype}' are not continuous type, statsplotly will map it to colormap"  # type: ignore
             )
             if self.colormap is None:
                 raise StatsPlotSpecificationError(
@@ -126,21 +143,34 @@ class ColorSpecifier(BaseModel):
             "tickmode": "auto",
         }
 
-        if self._check_is_discrete_color_data_type(color_values):
-            if (colormap := self.colormap) is None:
-                raise StatsPlotSpecificationError(
-                    f"No colormap defined, check {ColorSpecifier.__name__} instantiation"
+        if self._check_is_discrete_color_data_type(
+            color_values
+        ) or self._check_is_datetime_color_data_type(color_values):
+            colorbar_dict.update({"tickmode": "array"})
+
+            if self._check_is_discrete_color_data_type(color_values):
+                if (colormap := self.colormap) is None:
+                    raise StatsPlotSpecificationError(
+                        f"No colormap defined, check {ColorSpecifier.__name__} instantiation"
+                    )
+                colormap_ticks = list(colormap.values())
+                _tick_locations = np.linspace(
+                    colormap_ticks[0], colormap_ticks[-1], len(colormap_ticks) + 1
                 )
-            colormap_ticks = list(colormap.values())
-            tick_locations = np.linspace(
-                colormap_ticks[0], colormap_ticks[-1], len(colormap_ticks) + 1
-            )
+                tickvals = (_tick_locations[:-1] + _tick_locations[1:]) / 2
+                ticktext = color_values.dropna().unique()
+
+            elif self._check_is_datetime_color_data_type(color_values):
+                tickvals = self.format_color_data(color_values).iloc[[0, -1]]
+                ticktext = [
+                    datum.strftime("%B %Y")
+                    for datum in color_values.dropna().sort_values().iloc[[0, -1]]
+                ]
 
             colorbar_dict.update(
                 {
-                    "tickmode": "array",
-                    "tickvals": (tick_locations[:-1] + tick_locations[1:]) / 2,
-                    "ticktext": color_values.dropna().unique(),
+                    "tickvals": tickvals,
+                    "ticktext": ticktext,
                 }
             )
 

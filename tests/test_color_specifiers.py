@@ -18,6 +18,9 @@ from statsplotly.plot_specifiers.color._utils import (
 EXAMPLE_VALID_INT_COLOR_DATA = pd.Series(np.random.randint(1, 100, 100), name="color_data")
 EXAMPLE_VALID_FLOAT_COLOR_DATA = pd.Series(np.random.rand(100), name="color_data")
 EXAMPLE_DIRECT_COLOR_ARRAY = pd.Series(["green", "red", "blue"], name="colors")
+EXAMPLE_VALID_DATETIME_COLOR_DATA = pd.Series(
+    pd.to_datetime(("2020-01-01", "2020-01-02", "2020-02-03")), name="color_data"
+)
 EXAMPLE_MAPPED_COLOR_ARRAY = pd.Series(["a", "b", "c"], name="color_ids")
 
 
@@ -83,9 +86,11 @@ class TestColorSpecifier:
         assert coloraxis.colorscale is not None
 
     def test_format_color_data(self, caplog):
+        # String
         single_string_color_data = ColorSpecifier().format_color_data(color_data="blue")
         assert single_string_color_data == "blue"
 
+        # Direct
         direct_color_data = ColorSpecifier().format_color_data(
             color_data=EXAMPLE_DIRECT_COLOR_ARRAY
         )
@@ -95,14 +100,26 @@ class TestColorSpecifier:
             in caplog.text
         )
 
+        # Integer
         integer_color_data = ColorSpecifier().format_color_data(EXAMPLE_VALID_INT_COLOR_DATA)
         assert all(integer_color_data == EXAMPLE_VALID_INT_COLOR_DATA)
 
+        # Float
         float_color_data = ColorSpecifier().format_color_data(
             color_data=EXAMPLE_VALID_FLOAT_COLOR_DATA
         )
         assert all(float_color_data == EXAMPLE_VALID_FLOAT_COLOR_DATA)
 
+        # Datetime
+        timestamp_color_data = ColorSpecifier().format_color_data(
+            color_data=EXAMPLE_VALID_DATETIME_COLOR_DATA
+        )
+        expected_output = [1.577837e09, 1.577923e09, 1.580688e09]
+        assert np.allclose(
+            timestamp_color_data, [1.577837e09, 1.577923e09, 1.580688e09]
+        ), f"Expected {expected_output} but got {result}"
+
+        # Mapping
         mapped_color_data = ColorSpecifier.build_from_color_data(
             EXAMPLE_MAPPED_COLOR_ARRAY
         ).format_color_data(color_data=EXAMPLE_MAPPED_COLOR_ARRAY)
@@ -119,7 +136,7 @@ class TestColorSpecifier:
             )
         )
         assert (
-            f"{EXAMPLE_MAPPED_COLOR_ARRAY.name} values are not continuous type, statsplotly will map it to colormap"
+            f"{EXAMPLE_MAPPED_COLOR_ARRAY.name} values of type='object' are not continuous type, statsplotly will map it to colormap"
             in caplog.text
         )
 
