@@ -177,6 +177,17 @@ class AxesSpecifier(BaseModel):
                 raise ValueError("Axis range must be numeric or `datetime`") from exc
         return value
 
+    @staticmethod
+    def pad_axis_range(axis_range: list[Any], padding_factor: float) -> list[Any]:
+        if axis_range[0] < 0:
+            axis_range[0] *= 1 + padding_factor
+        else:
+            axis_range[0] *= 1 - padding_factor
+
+        axis_range[1] *= 1 + padding_factor
+
+        return axis_range
+
     def get_axes_range(self) -> list[Any] | None:
         values_span = np.concatenate(
             [
@@ -193,14 +204,31 @@ class AxesSpecifier(BaseModel):
         ]
         try:
             if len(axes_span) > 0:
-                return [
+                min_value, max_value = (
                     np.max([np.min(values_span), np.min(axes_span)]),
                     np.min([np.max(values_span), np.max(axes_span)]),
-                ]
-            return [np.min(values_span), np.max(values_span)]
+                )
+
+            else:
+                min_value, max_value = np.min(values_span), np.max(values_span)
+
         except TypeError:
-            logger.debug("Can not calculate a common range for axes")
+            logger.debug(
+                f"Can not calculate a common range for values of type = '{values_span.dtype}'"
+            )
             return None
+
+        else:
+            try:
+                return self.pad_axis_range(
+                    [min_value, max_value], padding_factor=constants.RANGE_PADDING_FACTOR
+                )
+
+            except TypeError:
+                logger.debug(
+                    f"Can not pad a common range for values of type = '{values_span.dtype}'"
+                )
+                return [min_value, max_value]
 
     @property
     def height(self) -> int | None:
@@ -243,12 +271,12 @@ class AxesSpecifier(BaseModel):
 
     @property
     def scaleratio(self) -> float | None:
-        if self.axis_format in (AxisFormat.FIXED_RATIO, AxisFormat.EQUAL):
+        if self.axis_format in (AxisFormat.FIXED_RATIO, AxisFormat.EQUAL, AxisFormat.ID_LINE):
             return 1
         return None
 
     @property
     def scaleanchor(self) -> str | None:
-        if self.axis_format in (AxisFormat.FIXED_RATIO, AxisFormat.EQUAL):
+        if self.axis_format in (AxisFormat.FIXED_RATIO, AxisFormat.EQUAL, AxisFormat.ID_LINE):
             return "x"
         return None

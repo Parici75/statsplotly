@@ -22,7 +22,11 @@ from statsplotly.exceptions import StatsPlotSpecificationError
 from statsplotly.plot_objects.trace import BaseTrace
 from statsplotly.plot_specifiers.common import smart_legend
 from statsplotly.plot_specifiers.data import DataDimension
-from statsplotly.plot_specifiers.layout import ColoraxisReference, PlotAxis
+from statsplotly.plot_specifiers.layout import (
+    AxesSpecifier,
+    ColoraxisReference,
+    PlotAxis,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -422,20 +426,16 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
     def _compute_axis_range(
         self,
         axis_limits: list[tuple[float, float] | None],
-    ) -> tuple[float, float] | None:
+    ) -> list[float] | None:
         try:
             min_value, max_value = [
                 np.min([limit[0] for limit in axis_limits if limit is not None]),
                 np.max([limit[1] for limit in axis_limits if limit is not None]),
             ]
-            if min_value < 0:
-                min_value *= 1 + constants.RANGE_PADDING_FACTOR
-            else:
-                min_value *= 1 - constants.RANGE_PADDING_FACTOR
 
-            max_value *= 1 + constants.RANGE_PADDING_FACTOR
-
-            return [min_value, max_value]  # type: ignore
+            return AxesSpecifier.pad_axis_range(
+                axis_range=[min_value, max_value], padding_factor=constants.RANGE_PADDING_FACTOR
+            )
 
         except ValueError:
             # No computable limits

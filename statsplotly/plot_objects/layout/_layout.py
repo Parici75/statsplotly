@@ -60,7 +60,14 @@ class _XYColorAxisLayout(_XYLayout):
         cls, axes_specifier: AxesSpecifier, coloraxis: ColorAxis
     ) -> _XYColorAxisLayout:
         if coloraxis.colorbar is not None:
-            coloraxis.colorbar.update({"x": constants.COLORBAR_OFFSET})
+            coloraxis.colorbar.update(
+                {
+                    "x": constants.COLORBAR_XOFFSET,
+                    "len": coloraxis.colorbar.get("len", 1) * constants.COLORBAR_REDUCTION_FACTOR,
+                }
+            )
+            if coloraxis.colorbar.get("y") is None:
+                coloraxis.colorbar.update({"y": 0, "yanchor": "bottom"})
 
         return cls(
             **_XYLayout.build_xy_layout(axes_specifier=axes_specifier).model_dump(),

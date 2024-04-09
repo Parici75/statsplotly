@@ -56,7 +56,7 @@ class TestAxesSpecifier:
         axes_specifier = AxesSpecifier(
             axis_format="equal", traces=[trace_data], legend=self.legend_specifier
         )
-        assert axes_specifier.yaxis_range == [0, 8]
+        assert axes_specifier.yaxis_range == [0.0, 8.8]
 
     def test_datetime_range(self):
         trace_data = TraceData.build_trace_data(
