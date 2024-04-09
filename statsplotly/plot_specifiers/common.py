@@ -10,9 +10,20 @@ def register_statsplotly_template() -> None:
     pio.templates["statsplotly_template"] = {
         "layout": go.Layout(
             title_font=constants.FIGURE_TITLEFONT,
-            xaxis={"title_font": constants.AXIS_TITLEFONT, "tickfont": constants.TICKFONT},
-            yaxis={"title_font": constants.AXIS_TITLEFONT, "tickfont": constants.TICKFONT},
-        ),
+            **{
+                axis_ref: {"title_font": constants.AXIS_TITLEFONT, "tickfont": constants.TICKFONT}
+                for axis_ref in ["xaxis", "yaxis"]
+            },
+            scene={
+                **{
+                    xaxis_ref: {
+                        "title_font": constants.AXIS_TITLEFONT,
+                        "tickfont": constants.TICKFONT,
+                    }
+                    for xaxis_ref in ["xaxis", "yaxis", "zaxis"]
+                }
+            },
+        )
     }
 
 
