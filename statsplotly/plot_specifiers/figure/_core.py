@@ -63,23 +63,26 @@ class HistogramPlot(BasePlot[HistogramSpecifier]):
         plot_specifier: HistogramSpecifier,
     ) -> HistogramPlot:
         if fig is None:
-            match plot_specifier.dimension:
-                case DataDimension.X:
-                    fig = make_subplots(
-                        rows=2,
-                        cols=1,
-                        row_heights=[0.2, 0.8],
-                        vertical_spacing=0.05,
-                        shared_xaxes=True,
-                    )
-                case DataDimension.Y:
-                    fig = make_subplots(
-                        rows=1,
-                        cols=2,
-                        column_widths=[0.8, 0.2],
-                        horizontal_spacing=0.05,
-                        shared_yaxes=True,
-                    )
+            if plot_specifier.central_tendency is not None:
+                match plot_specifier.dimension:
+                    case DataDimension.X:
+                        fig = make_subplots(
+                            rows=2,
+                            cols=1,
+                            row_heights=[0.2, 0.8],
+                            vertical_spacing=0.05,
+                            shared_xaxes=True,
+                        )
+                    case DataDimension.Y:
+                        fig = make_subplots(
+                            rows=1,
+                            cols=2,
+                            column_widths=[0.8, 0.2],
+                            horizontal_spacing=0.05,
+                            shared_yaxes=True,
+                        )
+            else:
+                fig = make_subplots(rows=1, cols=1)
 
         return cls(
             fig=fig,

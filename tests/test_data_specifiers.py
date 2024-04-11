@@ -43,7 +43,7 @@ class TestDataHandler:
             slice_order=[0, 2, 1],
         )
         assert data_handler.n_slices == 3
-        assert (data_handler.get_data("y").values == np.arange(3)).all()
+        assert (data_handler.get_data("y").to_numpy() == np.arange(3)).all()
         assert data_handler.slice_levels == [str(x) for x in [0, 2, 1]]
         assert [level for level, trace in list(data_handler.iter_slices())] == ["0", "2", "1"]
 
@@ -54,7 +54,7 @@ class TestDataHandler:
             slice_order=[0, 1],
         )
         assert data_handler.n_slices == 2
-        assert (data_handler.get_data("y").values == np.arange(3)).all()
+        assert (data_handler.get_data("y").to_numpy() == np.arange(3)).all()
         assert data_handler.slice_levels == [str(x) for x in [0, 1]]
         assert [level for level, trace in list(data_handler.iter_slices())] == ["0", "1"]
         assert "[2] slices are not present in slices [0, 1] and will not be plotted" in caplog.text
@@ -236,17 +236,3 @@ class TestAggregationTraceData:
             )
             .tolist()
         )
-
-    def test_invalid_aggregation_dtypes(self):
-        data_pointer = DataPointer(x="y", y="x")
-        with pytest.raises(ValueError) as excinfo:
-            AggregationSpecifier(
-                aggregation_func="mean",
-                error_bar="sem",
-                data_pointer=data_pointer,
-                data_types=DataHandler(
-                    data=EXAMPLE_DATAFRAME,
-                    data_pointer=data_pointer,
-                ).data_types,
-            )
-        assert "mean aggregation requires numeric type y data, got: `object`" in str(excinfo.value)

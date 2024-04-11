@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 import scipy as sc
 from numpy.typing import NDArray
-from pandas.api.types import is_numeric_dtype
 from pydantic import ValidationInfo, field_validator, model_validator
 
 from statsplotly import constants
@@ -51,6 +50,7 @@ class RegressionType(str, Enum):
 
 class AggregationType(str, Enum):
     MEAN = "mean"
+    GEO_MEAN = "geo_mean"
     COUNT = "count"
     MEDIAN = "median"
     PERCENT = "percent"
@@ -67,6 +67,7 @@ class ErrorBarType(str, Enum):
     SEM = "sem"
     IQR = "iqr"
     STD = "std"
+    GEO_STD = "geo_std"
     BOOTSTRAP = "bootstrap"
 
 
@@ -120,11 +121,11 @@ class DataPointer(BaseModel):
     size: str | float | None = None
     text: str | None = None
 
-    @model_validator(mode="after")  # type: ignore
-    def check_missing_dimension(cls, model: DataPointer) -> DataPointer:
-        if model.x is None and model.y is None:
+    @model_validator(mode="after")
+    def check_missing_dimension(self) -> DataPointer:
+        if self.x is None and self.y is None:
             raise ValueError("Both x and y dimensions can not be None")
-        return model
+        return self
 
     @property
     def text_identifiers(self) -> list[str] | None:
@@ -206,7 +207,7 @@ class DataHandler(BaseModel):
                 )
             slices = []
             for slice_id in slice_order:
-                if slice_id not in slice_ids.values:
+                if slice_id not in slice_ids.to_numpy():
                     raise ValueError(
                         f"Invalid slice identifier: '{slice_id}' could not be found in"
                         f" '{slice_ids.name}'"
@@ -217,7 +218,7 @@ class DataHandler(BaseModel):
 
         logical_indices: dict[str, NDArray[Any]] = {}
         for slice_id in slices:
-            logical_indices[slice_id] = (slice_ids.astype(str) == slice_id).values
+            logical_indices[slice_id] = (slice_ids.astype(str) == slice_id).to_numpy()
 
         return logical_indices
 
@@ -279,7 +280,9 @@ class DataHandler(BaseModel):
         self,
     ) -> Generator[tuple[str, pd.DataFrame], None, None]:
         levels: list[str] = self.slice_levels or (
-            [self.data_pointer.y] if self.data_pointer.y is not None else [""]
+            [self.data_pointer.y]
+            if self.data_pointer.y is not None
+            else [self.data_pointer.x or ""]
         )
         for level in levels:
             trace_data = (
@@ -320,12 +323,12 @@ class DataProcessor(BaseModel):
                 return data_series - data_series.mean()
             case NormalizationType.MIN_MAX:
                 return pd.Series(
-                    range_normalize(data_series.values, 0, 1),
+                    range_normalize(data_series.to_numpy(), 0, 1),
                     name=data_series.name,
                 )
             case NormalizationType.ZSCORE:
                 return pd.Series(
-                    sc.stats.zscore(data_series.values, nan_policy="omit"),
+                    sc.stats.zscore(data_series.to_numpy(), nan_policy="omit"),
                     name=data_series.name,
                 )
 
@@ -376,6 +379,41 @@ class AggregationSpecifier(BaseModel):
     data_types: DataTypes
     data_pointer: DataPointer
 
+    @property
+    def aggregated_dimension(self) -> DataDimension:
+        if self.data_pointer.y is None:
+            return DataDimension.X
+        return DataDimension.Y
+
+    @model_validator(mode="after")
+    def check_aggregation_specifier(self) -> AggregationSpecifier:
+
+        if self.aggregation_func is None and self.data_pointer.x and self.data_pointer.y is None:
+            raise StatsPlotSpecificationError(
+                "Both `x` and `y` must be supplied when `aggregation_func=None`"
+            )
+
+        if (aggregation_func := self.aggregation_func) is not None:
+            # text can not be displayed along aggregation trace
+            if self.data_pointer.text is not None:
+                logger.warning("Text data can not be displayed along aggregated data")
+
+            if aggregation_func is AggregationType.COUNT:
+                if (
+                    sum(
+                        [
+                            dimension is None
+                            for dimension in [self.data_pointer.x, self.data_pointer.y]
+                        ]
+                    )
+                    > 1
+                ) or self.data_pointer.x is None:
+                    raise StatsPlotSpecificationError(
+                        f"{aggregation_func.value} aggregation only applies to `x` dimension"
+                    )
+
+        return self
+
     @field_validator("error_bar")
     def check_error_bar(
         cls, value: ErrorBarType | None, info: ValidationInfo
@@ -389,35 +427,6 @@ class AggregationSpecifier(BaseModel):
                 f"{[member.value for member in AggregationType if member is not AggregationType.COUNT]} "  # noqa: E501
                 f"aggregation function"
             )
-        return value
-
-    @field_validator("data_pointer")
-    def check_data_pointer(cls, value: DataPointer, info: ValidationInfo) -> DataPointer:
-        # x dimension
-        if value.x is None:
-            value.x = "index"
-
-        if (aggregation_func := info.data.get("aggregation_func")) is not None:
-            # text can not be displayed along aggregation trace
-            if value.text is not None:
-                logger.warning("Text data can not be displayed along aggregated data")
-            # y dimension
-            if value.y is None and aggregation_func is not AggregationType.COUNT:
-                raise StatsPlotSpecificationError(f"{aggregation_func} aggregation requires y data")
-            if value.y is not None:
-                if aggregation_func is AggregationType.COUNT:
-                    raise StatsPlotSpecificationError(
-                        f"{aggregation_func.value} aggregation does not apply to y data"
-                    )
-
-                if (dtypes := info.data.get("data_types")) is None:
-                    raise ValueError("`data_type` can not be `None`")
-                if not is_numeric_dtype(y_dtype := dtypes.y):
-                    raise StatsPlotSpecificationError(
-                        f"{aggregation_func.value} aggregation requires numeric type y data, got: "
-                        f"`{y_dtype}`"
-                    )
-
         return value
 
 
@@ -499,11 +508,9 @@ class _BaseTraceData(BaseModel):
             data[pointer.color] if pointer.color in data.columns else pointer.color
         )
         trace_data["size_data"] = (
-            data[[pointer.size]]
-            .apply(
-                lambda x: range_normalize(x, constants.MIN_MARKER_SIZE, constants.MAX_MARKER_SIZE)
+            range_normalize(
+                data[pointer.size], constants.MIN_MARKER_SIZE, constants.MAX_MARKER_SIZE
             )
-            .squeeze()
             if pointer.size in data.columns
             else pointer.size
         )
@@ -553,6 +560,14 @@ class AggregationTraceData(TraceData):
                 name=data_agg.name,
             )
 
+        if error_bar is ErrorBarType.GEO_STD:
+            data_agg = data_group.apply(agg_function)
+            error_data = data_group.apply(lambda series: np.exp(np.std(np.log(series))))
+            return pd.Series(
+                zip(data_agg / error_data, data_agg * error_data, strict=True),
+                name=data_agg.name,
+            )
+
         if error_bar is ErrorBarType.IQR:
             return data_group.apply(lambda series: np.quantile(series, constants.IQR))
 
@@ -577,11 +592,9 @@ class AggregationTraceData(TraceData):
         aggregation_specifier: AggregationSpecifier,
     ) -> dict[str, Any]:
         trace_data: dict[str, Any] = {}
-        if (x := aggregation_specifier.data_pointer.x) is None:
-            raise ValueError("`aggregation_specifier.data_pointer.x` can not be `None`")
-        y = aggregation_specifier.data_pointer.y
+        x, y = aggregation_specifier.data_pointer.x, aggregation_specifier.data_pointer.y
 
-        trace_data["x_values"] = pd.Series(np.sort(data[x].unique()), name=x)
+        trace_data["x_values"] = pd.Series(data[x].unique(), name=x)
         if (
             aggregation_specifier.aggregation_func is AggregationType.COUNT
             or aggregation_specifier.aggregation_func is AggregationType.PROBABILITY
@@ -598,7 +611,12 @@ class AggregationTraceData(TraceData):
                     _y_values.append(y_value)
             trace_data["y_values"] = pd.Series(
                 _y_values,
-                name="_".join((x, aggregation_specifier.aggregation_func.value)),
+                name="_".join(
+                    (
+                        aggregation_specifier.aggregated_dimension,
+                        aggregation_specifier.aggregation_func.value,
+                    )
+                ),
             )
 
         else:
@@ -606,16 +624,18 @@ class AggregationTraceData(TraceData):
             match aggregation_specifier.aggregation_func:
                 case AggregationType.MEAN:
                     agg_func = np.mean
+                case AggregationType.GEO_MEAN:
+                    agg_func = sc.stats.mstats.gmean
                 case AggregationType.MEDIAN:
                     agg_func = np.median
                 case AggregationType.SUM:
                     agg_func = np.sum
 
-            trace_data["y_values"] = data.groupby(x)[y].apply(agg_func)
+            trace_data["y_values"] = data.groupby(x, sort=False)[y].apply(agg_func)
 
             if aggregation_specifier.error_bar is not None:
                 trace_data["error_y"] = cls._compute_error_bar(
-                    data.groupby(x)[y],
+                    data.groupby(x, sort=False)[y],
                     agg_func,
                     aggregation_specifier.error_bar,
                 )

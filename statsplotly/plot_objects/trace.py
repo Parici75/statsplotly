@@ -660,7 +660,11 @@ class HistogramTrace(BaseTrace, _BasePlotlyTrace):
         return cls(
             x=histogram_data if histogram_specifier.dimension is DataDimension.X else None,
             y=histogram_data if histogram_specifier.dimension is DataDimension.Y else None,
-            name=f"{trace_name} distribution",
+            name=(
+                f"{trace_name} cumulative distribution"
+                if histogram_specifier.cumulative
+                else f"{trace_name} distribution"
+            ),
             opacity=color_specifier.opacity,
             legendgroup=trace_name,
             marker={

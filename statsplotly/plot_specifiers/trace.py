@@ -10,8 +10,7 @@ import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
 from pandas.api.types import is_numeric_dtype
-from pydantic import field_validator
-from pydantic_core.core_schema import ValidationInfo
+from pydantic import ValidationInfo, field_validator, model_validator
 
 from statsplotly import constants
 from statsplotly._base import BaseModel
@@ -20,6 +19,7 @@ from statsplotly.plot_specifiers.data import (
     CentralTendencyType,
     DataDimension,
     DataHandler,
+    DataPointer,
     HistogramNormType,
     RegressionType,
     TraceData,
@@ -74,12 +74,24 @@ class _TraceSpecifier(BaseModel):
         return cast(F, wrapper)
 
 
-class ScatterSpecifier(_TraceSpecifier):
+class _XYTraceValidator(BaseModel):
+    data_pointer: DataPointer
+
+    @model_validator(mode="after")
+    def validate_model(self) -> _XYTraceValidator:
+        if not (self.data_pointer.x is not None and self.data_pointer.y is not None):
+            raise StatsPlotSpecificationError(
+                f"Both `x` and `y`dimensions must be supplied for {self.__class__.__name__}"
+            )
+        return self
+
+
+class ScatterSpecifier(_TraceSpecifier, _XYTraceValidator):
     mode: TraceMode | None = None
     regression_type: RegressionType | None = None
 
 
-class CategoricalPlotSpecifier(_TraceSpecifier):
+class CategoricalPlotSpecifier(_TraceSpecifier, _XYTraceValidator):
     plot_type: CategoricalPlotType
     orientation: CategoricalPlotOrientation
 

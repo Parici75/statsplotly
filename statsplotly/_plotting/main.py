@@ -115,7 +115,7 @@ def plot(
     error_y: str | None = None,
     error_z: str | None = None,
     fit: str | None = None,
-    size: float | None = None,
+    size: float | str | None = None,
     x_label: str | None = None,
     y_label: str | None = None,
     z_label: str | None = None,
@@ -215,7 +215,9 @@ def plot(
         slice_order=slice_order,
     )
 
-    scatter_specifier = ScatterSpecifier(mode=mode, regression_type=fit)
+    scatter_specifier = ScatterSpecifier(
+        mode=mode, regression_type=fit, data_pointer=data_handler.data_pointer
+    )
 
     if opacity is None and scatter_specifier.regression_type is not None:
         logger.debug(
@@ -565,7 +567,7 @@ def catplot(
     )
 
     categorical_plot_specifier = CategoricalPlotSpecifier(
-        plot_type=plot_type, orientation=orientation
+        plot_type=plot_type, orientation=orientation, data_pointer=data_handler.data_pointer
     )
 
     if jitter > 0 and categorical_plot_specifier.plot_type is not CategoricalPlotType.STRIP:
@@ -709,7 +711,7 @@ def distplot(
         kde: If True, plot a line of a Kernel Density Estimation of the distribution.
         step: If True, plot a step histogram instead of a standard histogram bars.
         equal_bins: If True, uses the same bins for all `slices` in the data.
-        bins: A string or an integer specifying the `bins` parameter for :func:`numpy.histogram`.
+        bins: A string, integer, or sequence specifying the `bins` parameter for :func:`numpy.histogram`.
         cumulative: If True, draws a cumulative histogram.
         histnorm: One of :obj:`~statsplotly.plot_specifiers.data.HistogramNormType` value.
         central_tendency: One of :obj:`~statsplotly.plot_specifiers.data.CentralTendencyType` value.
@@ -728,11 +730,6 @@ def distplot(
     Returns:
         A :obj:`plotly.graph_obj.Figure`.
     """
-
-    # if central_tendency is not None and fig is not None:
-    #     raise StatsPlotSpecificationError(
-    #         "Central tendencies of distribution can not be automatically drawn on a subplot grid. Set `central_tendency` to None."
-    #     )
 
     data_handler = DataHandler.build_handler(
         data=data,
@@ -951,7 +948,7 @@ def jointplot(
     error_x: str | None = None,
     error_y: str | None = None,
     fit: str | None = None,
-    size: float | None = None,
+    size: float | str | None = None,
     x_label: str | None = None,
     y_label: str | None = None,
     title: str | None = None,
@@ -995,8 +992,8 @@ def jointplot(
         step: If True, plot a step histogram instead of a standard histogram bars.
         equal_bins_x: If True, uses the same bins for `x` dimension of all `slices` in the data.
         equal_bins_y: If True, uses the same bins for `y` dimension of all `slices` in the data.
-        bins_x: A string or an integer specifying the `bins` parameter for `x` dimension for :func:`numpy.histogram`.
-        bins_y: A string or an integer specifying the `bins` parameter for `y` dimension  for :func:`numpy.histogram`.
+        bins_x: A string, integer, or sequence specifying the `bins` parameter for `x` dimension for :func:`numpy.histogram`.
+        bins_y: A string, integer, or sequence specifying the `bins` parameter for `y` dimension  for :func:`numpy.histogram`.
         histnorm: One of :obj:`~statsplotly.plot_specifiers.data.HistogramNormType` value.
         central_tendency: One of :obj:`~statsplotly.plot_specifiers.data.CentralTendencyType` value.
         barmode: One of :obj:`~statsplotly.plot_specifiers.layout.BarMode` value.
@@ -1049,7 +1046,9 @@ def jointplot(
     jointplot_specifier = JointplotSpecifier(
         plot_type=plot_type,
         marginal_plot=marginal_plot,
-        scatter_specifier=ScatterSpecifier(mode=mode, regression_type=fit),
+        scatter_specifier=ScatterSpecifier(
+            mode=mode, regression_type=fit, data_pointer=data_handler.data_pointer
+        ),
     )
     if data_handler.data_pointer.color is not None:
         if jointplot_specifier.marginal_plot is not None:
