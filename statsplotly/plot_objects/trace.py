@@ -200,7 +200,7 @@ class HeatmapTrace(_DensityTrace, _BasePlotlyTrace):
         return cls(
             x=trace_data.x_values,
             y=trace_data.y_values,
-            z=trace_data.z_values,
+            z=color_specifier.format_color_data(trace_data.z_values),
             zmin=color_specifier.zmin,
             zmax=color_specifier.zmax,
             coloraxis=color_specifier.coloraxis_reference,
@@ -566,9 +566,7 @@ class StepHistogramTrace(BaseTrace, _BasePlotlyTrace):
             y=padded_hist if histogram_specifier.dimension is DataDimension.X else bin_centers,
             name=f"{trace_name} {histogram_data.name}",
             line={
-                "color": (
-                    trace_data.color_data if trace_data.color_data is not None else trace_color
-                ),
+                "color": trace_color,
                 "shape": "hvh" if histogram_specifier.dimension is DataDimension.X else "vhv",
             },
             opacity=color_specifier.opacity,
@@ -627,9 +625,7 @@ class RugTrace(BaseTrace, _BasePlotlyTrace):
             name=f"{trace_name} {rug_data.name} raw observations",
             hoverinfo="x+text" if histogram_specifier.dimension is DataDimension.X else "y+text",
             line={
-                "color": (
-                    trace_data.color_data if trace_data.color_data is not None else trace_color
-                ),
+                "color": trace_color,
                 "width": 1,
             },
             legendgroup=trace_name,
@@ -667,12 +663,43 @@ class HistogramTrace(BaseTrace, _BasePlotlyTrace):
             ),
             opacity=color_specifier.opacity,
             legendgroup=trace_name,
-            marker={
-                "color": trace_data.color_data if trace_data.color_data is not None else trace_color
-            },
+            marker={"color": trace_color},
             cumulative={"enabled": histogram_specifier.cumulative},
             xbins={"start": bin_edges[0], "end": bin_edges[-1], "size": bin_size},
             histnorm=histogram_specifier.histnorm,
+        )
+
+
+class EcdfTrace(BaseTrace, _BasePlotlyTrace):
+    _PLOTLY_GRAPH_FCT = go.Scatter
+
+    line: dict[str, Any]
+    hoverinfo: str = "all"
+    mode: TraceMode = TraceMode.LINES
+
+    @classmethod
+    def build_trace(
+        cls,
+        trace_data: TraceData,
+        trace_name: str,
+        trace_color: str | None,
+        color_specifier: ColorSpecifier,
+        histogram_specifier: HistogramSpecifier,
+    ) -> EcdfTrace:
+        rank_counts, ranks = histogram_specifier.compute_ecdf(
+            getattr(trace_data, TRACE_DIMENSION_MAP[histogram_specifier.dimension])
+        )
+
+        return cls(
+            x=ranks if histogram_specifier.dimension is DataDimension.X else rank_counts,
+            y=rank_counts if histogram_specifier.dimension is DataDimension.X else ranks,
+            name=f"{trace_name} ecdf",
+            opacity=color_specifier.opacity,
+            legendgroup=trace_name,
+            line={
+                "color": trace_color,
+                "shape": "hv" if histogram_specifier.dimension is DataDimension.X else "vh",
+            },
         )
 
 
@@ -755,9 +782,10 @@ class KdeTrace(BaseTrace, _BasePlotlyTrace):
             constants.N_GRID_POINTS,
         )
         kde = kde_1d(histogram_data, grid)
-        color = trace_data.color_data if trace_data.color_data is not None else trace_color
         line_color = (
-            set_rgb_alpha(color, color_specifier.opacity or 1) if color is not None else None
+            set_rgb_alpha(trace_color, color_specifier.opacity or 1)
+            if trace_color is not None
+            else None
         )
         return cls(
             x=grid if histogram_specifier.dimension is DataDimension.X else kde,
@@ -790,8 +818,9 @@ class HistogramLineTrace(BaseTrace, _BasePlotlyTrace):
             vline_name, vline_data = vline_coordinates
             x_data = np.repeat(vline_data, 2)
             if trace_data.x_values is not None:
-                hist, _, _ = histogram_specifier.compute_histogram(trace_data.x_values)
-                y_data = np.array([0, max(hist)])
+                y_data = np.array(
+                    [0, histogram_specifier.get_distribution_max_value(trace_data.x_values)]
+                )
             else:
                 if trace_data.y_values is None:
                     raise ValueError("`trace_data.y_values` can not be `None`")
@@ -804,7 +833,9 @@ class HistogramLineTrace(BaseTrace, _BasePlotlyTrace):
             y_data = np.repeat(hline_data, 2)
             if trace_data.y_values is not None:
                 hist, _, _ = histogram_specifier.compute_histogram(trace_data.y_values)
-                x_data = np.array([0, max(hist)])
+                x_data = np.array(
+                    [0, histogram_specifier.get_distribution_max_value(trace_data.y_values)]
+                )
             else:
                 if trace_data.x_values is None:
                     raise ValueError("`trace_data.x_values` can not be `None`")

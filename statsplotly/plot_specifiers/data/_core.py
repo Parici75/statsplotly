@@ -190,7 +190,7 @@ class DataHandler(BaseModel):
         return DataTypes.model_validate(data_types)
 
     @property
-    def slicer_groupby_data(self) -> pd.DataFrame | pd.Grouper:
+    def _slicer_groupby_data(self) -> pd.DataFrame | pd.Grouper:
         if self.data_pointer.slicer is not None:
             return self.data.groupby(self.data_pointer.slicer, sort=False)
         return self.data
@@ -260,14 +260,16 @@ class DataHandler(BaseModel):
         def std(x: pd.Series) -> list[float]:
             return [x.mean() - x.std(), x.mean() + x.std()]
 
-        return self.slicer_groupby_data[getattr(self.data_pointer, dimension)].agg([np.mean, std])
+        return self._slicer_groupby_data[getattr(self.data_pointer, dimension)].agg([np.mean, std])
 
     @to_dataframe
     def get_median(self, dimension: str) -> pd.DataFrame:
         def iqr(x: pd.Series) -> list[float]:
             return np.quantile(x, constants.IQR, axis=0).tolist()
 
-        return self.slicer_groupby_data[getattr(self.data_pointer, dimension)].agg([np.median, iqr])
+        return self._slicer_groupby_data[getattr(self.data_pointer, dimension)].agg(
+            [np.median, iqr]
+        )
 
     def get_data(self, dimension: str) -> pd.Series | None:
         if (dimension_pointer := getattr(self.data_pointer, dimension)) is None:

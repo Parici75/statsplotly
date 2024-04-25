@@ -6,6 +6,7 @@ from ._core import (
     AxisType,
     BarMode,
     ColoraxisReference,
+    HistogramBarMode,
     LegendSpecifier,
     PlotAxis,
 )
@@ -16,6 +17,7 @@ __all__ = [
     "AxisFormat",
     "AxisType",
     "BarMode",
+    "HistogramBarMode",
     "ColoraxisReference",
     "LegendSpecifier",
     "PlotAxis",

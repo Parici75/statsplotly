@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from pydantic import field_validator
 from pydantic.v1.utils import deep_update
 
 from statsplotly import constants
@@ -10,7 +11,12 @@ from statsplotly._base import BaseModel
 from statsplotly.constants import DEFAULT_HOVERMODE
 from statsplotly.plot_objects.layout._axis import BaseAxis, ColorAxis, XYAxis
 from statsplotly.plot_specifiers.data import DataDimension
-from statsplotly.plot_specifiers.layout import AxesSpecifier, BarMode, PlotAxis
+from statsplotly.plot_specifiers.layout import (
+    AxesSpecifier,
+    BarMode,
+    HistogramBarMode,
+    PlotAxis,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -234,7 +240,14 @@ class BarLayout(_XYColorAxisLayout):
 
 
 class HistogramLayout(_XYLayout):
-    barmode: BarMode | None = None
+    barmode: HistogramBarMode
+
+    @field_validator("barmode", mode="before")
+    def validate_histogram_barmode(cls, value: str | None) -> HistogramBarMode:
+        if value is None:
+            return HistogramBarMode.OVERLAY
+
+        return HistogramBarMode(value)
 
     @classmethod
     def build_layout(cls, axes_specifier: AxesSpecifier, barmode: str | None) -> HistogramLayout:

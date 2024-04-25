@@ -32,6 +32,11 @@ class ColoraxisReference(str, Enum):
     MAIN_COLORAXIS = "coloraxis"
 
 
+class HistogramBarMode(str, Enum):
+    STACK = "stack"
+    OVERLAY = "overlay"
+
+
 class BarMode(str, Enum):
     STACK = "stack"
     GROUP = "group"

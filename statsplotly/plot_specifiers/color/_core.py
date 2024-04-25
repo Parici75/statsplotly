@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 class ColorSpecifier(BaseModel):
     barmode: BarMode | None = None
     coloraxis_reference: ColoraxisReference | None = None
-    colormap: dict[str | np.datetime64, Any] | None = None
+    colormap: dict[str | np.datetime64 | bool, Any] | None = None
     logscale: float | None = None
     color_palette: str | list[str] | None = None
     color_limits: list[float] | None = None
@@ -89,7 +89,9 @@ class ColorSpecifier(BaseModel):
             return np.nan
 
     @classmethod
-    def _register_colormap(cls, color_data: pd.Series) -> dict[str | np.datetime64, Any] | None:
+    def _register_colormap(
+        cls, color_data: pd.Series
+    ) -> dict[str | np.datetime64 | bool, Any] | None:
         if color_data is None:
             return None
 

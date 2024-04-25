@@ -4,6 +4,7 @@ import plotly
 
 from statsplotly.plot_objects.trace import (
     ContourTrace,
+    EcdfTrace,
     HeatmapTrace,
     Histogram2dTrace,
     HistogramTrace,
@@ -67,7 +68,7 @@ def plot_jointplot_main_traces(
             jointplot_specifier=jointplot_specifier,
         )
         # Make colorbars horizontal
-        # TODO: Get read of this one we use _SubplotGridCommonColoraxisFormatter class for managing coloraxis
+        # TODO: Get read of this one when we use _SubplotGridCommonColoraxisFormatter class for managing coloraxis
         if heatmap_trace.colorbar is not None:
             heatmap_trace.colorbar = set_horizontal_colorbar(heatmap_trace.colorbar)
 
@@ -121,7 +122,7 @@ def plot_scatter_traces(
     return traces
 
 
-def plot_distribution_traces(
+def plot_distplot_traces(
     trace_data: TraceData,
     trace_name: str,
     trace_color: str,
@@ -135,27 +136,39 @@ def plot_distribution_traces(
         raise ValueError("`histogram_specifier.dimension` can not be `None`")
 
     if histogram_specifier.hist:
+        hist_trace: StepHistogramTrace | HistogramTrace
         if histogram_specifier.step:
-            traces["_".join((trace_name, histogram_specifier.dimension))] = (
-                StepHistogramTrace.build_trace(
-                    trace_data=trace_data,
-                    trace_name=trace_name,
-                    trace_color=trace_color,
-                    color_specifier=color_specifier,
-                    histogram_specifier=histogram_specifier,
-                ).to_plotly_trace()
+            hist_trace = StepHistogramTrace.build_trace(
+                trace_data=trace_data,
+                trace_name=trace_name,
+                trace_color=trace_color,
+                color_specifier=color_specifier,
+                histogram_specifier=histogram_specifier,
             )
 
         else:
-            traces["_".join((trace_name, histogram_specifier.dimension))] = (
-                HistogramTrace.build_trace(
-                    trace_data=trace_data,
-                    trace_name=trace_name,
-                    trace_color=trace_color,
-                    color_specifier=color_specifier,
-                    histogram_specifier=histogram_specifier,
-                ).to_plotly_trace()
+            hist_trace = HistogramTrace.build_trace(
+                trace_data=trace_data,
+                trace_name=trace_name,
+                trace_color=trace_color,
+                color_specifier=color_specifier,
+                histogram_specifier=histogram_specifier,
             )
+        traces["_".join((hist_trace.name, histogram_specifier.dimension))] = (
+            hist_trace.to_plotly_trace()
+        )
+
+    if histogram_specifier.ecdf:
+        ecdf_trace = EcdfTrace.build_trace(
+            trace_data=trace_data,
+            trace_name=trace_name,
+            trace_color=trace_color,
+            color_specifier=color_specifier,
+            histogram_specifier=histogram_specifier,
+        )
+        traces["_".join((ecdf_trace.name, histogram_specifier.dimension))] = (
+            ecdf_trace.to_plotly_trace()
+        )
 
     if histogram_specifier.rug:
         rug_trace = RugTrace.build_trace(

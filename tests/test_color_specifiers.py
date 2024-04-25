@@ -12,7 +12,7 @@ from statsplotly.plot_specifiers.color._utils import (
     ColorSystem,
     cmap_to_array,
     compute_colorscale,
-    to_rgb,
+    to_rgb_string,
 )
 
 EXAMPLE_VALID_INT_COLOR_DATA = pd.Series(np.random.randint(1, 100, 100), name="color_data")
@@ -54,12 +54,13 @@ class TestColorSpecifier:
         coloraxis = ColorSpecifier(color_palette="winter").build_coloraxis(
             color_data=EXAMPLE_VALID_INT_COLOR_DATA
         )
-        assert [color_tuple[1] for color_tuple in coloraxis.colorscale] == to_rgb(
-            cmap_to_array(
+        assert [color_tuple[1] for color_tuple in coloraxis.colorscale] == [
+            to_rgb_string(color)
+            for color in cmap_to_array(
                 constants.N_COLORSCALE_COLORS,
                 "winter",
             )
-        )
+        ]
         assert "Plotly error processing winter colormap" in caplog.text
 
     def test_listed_colormap(self):
@@ -74,15 +75,16 @@ class TestColorSpecifier:
 
     def test_seaborn_continuous_colorscale(self):
         coloraxis = ColorSpecifier().build_coloraxis(color_data=EXAMPLE_VALID_INT_COLOR_DATA)
-        assert [color_tuple[1] for color_tuple in coloraxis.colorscale] == to_rgb(
-            cmap_to_array(
+        assert [color_tuple[1] for color_tuple in coloraxis.colorscale] == [
+            to_rgb_string(color)
+            for color in cmap_to_array(
                 constants.N_COLORSCALE_COLORS,
                 sns.color_palette(
                     palette=constants.SEABORN_DEFAULT_CONTINUOUS_COLOR_PALETTE,
                     as_cmap=True,
                 ),
             )
-        )
+        ]
         assert coloraxis.colorscale is not None
 
     def test_format_color_data(self, caplog):

@@ -107,7 +107,7 @@ def kde_2d(
     return z.reshape(x_grid_mesh.shape)
 
 
-def sem(array: NDArray[Any], confidence_level: float = 0.95) -> float:
+def sem(data: NDArray[Any], confidence_level: float = 0.95) -> float:
     """Returns the margin of error at the given confidence level."""
     confidence_level = confidence_level / 2  # Converts to 2-tail
 
@@ -120,7 +120,7 @@ def sem(array: NDArray[Any], confidence_level: float = 0.95) -> float:
         my_norm_inv(confidence_level)
     )  # This is the same as doing: abs(sc.stats.norm.ppf(ci, 0, 1))
 
-    return np.std(array) / np.sqrt(len(array)) * zscore_ci
+    return np.std(data) / np.sqrt(len(data)) * zscore_ci
 
 
 def get_iqr(x: NDArray[Any]) -> NDArray[Any]:
@@ -129,11 +129,11 @@ def get_iqr(x: NDArray[Any]) -> NDArray[Any]:
     return iqr
 
 
-def range_normalize(arr: NDArray[Any], a: float, b: float) -> NDArray[Any]:
+def range_normalize(data: NDArray[Any], a: float, b: float) -> NDArray[Any]:
     """Normalizes an array between a and b (min and max) values."""
-    if min(arr) == max(arr):
-        return np.clip(arr, a, b)
-    return (b - a) * (arr - min(arr)) / (max(arr) - min(arr)) + a
+    if min(data) == max(data):
+        return np.clip(data, a, b)
+    return (b - a) * (data - min(data)) / (max(data) - min(data)) + a
 
 
 def reject_outliers(data: NDArray[Any], m: float = 2.0) -> NDArray[Any]:

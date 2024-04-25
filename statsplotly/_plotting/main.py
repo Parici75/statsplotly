@@ -61,7 +61,6 @@ from statsplotly.plot_specifiers.layout import (
 
 # Trace objects
 from statsplotly.plot_specifiers.trace import (
-    CategoricalPlotOrientation,
     CategoricalPlotSpecifier,
     CategoricalPlotType,
     HistogramSpecifier,
@@ -74,7 +73,7 @@ from statsplotly.plot_specifiers.trace import (
 
 # Helpers
 from .helpers import (
-    plot_distribution_traces,
+    plot_distplot_traces,
     plot_jointplot_main_traces,
     plot_scatter_traces,
 )
@@ -146,7 +145,7 @@ def plot(
                 - To map color data of the `color` parameter onto the corresponding colormap.
                 - To assign discrete colors to `slices` of data.
 
-        shared_coloraxis: If True, colorscale is shared across slices of data.
+        shared_coloraxis: If True, colorscale limits are shared across slices of data.
         color_limits: A tuple specifying the (min, max) values of the colormap.
         logscale: A float specifying the log base to use for colorscaling.
         colorbar: If True, draws a colorbar.
@@ -378,7 +377,7 @@ def barplot(
                 - To map color data of the `color` parameter onto the corresponding colormap.
                 - To assign discrete colors to `slices` of data.
 
-        shared_coloraxis: If True, colorscale is shared across slices of data.
+        shared_coloraxis: If True, colorscale limits are shared across slices of data.
         color_limits: A tuple specifying the (min, max) values of the colormap.
         logscale: A float specifying the log base to use for colorscaling.
         colorbar: If True, draws a colorbar.
@@ -490,17 +489,18 @@ def catplot(
     data: pd.DataFrame,
     x: str | None = None,
     y: str | None = None,
-    orientation: str = CategoricalPlotOrientation.VERTICAL,
+    orientation: str | None = None,
     slicer: str | None = None,
     slice_order: list[str] | None = None,
     color: str | None = None,
     color_palette: list[str] | str | None = None,
+    shared_coloraxis: bool = False,
     text: str | None = None,
     marker: str | None = None,
     axis: str | None = None,
     opacity: str | float | None = None,
-    plot_type: str = CategoricalPlotType.STRIP,
-    jitter: float = constants.DEFAULT_STRIPPLOT_JITTER,
+    plot_type: str | None = None,
+    jitter: float | None = None,
     normalizer: str | None = None,
     size: float = constants.DEFAULT_MARKER_SIZE,
     x_label: str | None = None,
@@ -530,6 +530,7 @@ def catplot(
                 - To map color data of the `color` parameter onto the corresponding colormap.
                 - To assign discrete colors to `slices` of data.
 
+        shared_coloraxis: If True, colorscale limits are shared across slices of data.
         text: A string or the name of the column in `data` with values to appear in the hover tooltip. Column names can be concatenated with '+' to display values from multiple columns.
         marker: A valid marker symbol or the name of the column in `data` with values to assign marker symbols.
         axis: One of :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
@@ -570,16 +571,11 @@ def catplot(
         plot_type=plot_type, orientation=orientation, data_pointer=data_handler.data_pointer
     )
 
-    if jitter > 0 and categorical_plot_specifier.plot_type is not CategoricalPlotType.STRIP:
+    if jitter is not None and categorical_plot_specifier.plot_type is not CategoricalPlotType.STRIP:
         logger.warning(
             f"Jitter parameters have no effect for {categorical_plot_specifier.plot_type.value}"
         )
 
-    color_specifier = ColorSpecifier(
-        coloraxis_reference=ColoraxisReference.MAIN_COLORAXIS,
-        color_palette=color_palette,
-        opacity=opacity,
-    )
     color_specifier = ColorSpecifier.build_from_color_data(
         color_data=data_handler.get_data("color"),
         coloraxis_reference=ColoraxisReference.MAIN_COLORAXIS,
@@ -590,7 +586,10 @@ def catplot(
     data_processor = DataProcessor(
         data_values_map=categorical_plot_specifier.get_category_strip_map(data_handler),
         jitter_settings=(
-            {categorical_plot_specifier.categorical_dimension: jitter}
+            {
+                categorical_plot_specifier.categorical_dimension: jitter
+                or constants.DEFAULT_STRIPPLOT_JITTER
+            }
             if categorical_plot_specifier.plot_type is CategoricalPlotType.STRIP
             else None
         ),
@@ -646,7 +645,9 @@ def catplot(
         y_range=y_range,
     )
 
-    coloraxis = color_specifier.build_coloraxis(color_data=data_handler.get_data("color"))
+    coloraxis = color_specifier.build_coloraxis(
+        color_data=data_handler.get_data("color"), shared=shared_coloraxis
+    )
 
     layout = CategoricalLayout.build_layout(
         axes_specifier=axes_specifier,
@@ -672,10 +673,11 @@ def distplot(
     opacity: float | None = None,
     hist: bool = True,
     rug: bool | None = None,
+    ecdf: bool | None = None,
     kde: bool | None = None,
     step: bool | None = None,
     equal_bins: bool | None = None,
-    bins: Sequence[float] | int | str = constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD,
+    bins: Sequence[float] | int | str | None = None,
     cumulative: bool | None = None,
     histnorm: str | None = None,
     central_tendency: str | None = None,
@@ -708,6 +710,7 @@ def distplot(
         opacity: A numeric value in the (0, 1) interval to specify bar and line opacity.
         hist: If True, plot histogram bars.
         rug: If True, plot rug bars of the underlying data.
+        ecdf: If True, plot the Empirical Cumulative Density Function.
         kde: If True, plot a line of a Kernel Density Estimation of the distribution.
         step: If True, plot a step histogram instead of a standard histogram bars.
         equal_bins: If True, uses the same bins for all `slices` in the data.
@@ -717,7 +720,7 @@ def distplot(
         central_tendency: One of :obj:`~statsplotly.plot_specifiers.data.CentralTendencyType` value.
         vlines: A dictionary of {slice: (line_name, vertical_coordinates) to draw vertical lines.
         hlines: A dictionary of {slice: (line_name, horizontal_coordinates) to draw horizontal lines.
-        barmode: One of :obj:`~statsplotly.plot_specifiers.layout.BarMode` value.
+        barmode: One of :obj:`~statsplotly.plot_specifiers.layout.HistogramBarMode` value.
         x_label: A string to label the x_axis in place of the corresponding column name in `data`.
         y_label: A string to label the y_axis in place of the corresponding column name in `data`.
         title: A string for the title of the plot.
@@ -744,6 +747,7 @@ def distplot(
     histogram_specifier = HistogramSpecifier(
         hist=hist,
         rug=rug,
+        ecdf=ecdf,
         kde=kde,
         step=step,
         bins=bins,
@@ -773,7 +777,7 @@ def distplot(
         trace_data = TraceData.build_trace_data(data=slice_data, pointer=data_handler.data_pointer)
 
         traces.update(
-            plot_distribution_traces(
+            plot_distplot_traces(
                 trace_data=trace_data,
                 trace_name=slice_name,
                 trace_color=trace_color,
@@ -920,7 +924,7 @@ def jointplot(
     shared_coloraxis: bool = False,
     color_limits: Sequence[float] | None = None,
     logscale: float | None = None,
-    colorbar: bool = False,
+    colorbar: bool = True,
     text: str | None = None,
     marker: str | None = None,
     mode: str | None = TraceMode.MARKERS,
@@ -929,6 +933,7 @@ def jointplot(
     kde_color_palette: list[str] | str = constants.DEFAULT_KDE_COLOR_PALETTE,
     hist: bool = True,
     rug: bool | None = None,
+    ecdf: bool | None = None,
     kde: bool | None = None,
     step: bool | None = None,
     equal_bins_x: bool | None = None,
@@ -975,7 +980,7 @@ def jointplot(
                 - To map color data of the `color` parameter onto the corresponding colormap.
                 - To assign discrete colors to `slices` of data.
 
-        shared_coloraxis: If True, colorscale is shared across slices of data.
+        shared_coloraxis: If True, colorscale limits are shared across slices of data.
         color_limits: A tuple specifying the (min, max) values of the colormap.
         logscale: A float specifying the log base to use for colorscaling.
         colorbar: If True, draws a colorbar.
@@ -988,6 +993,7 @@ def jointplot(
         kde_color_palette: The color_palette for the Kernel Density Estimation map.
         hist: If True, plot histogram bars.
         rug: If True, plot rug bars of the underlying data.
+        ecdf: If True, plot the Empirical Cumulative Density Function.
         kde: If True, plot a line of a Kernel Density Estimation of the distribution.
         step: If True, plot a step histogram instead of a standard histogram bars.
         equal_bins_x: If True, uses the same bins for `x` dimension of all `slices` in the data.
@@ -1051,10 +1057,6 @@ def jointplot(
         ),
     )
     if data_handler.data_pointer.color is not None:
-        if jointplot_specifier.marginal_plot is not None:
-            raise StatsPlotSpecificationError(
-                f"Color parameters requires `marginal_plot=None`, received `marginal_plot={jointplot_specifier.marginal_plot.value}`"
-            )
         if jointplot_specifier.plot_type in (JointplotType.HISTOGRAM, JointplotType.KDE):
             logger.warning(
                 f"Color mapping have no effect with `plot_type={jointplot_specifier.plot_type.value}`"
@@ -1069,6 +1071,7 @@ def jointplot(
             histogram_specifier = HistogramSpecifier(
                 hist=hist,
                 rug=rug,
+                ecdf=ecdf,
                 kde=kde,
                 step=step,
                 bins=bins,
@@ -1211,7 +1214,7 @@ def jointplot(
             ):
                 jointplot_specifier.histogram_specifier[dimension].dimension = dimension
                 slices_marginal_traces.update(
-                    plot_distribution_traces(
+                    plot_distplot_traces(
                         trace_data=trace_data,
                         trace_name=slice_name,
                         trace_color=trace_color,
@@ -1267,7 +1270,7 @@ def jointplot(
 
     def add_marginal_distribution_to_layout(
         dimension: DataDimension, figure_plot: JointplotPlot
-    ) -> go.Figure:
+    ) -> None:
         marginal_row = figure_plot.main_row if dimension is DataDimension.Y else figure_plot.row
         marginal_col = figure_plot.col + 1 if dimension is DataDimension.Y else figure_plot.col
 
@@ -1322,18 +1325,13 @@ def jointplot(
             row=marginal_row,
             col=marginal_col,
         )
-        return fig
 
     # Marginals
     if jointplot_specifier.plot_x_distribution:
-        fig = add_marginal_distribution_to_layout(
-            dimension=DataDimension.X, figure_plot=figure_plot
-        )
+        add_marginal_distribution_to_layout(dimension=DataDimension.X, figure_plot=figure_plot)
 
     if jointplot_specifier.plot_y_distribution:
-        fig = add_marginal_distribution_to_layout(
-            dimension=DataDimension.Y, figure_plot=figure_plot
-        )
+        add_marginal_distribution_to_layout(dimension=DataDimension.Y, figure_plot=figure_plot)
 
     # Finalize figure
     figure_plot.tidy_plot()
@@ -1405,7 +1403,7 @@ def heatmap(
                 - To map color data of the `color` parameter onto the corresponding colormap.
                 - To assign discrete colors to `slices` of data.
 
-        shared_coloraxis: If True, colorscale is shared across slices of data.
+        shared_coloraxis: If True, colorscale limits are shared across slices of data.
         color_limits: A tuple specifying the (min, max) values of the colormap.
         logscale: A float specifying the log base to use for colorscaling.
         colorbar: If True, draws a colorbar.
@@ -1433,7 +1431,8 @@ def heatmap(
         slice_order=slice_order,
     )
 
-    color_specifier = ColorSpecifier(
+    color_specifier = ColorSpecifier.build_from_color_data(
+        color_data=data_handler.get_data(DataDimension.Z),
         coloraxis_reference=ColoraxisReference.MAIN_COLORAXIS,
         color_palette=color_palette,
         logscale=logscale,

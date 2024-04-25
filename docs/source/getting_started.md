@@ -22,7 +22,7 @@ All plotting functions return a `plotly.graphic_objects.Figure` object, and must
 
 All plotting functions also accept:
 
-- a `slicer` argument to slice the data along a particular dimension : each slice of the data is drawned as an independent `plotly.js` trace. Depending on the graphic representation, traces can be toggled via legend clicking (scatter-like representation), or via dropdown selection (heatmap-like representation).
+- a `slicer` argument to slice the data along a particular dimension : each slice of the data is drawed as an independent `plotly.js` trace. Depending on the graphic representation, traces can be toggled via legend clicking (scatter-like representation), or via dropdown selection (heatmap-like representation).
 - a `color_palette` argument which can be :
 
   - a string refering to a built-in `plotly`, `seaborn` or `matplotlib` colormap.

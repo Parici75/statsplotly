@@ -13,15 +13,18 @@ The 0.2.0 version introduces new methods enhancing subplots management, and impr
 
 - Enhance the color specification option of the main plotting module : the `color` argument now accepts reference to `datetime` and arbitrary `string` color data.
 - Support 'geometric mean' and 'geometric standard deviation factor' options in :func:`~statsplotly.barplot` `aggregation_fct` and `error_bar` arguments.
+- Support Empirical Cumulative Distribution Function option in :func:`~statsplotly.distplot` and :func:`~statsplotly.jointplot`.
 
 🎨 Feature improvements
 ***********************
 - Improve :func:`~statsplotly.heatmap` axis formatting when `axis = "equal"`.
-- Improve :func:`~statsplotly.jointplot` trace visibility groups.
+- Improve :func:`~statsplotly.jointplot` trace visibility group consistency.
 - Add `color` specification option for :func:`~statsplotly.jointplot` scatter traces.
 - Preserve original data ordering in :func:`~statsplotly.barplot` aggregations.
 - Improve colorbar management in layout.
+- Support discrete color mapping in :func:`~statsplotly.heatmap`.
 - Improve `datetime` data handling in :func:`~statsplotly.catplot`.
+- Correct bar layout in multi-trace histograms.
 - Improve step histogram line aesthetics.
 - Display slice name on color-coded barcharts.
 

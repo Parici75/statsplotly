@@ -5,12 +5,18 @@ import pandas as pd
 import pytest
 from pydantic import ValidationError
 
-from statsplotly.plot_specifiers.data import DataDimension, DataHandler, DataPointer
+from statsplotly.exceptions import StatsPlotSpecificationError
+from statsplotly.plot_specifiers.data import (
+    DataDimension,
+    DataHandler,
+    DataPointer,
+    HistogramNormType,
+    RegressionType,
+)
 from statsplotly.plot_specifiers.trace import (
     CategoricalPlotSpecifier,
     HistogramSpecifier,
     JointplotSpecifier,
-    RegressionType,
     ScatterSpecifier,
     TraceMode,
 )
@@ -84,14 +90,33 @@ class TestCategoricalPlotSpecifier:
         ).get_category_strip_map(data_handler=data_handler)
         assert x_values_map is None
 
+    def test_color_data_not_allowed(self, example_raw_data):
+        data_handler = DataHandler.build_handler(
+            data=example_raw_data, data_pointer=DataPointer(x="x", y="y", color="z")
+        )
+        with pytest.raises(ValueError) as excinfo:
+            CategoricalPlotSpecifier(
+                plot_type="boxplot",
+                orientation="vertical",
+                data_pointer=data_handler.data_pointer,
+            )
+            assert (
+                "Only slice-level color data can be specified with `boxplot`, got marker-level argument `color=z`"
+                in str(excinfo)
+            )
+
 
 class TestHistogramSpecifier:
+    bins = 10
+
     def test_invalid_histogram_parameters(self):
         with pytest.raises(ValueError) as excinfo:
             HistogramSpecifier(
+                hist=False,
                 cumulative=True,
+                bins=None,
                 dimension=DataDimension.X,
-                histnorm="",
+                histnorm=None,
                 data_type=np.dtype("int"),
             )
         assert "Cumulative histogram requires histogram bins plotting" in str(excinfo.value)
@@ -99,44 +124,79 @@ class TestHistogramSpecifier:
         with pytest.raises(ValueError) as excinfo:
             HistogramSpecifier(
                 hist=True,
+                bins=None,
                 kde=True,
                 cumulative=True,
                 dimension=DataDimension.X,
-                histnorm="",
+                histnorm=None,
                 data_type=np.dtype("int"),
             )
         assert "KDE is incompatible with cumulative histogram plotting" in str(excinfo.value)
 
+        with pytest.raises(ValueError) as excinfo:
+            HistogramSpecifier(
+                bins=None,
+                kde=True,
+                dimension=DataDimension.X,
+                histnorm="",
+                data_type=np.dtype("int"),
+            )
+        assert (
+            "Histogram norm must be set to probability density with KDE plotting, got `HistogramNormType.COUNT`"
+            in str(excinfo.value)
+        )
+
+    def test_automatic_histnorm(self):
+        histogram_specifier = HistogramSpecifier(
+            bins=None,
+            kde=True,
+            dimension=DataDimension.X,
+            histnorm=None,
+            data_type=np.dtype("int"),
+        )
+        assert histogram_specifier.histnorm is HistogramNormType.PROBABILITY_DENSITY
+
     def test_histogram_bin_edges(self):
-        bins = 10
         histogram_specifier = HistogramSpecifier(
             hist=True,
             dimension=DataDimension.X,
-            histnorm="",
-            bins=bins,
+            histnorm=None,
+            bins=self.bins,
             data_type=np.dtype("int"),
         )
         assert not histogram_specifier.density
-        assert histogram_specifier.bins == bins
+        assert histogram_specifier.bins == self.bins
         bin_edges, bin_size = histogram_specifier.get_histogram_bin_edges(pd.Series(np.arange(100)))
-        assert len(bin_edges) == bins + 1
+        assert len(bin_edges) == self.bins + 1
         assert bin_size == 9.9
 
     @pytest.mark.parametrize(
         "cumulative_option, hist_expected", [(False, 10), (True, np.cumsum(np.repeat(10, 10)))]
     )
     def test_compute_histogram(self, cumulative_option, hist_expected):
-        bins = 10
         histogram_specifier = HistogramSpecifier(
             hist=True,
             cumulative=cumulative_option,
             dimension=DataDimension.X,
-            histnorm="",
-            bins=bins,
+            histnorm=None,
+            bins=self.bins,
             data_type=np.dtype("int"),
         )
         hist, bin_edges, bin_size = histogram_specifier.compute_histogram(pd.Series(np.arange(100)))
         assert all(hist == hist_expected)
+
+    def test_compute_ecdf(self):
+        histogram_specifier = HistogramSpecifier(
+            hist=False,
+            dimension=DataDimension.X,
+            histnorm=None,
+            bins=None,
+            data_type=np.dtype("int"),
+        )
+        sample_data = [6.23, 5.58, 7.06, 6.42, 5.20]
+        ranks, unique_values = histogram_specifier.compute_ecdf(pd.Series(sample_data))
+        assert all(ranks == pd.Series(np.arange(len(sample_data))) + 1)
+        assert all(unique_values == np.sort(sample_data))
 
 
 class TestJointplotSpecifier:

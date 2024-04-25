@@ -83,13 +83,9 @@ def cmap_to_array(
             raise UnsupportedColormapError(f"{cmap} is not a supported colormap") from exc
 
 
-def to_rgb(numeric_array: NDArray[Any]) -> list[str]:
-    """Transforms a list of numeric rgb tuple into a list of rgb strings"""
-    rgb_array = [
-        "rgb" + str(rgb_tuple[:3])
-        for rgb_tuple in [tuple(int(rgb * 256) for rgb in x) for x in numeric_array]
-    ]
-    return rgb_array
+def to_rgb_string(numeric_rgb: tuple[float, float, float]) -> str:
+    """Transforms a numeric rgb tuple into a rgb string"""
+    return "rgb" + str(tuple(int(color * 256) for color in numeric_rgb)[:3])
 
 
 def get_rgb_discrete_array(
@@ -99,7 +95,7 @@ def get_rgb_discrete_array(
     rgb_array = cmap_to_array(n_colors, color_palette)
 
     # Convert the RGB value array to a RGB plotly_friendly string array
-    return to_rgb(rgb_array)
+    return [to_rgb_string(rgb) for rgb in rgb_array]
 
 
 def compute_colorscale(  # noqa PLR0912 C901
@@ -138,7 +134,7 @@ def compute_colorscale(  # noqa PLR0912 C901
                 "specify a Matplotlib-supported colormap"
             ) from exc
         else:
-            color_palette = to_rgb(colors)
+            color_palette = [to_rgb_string(color) for color in colors]
 
         nsample = len(color_palette)
         colorscale = []
@@ -164,7 +160,7 @@ def compute_colorscale(  # noqa PLR0912 C901
                 "specify a plotly or matplotlib-supported colorscale"
             ) from exc
         else:
-            color_palette = to_rgb(colors)
+            color_palette = [to_rgb_string(color) for color in colors]
         nsample = len(color_palette)
         colorscale = []
         for lin_scale, color_index in zip(
@@ -177,7 +173,7 @@ def compute_colorscale(  # noqa PLR0912 C901
     elif color_system is ColorSystem.DISCRETE:
         try:
             colors = cmap_to_array(n_colors, color_palette)
-            color_palette = to_rgb(colors)
+            color_palette = [to_rgb_string(color) for color in colors]
         except UnsupportedColormapError as exc:
             raise ValueError(
                 f"{color_palette} is not supported for {color_system.value} mapping, please "
@@ -197,13 +193,13 @@ def compute_colorscale(  # noqa PLR0912 C901
     return colorscale
 
 
-def set_rgb_alpha(color_string: str, alpha: float | None = 1) -> str:
-    """Transforms a rgb string into a rgba string or adjust alpha value."""
-    if re.search("rgba", color_string) is not None:
-        # Changing alpha value
-        rgba_string = re.sub(r"\d.\d*", str(alpha), color_string)
-    else:
-        # Converting to rgb to rgba string
-        rgba_string = f"{re.sub('rgb', 'rgba', color_string)[:-1]} , {str(alpha)})"
+def set_rgb_alpha(color_ref: str | tuple[float, float, float], alpha: float = 1) -> str:
+    """Return a rgba string from a color reference."""
+    try:
+        rgb_string = to_rgb_string(matplotlib.colors.to_rgb(color_ref))
+    except ValueError:
+        # Already an rgb string
+        rgb_string = color_ref  # type: ignore
 
-    return rgba_string
+    # Convert to rgba string
+    return f"{re.sub('rgb', 'rgba', rgb_string)[:-1]} , {str(alpha)})"

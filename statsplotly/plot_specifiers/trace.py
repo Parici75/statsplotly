@@ -95,6 +95,26 @@ class CategoricalPlotSpecifier(_TraceSpecifier, _XYTraceValidator):
     plot_type: CategoricalPlotType
     orientation: CategoricalPlotOrientation
 
+    @field_validator("plot_type", mode="before")
+    def validate_plot_type(cls, value: str | None) -> CategoricalPlotType:
+        if value is None:
+            return CategoricalPlotType.STRIP
+        return CategoricalPlotType(value)
+
+    @field_validator("orientation", mode="before")
+    def validate_orientation(cls, value: str | None) -> CategoricalPlotOrientation:
+        if value is None:
+            return CategoricalPlotOrientation.VERTICAL
+        return CategoricalPlotOrientation(value)
+
+    @model_validator(mode="after")
+    def validate_model(self) -> CategoricalPlotSpecifier:
+        if self.data_pointer.color is not None and self.plot_type is not CategoricalPlotType.STRIP:
+            raise StatsPlotSpecificationError(
+                f"Only slice-level color data can be specified with `{self.plot_type.value}`, got marker-level argument `color={self.data_pointer.color}`"
+            )
+        return self
+
     @property
     def categorical_dimension(self) -> DataDimension:
         if self.orientation is CategoricalPlotOrientation.VERTICAL:
@@ -129,6 +149,7 @@ class HistogramSpecifier(_TraceSpecifier):
     hist: bool | None = None
     cumulative: bool | None = None
     step: bool | None = None
+    ecdf: bool | None = None
     kde: bool | None = None
     rug: bool | None = None
     histnorm: HistogramNormType
@@ -146,17 +167,7 @@ class HistogramSpecifier(_TraceSpecifier):
             )
         return value
 
-    @field_validator("kde")
-    def check_kde(cls, value: bool | None, info: ValidationInfo) -> bool | None:
-        if value and info.data.get("cumulative"):
-            raise StatsPlotSpecificationError(
-                "KDE is incompatible with cumulative histogram plotting"
-            )
-        if value and info.data.get("step"):
-            raise StatsPlotSpecificationError("KDE is incompatible with step histogram plotting")
-        return value
-
-    @field_validator("bins")
+    @field_validator("bins", mode="before")
     def check_bins(cls, value: str | list[float] | int | None) -> str | list[float] | int:
         return value if value is not None else constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD
 
@@ -170,13 +181,6 @@ class HistogramSpecifier(_TraceSpecifier):
                 )
                 return HistogramNormType.PROBABILITY_DENSITY
 
-            if HistogramNormType(value) is not HistogramNormType.PROBABILITY_DENSITY:
-                raise StatsPlotSpecificationError(
-                    "Histogram norm must be set to"
-                    f" {HistogramNormType.PROBABILITY_DENSITY.value} with KDE plotting,"
-                    f" got `{value}`"
-                )
-
         return value or HistogramNormType.COUNT
 
     @field_validator("dimension")
@@ -187,9 +191,46 @@ class HistogramSpecifier(_TraceSpecifier):
             )
         return value
 
+    @model_validator(mode="after")
+    def check_parameter_consistency(self: HistogramSpecifier) -> HistogramSpecifier:
+        if self.ecdf and self.histnorm is HistogramNormType.PROBABILITY_DENSITY:
+            raise StatsPlotSpecificationError(
+                "Histogram norm can not be set to"
+                f" {HistogramNormType.PROBABILITY_DENSITY.value} with ECDF plotting"
+            )
+
+        if self.kde:
+            if self.histnorm is not HistogramNormType.PROBABILITY_DENSITY:
+                raise StatsPlotSpecificationError(
+                    "Histogram norm must be set to"
+                    f" {HistogramNormType.PROBABILITY_DENSITY.value} with KDE plotting,"
+                    f" got `{self.histnorm}`"
+                )
+
+            if self.cumulative:
+                raise StatsPlotSpecificationError(
+                    "KDE is incompatible with cumulative histogram plotting"
+                )
+
+            if self.step:
+                raise StatsPlotSpecificationError(
+                    "KDE is incompatible with step histogram plotting"
+                )
+
+        return self
+
     @property
     def density(self) -> bool:
         return True if self.histnorm is HistogramNormType.PROBABILITY_DENSITY else False
+
+    def get_distribution_max_value(self, data: pd.Series) -> float:
+        dist_function: Callable[[Any], Any]
+        if self.ecdf:
+            dist_function = self.compute_ecdf
+        elif self.hist:
+            dist_function = self.compute_histogram
+
+        return dist_function(data)[0].max()
 
     @_TraceSpecifier.remove_nans
     def get_histogram_bin_edges(self, data: pd.Series) -> tuple[NDArray[Any], float]:
@@ -224,6 +265,25 @@ class HistogramSpecifier(_TraceSpecifier):
             pd.Series(hist, name=self.histnorm if len(self.histnorm) > 0 else "count"),
             bin_edges,
             bin_size,
+        )
+
+    @_TraceSpecifier.remove_nans
+    def compute_ecdf(self, data: pd.Series) -> tuple[pd.Series, NDArray[Any]]:
+        unique_values, counts = np.unique(np.sort(data), return_counts=True)
+
+        cdf = np.cumsum(counts)
+
+        if (
+            self.histnorm is HistogramNormType.PROBABILITY
+            or self.histnorm is HistogramNormType.PERCENT
+        ):
+            cdf = cdf / data.size
+            if self.histnorm is HistogramNormType.PERCENT:
+                cdf = cdf * 100
+
+        return (
+            pd.Series(cdf, name=self.histnorm if len(self.histnorm) > 0 else "count"),
+            unique_values,
         )
 
 
