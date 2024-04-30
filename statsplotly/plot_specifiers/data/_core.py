@@ -92,6 +92,14 @@ TRACE_DIMENSION_MAP = dict(
     )
 )
 
+AGG_DIMENSION_TO_ERROR_DIMENSION = dict(
+    zip(
+        DataDimension,
+        ["_".join(("error", dimension.value)) for dimension in DataDimension],
+        strict=True,
+    )
+)
+
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -124,7 +132,7 @@ class DataPointer(BaseModel):
     @model_validator(mode="after")
     def check_missing_dimension(self) -> DataPointer:
         if self.x is None and self.y is None:
-            raise ValueError("Both x and y dimensions can not be None")
+            raise ValueError("Both `x` and `y` dimensions can not be None")
         return self
 
     @property
@@ -315,8 +323,8 @@ class DataProcessor(BaseModel):
     def jitter_data(data_series: pd.Series, jitter_amount: float) -> pd.Series:
         if jitter_amount == 0:
             return data_series
-        jittered_data = pd.Series(rand_jitter(data_series, jitter_amount), name=data_series.name)
-        return jittered_data
+
+        return pd.Series(rand_jitter(data_series, jitter_amount), name=data_series.name)
 
     @staticmethod
     def normalize_data(data_series: pd.Series, normalizer: NormalizationType) -> pd.Series:
@@ -376,45 +384,11 @@ class DataProcessor(BaseModel):
 
 
 class AggregationSpecifier(BaseModel):
-    aggregation_func: AggregationType | None = None
-    error_bar: ErrorBarType | None = None
+    aggregation_func: AggregationType | Callable[[Any], float] | None = None
+    aggregated_dimension: DataDimension
+    error_bar: ErrorBarType | Callable[[Any], NDArray[Any]] | None = None
     data_types: DataTypes
     data_pointer: DataPointer
-
-    @property
-    def aggregated_dimension(self) -> DataDimension:
-        if self.data_pointer.y is None:
-            return DataDimension.X
-        return DataDimension.Y
-
-    @model_validator(mode="after")
-    def check_aggregation_specifier(self) -> AggregationSpecifier:
-
-        if self.aggregation_func is None and self.data_pointer.x and self.data_pointer.y is None:
-            raise StatsPlotSpecificationError(
-                "Both `x` and `y` must be supplied when `aggregation_func=None`"
-            )
-
-        if (aggregation_func := self.aggregation_func) is not None:
-            # text can not be displayed along aggregation trace
-            if self.data_pointer.text is not None:
-                logger.warning("Text data can not be displayed along aggregated data")
-
-            if aggregation_func is AggregationType.COUNT:
-                if (
-                    sum(
-                        [
-                            dimension is None
-                            for dimension in [self.data_pointer.x, self.data_pointer.y]
-                        ]
-                    )
-                    > 1
-                ) or self.data_pointer.x is None:
-                    raise StatsPlotSpecificationError(
-                        f"{aggregation_func.value} aggregation only applies to `x` dimension"
-                    )
-
-        return self
 
     @field_validator("error_bar")
     def check_error_bar(
@@ -430,6 +404,62 @@ class AggregationSpecifier(BaseModel):
                 f"aggregation function"
             )
         return value
+
+    @model_validator(mode="after")
+    def check_aggregation_specifier(self) -> AggregationSpecifier:
+        if (aggregation_func := self.aggregation_func) is not None:
+            if getattr(self.data_pointer, self.aggregated_dimension) is None:
+                raise StatsPlotSpecificationError(
+                    f"aggregation dimension `{self.aggregated_dimension}` not found in the data"
+                )
+
+            # text can not be displayed along aggregation trace
+            if self.data_pointer.text is not None:
+                logger.warning("Text data can not be displayed along aggregated data")
+
+            if aggregation_func is AggregationType.COUNT:
+                if (
+                    sum(
+                        [
+                            dimension is not None
+                            for dimension in [self.data_pointer.x, self.data_pointer.y]
+                        ]
+                    )
+                    > 1
+                ):
+                    raise StatsPlotSpecificationError(
+                        f"{aggregation_func.value} aggregation only applies to one dimension"
+                    )
+
+        return self
+
+    @property
+    def reference_dimension(self) -> DataDimension:
+        if self.aggregation_func is AggregationType.COUNT:
+            return self.aggregated_dimension
+        if self.aggregated_dimension is DataDimension.X:
+            return DataDimension.Y
+        return DataDimension.X
+
+    @property
+    def aggregation_plot_dimension(self) -> DataDimension:
+        if self.aggregation_func is AggregationType.COUNT:
+            return (
+                DataDimension.Y if self.aggregated_dimension is DataDimension.X else DataDimension.X
+            )
+        return self.aggregated_dimension
+
+    @property
+    def reference_data(self) -> str | None:
+        if self.aggregation_func is AggregationType.COUNT:
+            return self.aggregated_data
+        if self.reference_dimension is DataDimension.X:
+            return self.data_pointer.x
+        return self.data_pointer.y
+
+    @property
+    def aggregated_data(self) -> str:
+        return getattr(self.data_pointer, self.aggregated_dimension)
 
 
 class _BaseTraceData(BaseModel):
@@ -451,7 +481,12 @@ class _BaseTraceData(BaseModel):
         if value is None:
             return value
 
-        if not all(value.apply(lambda x: np.issubdtype(np.asarray(x).dtype, np.number))):
+        if not all(
+            value.apply(
+                lambda x: np.issubdtype(np.asarray(x).dtype, np.number)
+                or any(xx is None for xx in x)
+            )
+        ):
             raise ValueError(f"{value.name} error data must be numeric")
 
         if not all(value.apply(lambda x: len(x) == 2)):  # noqa: PLR2004
@@ -517,7 +552,9 @@ class _BaseTraceData(BaseModel):
             else pointer.size
         )
         trace_data["opacity_data"] = (
-            data[pointer.opacity] if pointer.opacity in data.columns else pointer.opacity
+            range_normalize(data[pointer.opacity], 0, 1)
+            if pointer.opacity in data.columns
+            else pointer.opacity
         )
 
         return trace_data
@@ -539,12 +576,13 @@ class TraceData(_BaseTraceData):
 
 
 class AggregationTraceData(TraceData):
+
     @classmethod
     def _compute_error_bar(
         cls,
         data_group: pd.Grouper,
         agg_function: F,
-        error_bar: ErrorBarType,
+        error_bar: ErrorBarType | Callable[[Any], NDArray[Any]],
     ) -> pd.Series:
         if error_bar in (ErrorBarType.STD, ErrorBarType.SEM):
             data_agg = data_group.apply(agg_function)
@@ -585,6 +623,9 @@ class AggregationTraceData(TraceData):
                 )
             )
 
+        if isinstance(error_bar, Callable):  # type: ignore
+            return data_group.apply(error_bar)
+
         raise StatsPlotMissingImplementationError(f"Unsupported error bar type: {error_bar}")
 
     @classmethod
@@ -594,50 +635,76 @@ class AggregationTraceData(TraceData):
         aggregation_specifier: AggregationSpecifier,
     ) -> dict[str, Any]:
         trace_data: dict[str, Any] = {}
-        x, y = aggregation_specifier.data_pointer.x, aggregation_specifier.data_pointer.y
 
-        trace_data["x_values"] = pd.Series(data[x].unique(), name=x)
+        trace_data[TRACE_DIMENSION_MAP[aggregation_specifier.reference_dimension]] = pd.Series(
+            data[aggregation_specifier.reference_data].unique(),
+            name=aggregation_specifier.reference_data,
+        )
         if (
             aggregation_specifier.aggregation_func is AggregationType.COUNT
             or aggregation_specifier.aggregation_func is AggregationType.PROBABILITY
             or aggregation_specifier.aggregation_func is AggregationType.PERCENT
         ):
-            _y_values: list[NDArray[Any]] = []
-            for x_value in trace_data["x_values"]:
-                y_value = (data[x] == x_value).sum()
+            _aggregated_values: list[NDArray[Any]] = []
+            for reference_value in trace_data[
+                TRACE_DIMENSION_MAP[aggregation_specifier.reference_dimension]
+            ]:
+                aggregated_value = (
+                    data[aggregation_specifier.reference_data] == reference_value
+                ).sum()
                 if aggregation_specifier.aggregation_func is AggregationType.PROBABILITY:
-                    _y_values.append(y_value / data[x].notnull().sum())
-                elif aggregation_specifier.aggregation_func is AggregationType.PERCENT:
-                    _y_values.append(y_value / data[x].notnull().sum() * 100)
-                else:
-                    _y_values.append(y_value)
-            trace_data["y_values"] = pd.Series(
-                _y_values,
-                name="_".join(
-                    (
-                        aggregation_specifier.aggregated_dimension,
-                        aggregation_specifier.aggregation_func.value,
+                    _aggregated_values.append(
+                        aggregated_value
+                        / data[aggregation_specifier.reference_data].notnull().sum()
                     )
-                ),
+                elif aggregation_specifier.aggregation_func is AggregationType.PERCENT:
+                    _aggregated_values.append(
+                        aggregated_value
+                        / data[aggregation_specifier.reference_data].notnull().sum()
+                        * 100
+                    )
+                else:
+                    _aggregated_values.append(aggregated_value)
+            trace_data[TRACE_DIMENSION_MAP[aggregation_specifier.aggregation_plot_dimension]] = (
+                pd.Series(
+                    _aggregated_values,
+                    name="_".join(
+                        (
+                            aggregation_specifier.aggregated_dimension,
+                            aggregation_specifier.aggregation_func.value,
+                        )
+                    ),
+                )
             )
 
         else:
-            agg_func: Callable[[Any], Any]
-            match aggregation_specifier.aggregation_func:
-                case AggregationType.MEAN:
-                    agg_func = np.mean
-                case AggregationType.GEO_MEAN:
-                    agg_func = sc.stats.mstats.gmean
-                case AggregationType.MEDIAN:
-                    agg_func = np.median
-                case AggregationType.SUM:
-                    agg_func = np.sum
+            if isinstance(aggregation_specifier.aggregation_func, AggregationType):
+                agg_func: Callable[[Any], Any]
+                match aggregation_specifier.aggregation_func:
+                    case AggregationType.MEAN:
+                        agg_func = np.mean
+                    case AggregationType.GEO_MEAN:
+                        agg_func = sc.stats.mstats.gmean
+                    case AggregationType.MEDIAN:
+                        agg_func = np.median
+                    case AggregationType.SUM:
+                        agg_func = np.sum
+            else:
+                agg_func = aggregation_specifier.aggregation_func  # type: ignore
 
-            trace_data["y_values"] = data.groupby(x, sort=False)[y].apply(agg_func)
+            trace_data[TRACE_DIMENSION_MAP[aggregation_specifier.aggregated_dimension]] = (
+                data.groupby(aggregation_specifier.reference_data, sort=False)[
+                    aggregation_specifier.aggregated_data
+                ].apply(agg_func)
+            )
 
             if aggregation_specifier.error_bar is not None:
-                trace_data["error_y"] = cls._compute_error_bar(
-                    data.groupby(x, sort=False)[y],
+                trace_data[
+                    AGG_DIMENSION_TO_ERROR_DIMENSION[aggregation_specifier.aggregated_dimension]
+                ] = cls._compute_error_bar(
+                    data.groupby(aggregation_specifier.reference_data, sort=False)[
+                        aggregation_specifier.aggregated_data
+                    ],
                     agg_func,
                     aggregation_specifier.error_bar,
                 )

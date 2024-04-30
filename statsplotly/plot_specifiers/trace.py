@@ -19,7 +19,7 @@ from statsplotly.plot_specifiers.data import (
     CentralTendencyType,
     DataDimension,
     DataHandler,
-    DataPointer,
+    DataTypes,
     HistogramNormType,
     RegressionType,
     TraceData,
@@ -39,11 +39,6 @@ class CategoricalPlotType(str, Enum):
     STRIP = "stripplot"
     VIOLIN = "violinplot"
     BOX = "boxplot"
-
-
-class CategoricalPlotOrientation(str, Enum):
-    HORIZONTAL = "horizontal"
-    VERTICAL = "vertical"
 
 
 class MarginalPlotDimension(str, Enum):
@@ -75,15 +70,51 @@ class _TraceSpecifier(BaseModel):
 
 
 class _XYTraceValidator(BaseModel):
-    data_pointer: DataPointer
+    data_types: DataTypes
 
     @model_validator(mode="after")
     def validate_model(self) -> _XYTraceValidator:
-        if not (self.data_pointer.x is not None and self.data_pointer.y is not None):
+        if not (self.data_types.x is not None and self.data_types.y is not None):
             raise StatsPlotSpecificationError(
                 f"Both `x` and `y`dimensions must be supplied for {self.__class__.__name__}"
             )
         return self
+
+
+class PlotOrientation(str, Enum):
+    HORIZONTAL = "horizontal"
+    VERTICAL = "vertical"
+
+
+class OrientedPlotSpecifier(BaseModel):
+    prefered_orientation: PlotOrientation | None = None
+    data_types: DataTypes
+
+    @property
+    def orientation(self) -> PlotOrientation:
+        if self.data_types.x is None:
+            return PlotOrientation.HORIZONTAL
+        if self.data_types.y is None:
+            return PlotOrientation.VERTICAL
+        if self.prefered_orientation is not None:
+            return self.prefered_orientation
+        if is_numeric_dtype(self.data_types.x):
+            return PlotOrientation.HORIZONTAL
+        return PlotOrientation.VERTICAL
+
+    @property
+    def anchor_dimension(self) -> DataDimension:
+        if self.orientation is PlotOrientation.VERTICAL:
+            return DataDimension.X
+        return DataDimension.Y
+
+    @property
+    def anchored_dimension(self) -> DataDimension | None:
+        if self.data_types.x is None or self.data_types.y is None:
+            return None
+        if self.anchor_dimension is DataDimension.X:
+            return DataDimension.Y
+        return DataDimension.X
 
 
 class ScatterSpecifier(_TraceSpecifier, _XYTraceValidator):
@@ -91,9 +122,8 @@ class ScatterSpecifier(_TraceSpecifier, _XYTraceValidator):
     regression_type: RegressionType | None = None
 
 
-class CategoricalPlotSpecifier(_TraceSpecifier, _XYTraceValidator):
+class CategoricalPlotSpecifier(OrientedPlotSpecifier, _TraceSpecifier, _XYTraceValidator):
     plot_type: CategoricalPlotType
-    orientation: CategoricalPlotOrientation
 
     @field_validator("plot_type", mode="before")
     def validate_plot_type(cls, value: str | None) -> CategoricalPlotType:
@@ -101,39 +131,21 @@ class CategoricalPlotSpecifier(_TraceSpecifier, _XYTraceValidator):
             return CategoricalPlotType.STRIP
         return CategoricalPlotType(value)
 
-    @field_validator("orientation", mode="before")
-    def validate_orientation(cls, value: str | None) -> CategoricalPlotOrientation:
-        if value is None:
-            return CategoricalPlotOrientation.VERTICAL
-        return CategoricalPlotOrientation(value)
-
     @model_validator(mode="after")
     def validate_model(self) -> CategoricalPlotSpecifier:
-        if self.data_pointer.color is not None and self.plot_type is not CategoricalPlotType.STRIP:
+        if self.data_types.color is not None and self.plot_type is not CategoricalPlotType.STRIP:
             raise StatsPlotSpecificationError(
-                f"Only slice-level color data can be specified with `{self.plot_type.value}`, got marker-level argument `color={self.data_pointer.color}`"
+                f"Only slice-level color data can be specified with `{self.plot_type.value}`, got marker-level argument `color={self.data_types.color}`"
             )
         return self
-
-    @property
-    def categorical_dimension(self) -> DataDimension:
-        if self.orientation is CategoricalPlotOrientation.VERTICAL:
-            return DataDimension.X
-        return DataDimension.Y
-
-    @property
-    def continuous_dimension(self) -> DataDimension:
-        if self.categorical_dimension is DataDimension.X:
-            return DataDimension.Y
-        return DataDimension.X
 
     def get_category_strip_map(
         self, data_handler: DataHandler
     ) -> dict[DataDimension, dict[str, Any]] | None:
-        categorical_data = data_handler.get_data(self.categorical_dimension)
+        categorical_data = data_handler.get_data(self.anchor_dimension)
         if categorical_data is None:
             raise StatsPlotSpecificationError(
-                f"Could not find `{self.categorical_dimension.value}` in data pointer"
+                f"Could not find `{self.anchor_dimension.value}` in data pointer"
             )
         if is_numeric_dtype(categorical_data):
             return None
@@ -142,7 +154,7 @@ class CategoricalPlotSpecifier(_TraceSpecifier, _XYTraceValidator):
         for i, x_level in enumerate(np.sort(categorical_data.dropna().astype(str).unique()), 1):
             categorical_data_dict[x_level] = i
 
-        return {self.categorical_dimension: categorical_data_dict}
+        return {self.anchor_dimension: categorical_data_dict}
 
 
 class HistogramSpecifier(_TraceSpecifier):
@@ -227,7 +239,7 @@ class HistogramSpecifier(_TraceSpecifier):
         dist_function: Callable[[Any], Any]
         if self.ecdf:
             dist_function = self.compute_ecdf
-        elif self.hist:
+        else:
             dist_function = self.compute_histogram
 
         return dist_function(data)[0].max()
@@ -340,7 +352,7 @@ class JointplotSpecifier(_TraceSpecifier):
             raise ValueError("`histogram_specifier` can not be `None`")
         x, y = data.iloc[:, 0], data.iloc[:, 1]
         xbin_edges, xbin_size = self.histogram_specifier[DataDimension.X].get_histogram_bin_edges(x)
-        ybin_edges, ybin_size = self.histogram_specifier[DataDimension.X].get_histogram_bin_edges(y)
+        ybin_edges, ybin_size = self.histogram_specifier[DataDimension.Y].get_histogram_bin_edges(y)
 
         hist, _, _ = np.histogram2d(
             x,

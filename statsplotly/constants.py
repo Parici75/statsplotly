@@ -190,6 +190,7 @@ DEFAULT_KDE_BANDWIDTH = 0.2
 FIGURE_TITLEFONT = {"family": "Arial", "size": 20}
 AXIS_TITLEFONT = {"family": "Arial", "size": 20}
 TICKFONT = {"family": "Arial", "size": 18}
+SCENE_TICKFONT = {"family": "Arial", "size": 16}
 AXES_HEIGHT = 600
 AXES_WIDTH = 600
 MIN_CAPITALIZE_LENGTH = 3

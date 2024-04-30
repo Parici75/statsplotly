@@ -6,7 +6,7 @@ from typing import Any
 
 import numpy as np
 from dateutil.parser import parse as parse_date
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, field_validator
 
 from statsplotly import constants
 from statsplotly.plot_specifiers.common import smart_legend, smart_title
@@ -65,16 +65,8 @@ class LegendSpecifier(BaseModel):
     y_label: str | None = None
     z_label: str | None = None
     error_bar: str | None = None
+    shaded_error: str | None = None
     axis_type: AxisType | None = None
-
-    @model_validator(mode="after")
-    def check_y_label(self) -> LegendSpecifier:
-        if self.data_pointer.y is None and self.y_transformation is None and self.y_label is None:
-            raise ValueError(
-                "No y_label provided for the legend, check"
-                f" {LegendSpecifier.__name__} specification"
-            )
-        return self
 
     def _get_axis_title_from_dimension_pointer(self, dimension: DataDimension) -> str:
         pointer_label = getattr(self.data_pointer, dimension) or ""
@@ -129,22 +121,10 @@ class LegendSpecifier(BaseModel):
         if self.title is not None:
             return self.title
 
-        if self.y_transformation is not None:
-            if self.data_pointer.y is not None:
-                title = (
-                    f"{self.data_pointer.y} {self.y_transformation_legend} vs {self.data_pointer.x}"
-                )
-            else:
-                title = f"{self.data_pointer.x} {self.y_transformation_legend}"
-        elif self.x_transformation is not None:
-            if self.data_pointer.x is not None:
-                title = (
-                    f"{self.data_pointer.x} {self.x_transformation_legend} vs {self.data_pointer.y}"
-                )
-            else:
-                title = f"{self.data_pointer.y} {self.x_transformation_legend}"
-        else:
-            title = f"{self.data_pointer.y} vs {self.data_pointer.x}"
+        x_bit_title = f"{self.data_pointer.x or ''} {self.x_transformation_legend or ''}"
+        y_bit_title = f"{self.data_pointer.y or ''} {self.y_transformation_legend or ''}"
+        title_bits = [bit.strip() for bit in [y_bit_title, x_bit_title] if bit.strip()]
+        title = " vs ".join(title_bits)
 
         if self.data_pointer.z is not None:
             if self.axis_type is AxisType.THREE_DIMENSIONAL:
@@ -159,6 +139,8 @@ class LegendSpecifier(BaseModel):
                 title = f"{title} ({(1 - constants.CI_ALPHA) * 100}% CI {self.error_bar})"
             else:
                 title = f"{title} ({self.error_bar})"
+        if self.shaded_error is not None:
+            title = f"{title} (± {self.shaded_error})"
 
         return smart_title(title)
 

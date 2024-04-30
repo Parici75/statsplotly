@@ -16,11 +16,11 @@ def register_statsplotly_template() -> None:
             },
             scene={
                 **{
-                    xaxis_ref: {
+                    axis_ref: {
                         "title_font": constants.AXIS_TITLEFONT,
-                        "tickfont": constants.TICKFONT,
+                        "tickfont": constants.SCENE_TICKFONT,
                     }
-                    for xaxis_ref in ["xaxis", "yaxis", "zaxis"]
+                    for axis_ref in ["xaxis", "yaxis", "zaxis"]
                 }
             },
         )

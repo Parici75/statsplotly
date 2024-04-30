@@ -32,11 +32,12 @@ from statsplotly.plot_specifiers.data.statistics import (
     regress,
 )
 from statsplotly.plot_specifiers.trace import (
-    CategoricalPlotOrientation,
     CategoricalPlotSpecifier,
     HistogramSpecifier,
     JointplotSpecifier,
     JointplotType,
+    OrientedPlotSpecifier,
+    PlotOrientation,
     TraceMode,
 )
 
@@ -93,6 +94,7 @@ class BaseTrace(BaseModel, metaclass=ABCMeta):
     @abstractmethod
     def build_trace(cls, *args: Any, **kwargs: Any) -> BaseTrace:
         """This method implements the logic to generate the Trace object."""
+        ...
 
 
 class _ScatterBaseTrace(BaseTrace):
@@ -398,7 +400,7 @@ class _CategoricalTrace(BaseTrace):
         categorical_plot_specifier: CategoricalPlotSpecifier,
     ) -> _CategoricalTrace:
         hover_info = "name+text"
-        if categorical_plot_specifier.orientation is CategoricalPlotOrientation.VERTICAL:
+        if categorical_plot_specifier.orientation is PlotOrientation.VERTICAL:
             hover_info += "+y"
         else:
             hover_info += "+x"
@@ -455,7 +457,32 @@ class StripTrace(_CategoricalTrace, _BasePlotlyTrace):
         return cls.model_validate(strip_trace)
 
 
-class BoxTrace(_CategoricalTrace, _BasePlotlyTrace):
+class _OrientedTrace(_CategoricalTrace):
+    orientation: str
+
+    @classmethod
+    def build_trace(
+        cls,
+        trace_data: TraceData,
+        trace_name: str,
+        trace_color: str | None,
+        color_specifier: ColorSpecifier,
+        categorical_plot_specifier: CategoricalPlotSpecifier,
+    ) -> _OrientedTrace:
+
+        categorical_trace = _CategoricalTrace.build_trace(
+            trace_data, trace_name, trace_color, color_specifier, categorical_plot_specifier
+        )
+
+        return cls(
+            **categorical_trace.model_dump(),
+            orientation=(
+                "h" if categorical_plot_specifier.orientation is PlotOrientation.HORIZONTAL else "v"
+            ),
+        )
+
+
+class BoxTrace(_OrientedTrace, _BasePlotlyTrace):
     _PLOTLY_GRAPH_FCT = go.Box
 
     boxmean: bool = True
@@ -476,7 +503,7 @@ class BoxTrace(_CategoricalTrace, _BasePlotlyTrace):
         )
 
 
-class ViolinTrace(_CategoricalTrace, _BasePlotlyTrace):
+class ViolinTrace(_OrientedTrace, _BasePlotlyTrace):
     _PLOTLY_GRAPH_FCT = go.Violin
 
     meanline_visible: bool = True
@@ -503,9 +530,11 @@ class BarTrace(BaseTrace, _BasePlotlyTrace):
 
     hoverinfo: str = "x+y+name+text"
     marker: dict[str, Any] | None = None
+    error_x: dict[str, Any] | None = None
     error_y: dict[str, Any] | None = None
     text: str | pd.Series | None = None
     textposition: str | None = None
+    orientation: str
 
     @classmethod
     def build_trace(
@@ -514,16 +543,21 @@ class BarTrace(BaseTrace, _BasePlotlyTrace):
         trace_name: str,
         trace_color: str | None,
         color_specifier: ColorSpecifier,
+        bar_plot_specifier: OrientedPlotSpecifier,
     ) -> BarTrace:
-        _, error_y_data, _ = cls.get_error_bars(trace_data)
+        error_x_data, error_y_data, _ = cls.get_error_bars(trace_data)
         bar_annotation = trace_name if trace_data.color_data is not None else None
 
         return cls(
             x=trace_data.x_values,
             y=trace_data.y_values,
+            orientation=(
+                "h" if bar_plot_specifier.orientation is PlotOrientation.HORIZONTAL else "v"
+            ),
             name=trace_name,
             opacity=color_specifier.opacity,
             text=trace_data.text_data if trace_data.text_data is not None else bar_annotation,
+            error_x=error_x_data,
             error_y=error_y_data,
             marker={
                 "color": (
@@ -600,9 +634,10 @@ class RugTrace(BaseTrace, _BasePlotlyTrace):
             axis=1,
         ).ravel()
 
-        hist, _, _ = histogram_specifier.compute_histogram(data=rug_data)
-
-        rug_length_coord = np.tile(np.array([0, -0.1 * max(hist)]), (len(rug_coord), 1))
+        rug_length_coord = np.tile(
+            np.array([0, -0.1 * histogram_specifier.get_distribution_max_value(rug_data)]),
+            (len(rug_coord), 1),
+        )
         rug_length_grid = np.concatenate(
             (
                 rug_length_coord,

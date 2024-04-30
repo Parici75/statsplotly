@@ -10,6 +10,7 @@ from statsplotly.plot_specifiers.data import (
     DataDimension,
     DataHandler,
     DataPointer,
+    DataTypes,
     HistogramNormType,
     RegressionType,
 )
@@ -24,7 +25,9 @@ from statsplotly.plot_specifiers.trace import (
 
 def test_scatter_specifier():
     scatter_specifier = ScatterSpecifier(
-        mode="lines", regression_type="linear", data_pointer=DataPointer(x="x", y="y")
+        mode="lines",
+        regression_type="linear",
+        data_types=DataTypes(x=np.dtype(float), y=np.dtype(float)),
     )
     assert scatter_specifier.mode is TraceMode.LINES
     assert scatter_specifier.regression_type is RegressionType.LINEAR
@@ -37,7 +40,7 @@ def test_scatter_specifier():
         )
 
     with pytest.raises(ValueError) as excinfo:
-        ScatterSpecifier(data_pointer=DataPointer(x="x"))
+        ScatterSpecifier(data_types=DataTypes(x=np.dtype(float)))
         assert "Both `x` and `y`dimensions must be supplied for ScatterSpecifier" in str(
             excinfo.value
         )
@@ -51,7 +54,9 @@ class TestCategoricalPlotSpecifier:
         )
 
         x_values_map = CategoricalPlotSpecifier(
-            plot_type="stripplot", orientation="vertical", data_pointer=data_handler.data_pointer
+            plot_type="stripplot",
+            prefered_orientation="vertical",
+            data_types=data_handler.data_types,
         ).get_category_strip_map(data_handler=data_handler)
         assert x_values_map == {
             DataDimension.X: dict(
@@ -68,7 +73,9 @@ class TestCategoricalPlotSpecifier:
             data=example_raw_datetime_data, data_pointer=DataPointer(x="x", y="y")
         )
         y_values_map = CategoricalPlotSpecifier(
-            plot_type="stripplot", orientation="horizontal", data_pointer=data_handler.data_pointer
+            plot_type="stripplot",
+            prefered_orientation="horizontal",
+            data_types=data_handler.data_types,
         ).get_category_strip_map(data_handler=data_handler)
         assert y_values_map == {
             DataDimension.Y: dict(
@@ -86,7 +93,9 @@ class TestCategoricalPlotSpecifier:
         )
 
         x_values_map = CategoricalPlotSpecifier(
-            plot_type="stripplot", orientation="horizontal", data_pointer=data_handler.data_pointer
+            plot_type="stripplot",
+            prefered_orientation="horizontal",
+            data_types=data_handler.data_types,
         ).get_category_strip_map(data_handler=data_handler)
         assert x_values_map is None
 
@@ -97,8 +106,8 @@ class TestCategoricalPlotSpecifier:
         with pytest.raises(ValueError) as excinfo:
             CategoricalPlotSpecifier(
                 plot_type="boxplot",
-                orientation="vertical",
-                data_pointer=data_handler.data_pointer,
+                forced_orientation="vertical",
+                data_types=data_handler.data_types,
             )
             assert (
                 "Only slice-level color data can be specified with `boxplot`, got marker-level argument `color=z`"
@@ -200,16 +209,14 @@ class TestHistogramSpecifier:
 
 
 class TestJointplotSpecifier:
-    scatter_specifier = ScatterSpecifier(
-        mode="lines", regression_type="linear", data_pointer=DataPointer(x="x", y="y")
-    )
 
     def test_jointplot_specifier(self, caplog):
         jointplot_specifier = JointplotSpecifier(
             plot_type="kde",
             marginal_plot="all",
             scatter_specifier=ScatterSpecifier(
-                mode="lines", data_pointer=DataPointer(x="x", y="y")
+                mode="lines",
+                data_types=DataTypes(x=np.dtype(float), y=np.dtype(float)),
             ),
             histogram_specifier={
                 DataDimension.X: HistogramSpecifier(
@@ -236,7 +243,9 @@ class TestJointplotSpecifier:
                 plot_type="kde",
                 marginal_plot="all",
                 scatter_specifier=ScatterSpecifier(
-                    regression_type="linear", mode="lines", data_pointer=DataPointer(x="x", y="y")
+                    mode="lines",
+                    regression_type="linear",
+                    data_types=DataTypes(x=np.dtype(float), y=np.dtype(float)),
                 ),
             )
             assert ("linear regression can not be displayed on a JointplotType.KDE plot") in str(
@@ -249,7 +258,7 @@ class TestJointplotSpecifier:
             plot_type="kde",
             marginal_plot="all",
             scatter_specifier=ScatterSpecifier(
-                mode="lines", data_pointer=DataPointer(x="x", y="y")
+                mode="lines", data_types=DataTypes(x=np.dtype(float), y=np.dtype(float))
             ),
             histogram_specifier={
                 DataDimension.X: HistogramSpecifier(

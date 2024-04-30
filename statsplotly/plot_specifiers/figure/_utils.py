@@ -188,17 +188,15 @@ class _SubplotGridCommonAxisFormatter(BaseModel, metaclass=ABCMeta):
 
     @property
     def col_dimension_size(self) -> int | None:
-        if self.shared_grid_axis in [GridAxis.ROWS, GridAxis.COLS]:  # type: ignore[comparison-overlap]
-            return len(self.fig._grid_ref[0])
-
-        return None
+        if self.shared_grid_axis is SharedGridAxis.ALL:
+            return None
+        return len(self.fig._grid_ref[0])
 
     @property
     def row_dimension_size(self) -> int | None:
-        if self.shared_grid_axis in [GridAxis.ROWS, GridAxis.COLS]:  # type: ignore[comparison-overlap]
-            return len(self.fig._grid_ref[0][0])
-
-        return None
+        if self.shared_grid_axis is SharedGridAxis.ALL:
+            return None
+        return len(self.fig._grid_ref[0][0])
 
     def iter_plot_groups(self) -> Generator[list[tuple[plotly.subplots.SubplotRef]], None, None]:
         for plot_group in self._plot_groups:
@@ -364,6 +362,7 @@ class _SubplotGridCommonColoraxisFormatter(_SubplotGridCommonAxisFormatter):
 
 
 class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
+    common_range: bool
     link_axes: bool
 
     @field_validator("shared_grid_axis", mode="after")
@@ -429,15 +428,15 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
     ) -> list[float] | None:
         try:
             min_value, max_value = [
-                np.min([limit[0] for limit in axis_limits if limit is not None]),
-                np.max([limit[1] for limit in axis_limits if limit is not None]),
+                np.min([limit[0] if limit is not None else None for limit in axis_limits]),
+                np.max([limit[1] if limit is not None else None for limit in axis_limits]),
             ]
 
             return AxesSpecifier.pad_axis_range(
                 axis_range=[min_value, max_value], padding_factor=constants.RANGE_PADDING_FACTOR
             )
 
-        except ValueError:
+        except (ValueError, TypeError):
             # No computable limits
             return None
 
@@ -445,17 +444,21 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
         self, target_traces: list[plotly.basedatatypes.BaseTraceType]
     ) -> None:
         # Update axis limits
-        axis_limits = [self._get_trace_axis_limit(trace) for trace in target_traces]
-        axis_range = self._compute_axis_range(axis_limits)
+        range_dict: dict[str, list[float] | None] = {"range": None}
+        if self.common_range:
+            axis_limits = [self._get_trace_axis_limit(trace) for trace in target_traces]
+            axis_range = self._compute_axis_range(axis_limits)
+            range_dict.update({"range": axis_range})
+
         self.fig.update_layout(
             {
-                axis_reference: {"range": axis_range}
+                axis_reference: range_dict
                 for axis_reference in self.get_target_axes_from_target_traces(target_traces)
             }
         )
 
         # Optionally link axes
-        match_dict = {"matches": None}
+        match_dict: dict[str, str | None] = {"matches": None}
         if self.link_axes:
             match_dict.update({"matches": target_traces[-1][self.dimension]})
 
@@ -520,12 +523,14 @@ class SubplotGridFormatter(_SubplotGridValidator):
         self,
         shared_grid_axis: str = SharedGridAxis.ALL,
         plot_axis: str | None = None,
+        common_range: bool = True,
         link_axes: bool = False,
     ) -> SubplotGridFormatter:
         _SubplotGridCommonXYAxisFormatter(
             fig=self.fig,
             shared_grid_axis=shared_grid_axis,
             plot_axis=plot_axis,
+            common_range=common_range,
             link_axes=link_axes,
         ).update_along_grid_axis()
 

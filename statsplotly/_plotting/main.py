@@ -67,6 +67,7 @@ from statsplotly.plot_specifiers.trace import (
     JointplotSpecifier,
     JointplotType,
     MarginalPlotDimension,
+    OrientedPlotSpecifier,
     ScatterSpecifier,
     TraceMode,
 )
@@ -84,7 +85,7 @@ np.seterr(invalid="ignore")
 logger = logging.getLogger(__name__)
 
 
-# Simple line or scatter plot
+# Line or scatter plot
 def plot(
     data: pd.DataFrame,
     x: str | None = None,
@@ -142,7 +143,7 @@ def plot(
             - A list of CSS color names or HTML color codes.
 
             The color palette is used, by order of precedence :
-                - To map color data of the `color` parameter onto the corresponding colormap.
+                - To map color data specified by the `color` parameter onto the corresponding colormap.
                 - To assign discrete colors to `slices` of data.
 
         shared_coloraxis: If True, colorscale limits are shared across slices of data.
@@ -151,20 +152,20 @@ def plot(
         colorbar: If True, draws a colorbar.
         text: A string or the name of the column in `data` with values to appear in the hover tooltip. Column names can be concatenated with '+' to display values from multiple columns.
         marker: A valid marker symbol or the name of the column in `data` with values to assign marker symbols.
-        mode: One of :obj:`~statsplotly.plot_specifiers.data.TraceMode` value.
-        axis: One of :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
+        mode: A :obj:`~statsplotly.plot_specifiers.trace.TraceMode` value.
+        axis: A :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
         opacity: A numeric value in the (0, 1) interval or the name of the column in `data` with values to specify marker opacity.
         jitter_x: A numeric value to specify jitter amount on the `x` dimension.
         jitter_y: A numeric value to specify jitter amount on the `y` dimension.
         jitter_z: A numeric value to specify jitter amount on the `z` dimension.
-        normalizer_x: The normalizer for the `x` dimension. One of :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
-        normalizer_y: The normalizer for the `y` dimension. One of :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
-        normalizer_z: The normalizer for the `z` dimension. One of :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
+        normalizer_x: The normalizer for the `x` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
+        normalizer_y: The normalizer for the `y` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
+        normalizer_z: The normalizer for the `z` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
         shaded_error: The name of the column in `data` with values to plot continuous error shade.
         error_x: The name of the column in `data` with values to plot error bar in the `x` dimension.
         error_y: The name of the column in `data` with values to plot error bar in the `y` dimension.
         error_z: The name of the column in `data` with values to plot error bar in the `z` dimension.
-        fit: One of :obj:`~statsplotly.plot_specifiers.data.RegressionType` value. Computes and plot the corresponding regression.
+        fit: A :obj:`~statsplotly.plot_specifiers.data.RegressionType` value. Computes and plot the corresponding regression.
         size: A numeric value or the name of the column in `data` with values to assign mark sizes.
         x_label: A string to label the x_axis in place of the corresponding column name in `data`.
         y_label: A string to label the y_axis in place of the corresponding column name in `data`.
@@ -182,13 +183,15 @@ def plot(
         A :obj:`plotly.graph_obj.Figure`.
     """
 
-    if (color is not None or size is not None) and mode is None:
+    if (color is not None or size is not None or marker is not None) and mode is None:
         mode = TraceMode.MARKERS
     if color is not None and mode is TraceMode.LINES:
         raise ValueError("Only markers can be mapped to colormap")
     if size is not None and mode is TraceMode.LINES:
         raise ValueError("Size specification only applies to markers")
     if z is not None:
+        if mode is None:
+            mode = TraceMode.MARKERS
         if fit is not None:
             raise ValueError("Regression can not be computed on a three-dimensional plot")
         if size is None:
@@ -215,7 +218,7 @@ def plot(
     )
 
     scatter_specifier = ScatterSpecifier(
-        mode=mode, regression_type=fit, data_pointer=data_handler.data_pointer
+        mode=mode, regression_type=fit, data_types=data_handler.data_types
     )
 
     if opacity is None and scatter_specifier.regression_type is not None:
@@ -226,6 +229,7 @@ def plot(
 
     legend_specifier = LegendSpecifier(
         data_pointer=data_handler.data_pointer,
+        shaded_error=shaded_error,
         title=title,
         x_label=x_label,
         y_label=y_label,
@@ -337,6 +341,7 @@ def barplot(
     data: pd.DataFrame,
     x: str | None = None,
     y: str | None = None,
+    orientation: str | None = None,
     slicer: str | None = None,
     slice_order: list[str] | None = None,
     color: str | None = None,
@@ -366,6 +371,7 @@ def barplot(
         data: A :obj:`pandas.DataFrame`
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
+        orientation: A :obj:`~statsplotly.plot_specifiers.trace.PlotOrientation` value to force the orientation of the plot.
         slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.
         slice_order: A list of identifiers to order and/or subset data slices specified by `slicer`.
         color: The name of the column in `data` with values to map onto the colormap.
@@ -374,7 +380,7 @@ def barplot(
             - A list of CSS color names or HTML color codes.
 
             The color palette is used, by order of precedence :
-                - To map color data of the `color` parameter onto the corresponding colormap.
+                - To map color data specified by the `color` parameter onto the corresponding colormap.
                 - To assign discrete colors to `slices` of data.
 
         shared_coloraxis: If True, colorscale limits are shared across slices of data.
@@ -382,11 +388,11 @@ def barplot(
         logscale: A float specifying the log base to use for colorscaling.
         colorbar: If True, draws a colorbar.
         text: A string or the name of the column in `data` with values to appear in the hover tooltip. Column names can be concatenated with '+' to display values from multiple columns. Ignored when `aggregation_func` is not None.
-        axis: One of :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
+        axis: A :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
         opacity: A numeric value in the (0, 1) interval to specify bar opacity.
-        barmode: One of :obj:`~statsplotly.plot_specifiers.layout.BarMode` value.
-        error_bar: One of :obj:`~statsplotly.plot_specifiers.data.ErrorBarType` value.
-        aggregation_func: One of :obj:`~statsplotly.plot_specifiers.data.AggregationType` value.
+        barmode: A :obj:`~statsplotly.plot_specifiers.layout.BarMode` value.
+        error_bar: A :obj:`~statsplotly.plot_specifiers.data.ErrorBarType` value or a `Callable` taking the `x` or `y` dimension as input and returning a (inferior_limit, superior_limit) tuple.
+        aggregation_func: A :obj:`~statsplotly.plot_specifiers.data.AggregationType` value or a `Callable` taking the `x` or `y` dimension as input and returning a single value.
         x_label: A string to label the x_axis in place of the corresponding column name in `data`.
         y_label: A string to label the y_axis in place of the corresponding column name in `data`.
         title: A string for the title of the plot.
@@ -409,8 +415,13 @@ def barplot(
         slice_order=slice_order,
     )
 
+    plot_specifier = OrientedPlotSpecifier(
+        prefered_orientation=orientation, data_types=data_handler.data_types
+    )
+
     aggregation_specifier = AggregationSpecifier(
         aggregation_func=aggregation_func,
+        aggregated_dimension=plot_specifier.anchored_dimension or plot_specifier.anchor_dimension,
         error_bar=error_bar,
         data_pointer=data_handler.data_pointer,
         data_types=data_handler.data_types,
@@ -449,6 +460,7 @@ def barplot(
             trace_name=slice_name,
             trace_color=trace_color,
             color_specifier=color_specifier,
+            bar_plot_specifier=plot_specifier,
         ).to_plotly_trace()
 
         traces_data.append(trace_data)
@@ -458,8 +470,19 @@ def barplot(
         title=title,
         x_label=x_label,
         y_label=y_label,
-        y_transformation=aggregation_func,
-        error_bar=error_bar,
+        x_transformation=(
+            aggregation_func
+            if aggregation_specifier.aggregation_plot_dimension is DataDimension.X
+            and isinstance(aggregation_func, str)
+            else None
+        ),
+        y_transformation=(
+            aggregation_func
+            if aggregation_specifier.aggregation_plot_dimension is DataDimension.Y
+            and isinstance(aggregation_func, str)
+            else None
+        ),
+        error_bar=error_bar if isinstance(error_bar, str) else None,
     )
 
     axes_specifier = AxesSpecifier(
@@ -518,7 +541,7 @@ def catplot(
         data: A :obj:`pandas.DataFrame`
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
-        orientation: One of :obj:`~statsplotly.plot_specifiers.trace.CategoricalPlotOrientation` value.
+        orientation: A :obj:`~Astatsplotly.plot_specifiers.trace.PlotOrientation` value to force the orientation of the plot.
         slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.
         slice_order: A list of identifiers to order and/or subset data slices specified by `slicer`.
         color: The name of the column in `data` with values to map onto the colormap.
@@ -527,17 +550,17 @@ def catplot(
             - A list of CSS color names or HTML color codes.
 
             The color palette is used, by order of precedence :
-                - To map color data of the `color` parameter onto the corresponding colormap.
+                - To map color data specified by the `color` parameter onto the corresponding colormap.
                 - To assign discrete colors to `slices` of data.
 
         shared_coloraxis: If True, colorscale limits are shared across slices of data.
         text: A string or the name of the column in `data` with values to appear in the hover tooltip. Column names can be concatenated with '+' to display values from multiple columns.
         marker: A valid marker symbol or the name of the column in `data` with values to assign marker symbols.
-        axis: One of :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
+        axis: A :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
         opacity: A numeric value in the (0, 1) interval or the name of the column in `data` with values to specify marker opacity.
-        plot_type: One of :obj:`~statsplotly.plot_specifiers.trace.CategoricalPlotType` value.
+        plot_type: A :obj:`~statsplotly.plot_specifiers.trace.CategoricalPlotType` value.
         jitter: A numeric value to specify jitter amount on the categorical dimension.
-        normalizer: One of :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value to normalize data on the continous dimension.
+        normalizer: A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value to normalize data on the continous dimension.
         size: A numeric value or the name of the column in `data` with values to assign mark sizes.
         x_label: A string to label the x_axis in place of the corresponding column name in `data`.
         y_label: A string to label the y_axis in place of the corresponding column name in `data`.
@@ -568,7 +591,7 @@ def catplot(
     )
 
     categorical_plot_specifier = CategoricalPlotSpecifier(
-        plot_type=plot_type, orientation=orientation, data_pointer=data_handler.data_pointer
+        plot_type=plot_type, prefered_orientation=orientation, data_types=data_handler.data_types
     )
 
     if jitter is not None and categorical_plot_specifier.plot_type is not CategoricalPlotType.STRIP:
@@ -587,13 +610,13 @@ def catplot(
         data_values_map=categorical_plot_specifier.get_category_strip_map(data_handler),
         jitter_settings=(
             {
-                categorical_plot_specifier.categorical_dimension: jitter
+                categorical_plot_specifier.anchor_dimension: jitter
                 or constants.DEFAULT_STRIPPLOT_JITTER
             }
             if categorical_plot_specifier.plot_type is CategoricalPlotType.STRIP
             else None
         ),
-        normalizer={categorical_plot_specifier.continuous_dimension: normalizer},
+        normalizer={categorical_plot_specifier.anchored_dimension: normalizer},
     )
 
     traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
@@ -706,7 +729,7 @@ def distplot(
             - A list of CSS color names or HTML color codes.
 
             The color palette is used to assign discrete colors to `slices` of data.
-        axis: One of :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
+        axis: A :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
         opacity: A numeric value in the (0, 1) interval to specify bar and line opacity.
         hist: If True, plot histogram bars.
         rug: If True, plot rug bars of the underlying data.
@@ -716,11 +739,11 @@ def distplot(
         equal_bins: If True, uses the same bins for all `slices` in the data.
         bins: A string, integer, or sequence specifying the `bins` parameter for :func:`numpy.histogram`.
         cumulative: If True, draws a cumulative histogram.
-        histnorm: One of :obj:`~statsplotly.plot_specifiers.data.HistogramNormType` value.
-        central_tendency: One of :obj:`~statsplotly.plot_specifiers.data.CentralTendencyType` value.
+        histnorm: A :obj:`~statsplotly.plot_specifiers.data.HistogramNormType` value.
+        central_tendency: A :obj:`~statsplotly.plot_specifiers.data.CentralTendencyType` value.
         vlines: A dictionary of {slice: (line_name, vertical_coordinates) to draw vertical lines.
         hlines: A dictionary of {slice: (line_name, horizontal_coordinates) to draw horizontal lines.
-        barmode: One of :obj:`~statsplotly.plot_specifiers.layout.HistogramBarMode` value.
+        barmode: A :obj:`~statsplotly.plot_specifiers.layout.HistogramBarMode` value.
         x_label: A string to label the x_axis in place of the corresponding column name in `data`.
         y_label: A string to label the y_axis in place of the corresponding column name in `data`.
         title: A string for the title of the plot.
@@ -977,7 +1000,7 @@ def jointplot(
             - A list of CSS color names or HTML color codes.
 
             The color palette is used, by order of precedence :
-                - To map color data of the `color` parameter onto the corresponding colormap.
+                - To map color data specified by the `color` parameter onto the corresponding colormap.
                 - To assign discrete colors to `slices` of data.
 
         shared_coloraxis: If True, colorscale limits are shared across slices of data.
@@ -986,33 +1009,33 @@ def jointplot(
         colorbar: If True, draws a colorbar.
         text: A string or the name of the column in `data` with values to appear in the hover tooltip. Column names can be concatenated with '+' to display values from multiple columns.
         marker: A valid marker symbol or the name of the column in `data` with values to assign marker symbols.
-        mode: One of :obj:`~statsplotly.plot_specifiers.data.TraceMode` value.
-        axis: One of :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
+        mode: A :obj:`~statsplotly.plot_specifiers.trace.TraceMode` value.
+        axis: A :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
         opacity: A numeric value in the (0, 1) interval to specify bar and line opacity.
-        marginal_plot: One of :obj:`~statsplotly.plot_specifiers.trace.MarginalPlotDimension` value.
+        marginal_plot: A :obj:`~statsplotly.plot_specifiers.trace.MarginalPlotDimension` value.
         kde_color_palette: The color_palette for the Kernel Density Estimation map.
         hist: If True, plot histogram bars.
         rug: If True, plot rug bars of the underlying data.
         ecdf: If True, plot the Empirical Cumulative Density Function.
         kde: If True, plot a line of a Kernel Density Estimation of the distribution.
         step: If True, plot a step histogram instead of a standard histogram bars.
-        equal_bins_x: If True, uses the same bins for `x` dimension of all `slices` in the data.
-        equal_bins_y: If True, uses the same bins for `y` dimension of all `slices` in the data.
-        bins_x: A string, integer, or sequence specifying the `bins` parameter for `x` dimension for :func:`numpy.histogram`.
-        bins_y: A string, integer, or sequence specifying the `bins` parameter for `y` dimension  for :func:`numpy.histogram`.
-        histnorm: One of :obj:`~statsplotly.plot_specifiers.data.HistogramNormType` value.
-        central_tendency: One of :obj:`~statsplotly.plot_specifiers.data.CentralTendencyType` value.
-        barmode: One of :obj:`~statsplotly.plot_specifiers.layout.BarMode` value.
-        plot_type: One of :obj:`~statsplotly.plot_specifiers.trace.JointplotType` value.
+        equal_bins_x: If True, uses the same bins for the `x` dimension of all `slices` in the data.
+        equal_bins_y: If True, uses the same bins for the `y` dimension of all `slices` in the data.
+        bins_x: A string, integer, or sequence specifying the `bins` parameter for the `x` dimension for :func:`numpy.histogram`.
+        bins_y: A string, integer, or sequence specifying the `bins` parameter for the `y` dimension  for :func:`numpy.histogram`.
+        histnorm: A :obj:`~statsplotly.plot_specifiers.data.HistogramNormType` value.
+        central_tendency: A :obj:`~statsplotly.plot_specifiers.data.CentralTendencyType` value.
+        barmode: A :obj:`~statsplotly.plot_specifiers.layout.BarMode` value.
+        plot_type: A :obj:`~statsplotly.plot_specifiers.trace.JointplotType` value.
         opacity: A numeric value in the (0, 1) interval to specify marker opacity.
         jitter_x: A numeric value to specify jitter amount on the `x` dimension.
         jitter_y: A numeric value to specify jitter amount on the `y` dimension.
-        normalizer_x: The normalizer for the `x` dimension. One of :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
-        normalizer_y: The normalizer for the `y` dimension. One of :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
+        normalizer_x: The normalizer for the `x` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
+        normalizer_y: The normalizer for the `y` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
         shaded_error: The name of the column in `data` with values to plot continuous error shade.
         error_x: The name of the column in `data` with values to plot error bar in the `x` dimension.
         error_y: The name of the column in `data` with values to plot error bar in the `y` dimension.
-        fit: One of :obj:`~statsplotly.plot_specifiers.data.RegressionType` value. Computes and plot the corresponding regression.
+        fit: A :obj:`~statsplotly.plot_specifiers.data.RegressionType` value. Computes and plot the corresponding regression.
         size: A numeric value or the name of the column in `data` with values to assign mark sizes.
         x_label: A string to label the x_axis in place of the corresponding column name in `data`.
         y_label: A string to label the y_axis in place of the corresponding column name in `data`.
@@ -1053,7 +1076,7 @@ def jointplot(
         plot_type=plot_type,
         marginal_plot=marginal_plot,
         scatter_specifier=ScatterSpecifier(
-            mode=mode, regression_type=fit, data_pointer=data_handler.data_pointer
+            mode=mode, regression_type=fit, data_types=data_handler.data_types
         ),
     )
     if data_handler.data_pointer.color is not None:
@@ -1098,7 +1121,6 @@ def jointplot(
     ) or jointplot_specifier.plot_type in (
         JointplotType.SCATTER_KDE,
         JointplotType.KDE,
-        JointplotType.SCATTER_KDE,
         JointplotType.HISTOGRAM,
         JointplotType.Y_HISTMAP,
     ):
@@ -1400,7 +1422,7 @@ def heatmap(
             - A list of CSS color names or HTML color codes.
 
             The color palette is used, by order of precedence :
-                - To map color data of the `color` parameter onto the corresponding colormap.
+                - To map color data specified by the `color` parameter onto the corresponding colormap.
                 - To assign discrete colors to `slices` of data.
 
         shared_coloraxis: If True, colorscale limits are shared across slices of data.
@@ -1408,9 +1430,9 @@ def heatmap(
         logscale: A float specifying the log base to use for colorscaling.
         colorbar: If True, draws a colorbar.
         text: A string or the name of the column in `data` with values to appear in the hover tooltip. Column names can be concatenated with '+' to display values from multiple columns.
-        axis: One of :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
+        axis: A :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
         opacity: A numeric value in the (0, 1) interval to specify heatmap opacity.
-        normalizer: The normalizer for the `z` dimension. One of :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
+        normalizer: The normalizer for the `z` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
         x_label: A string to label the x_axis in place of the corresponding column name in `data`.
         y_label: A string to label the y_axis in place of the corresponding column name in `data`.
         z_label: A string to label the coloraxis in place of the corresponding column name in `data`.

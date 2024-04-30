@@ -129,7 +129,7 @@ def plot_distplot_traces(
     color_specifier: ColorSpecifier,
     histogram_specifier: HistogramSpecifier,
 ) -> dict[str, plotly.basedatatypes.BaseTraceType]:
-    """Constructs traces of marginal distributions."""
+    """Constructs distplot traces."""
 
     traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
     if histogram_specifier.dimension is None:

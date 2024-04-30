@@ -102,7 +102,14 @@ class SceneLayout(_BaseLayout):
             ),
         }
         if coloraxis.colorbar is not None:
-            coloraxis.colorbar.update({"x": 1.15})
+            coloraxis.colorbar.update(
+                {
+                    "x": constants.COLORBAR_XOFFSET,
+                    "len": coloraxis.colorbar.get("len", 1) * constants.COLORBAR_REDUCTION_FACTOR,
+                }
+            )
+            if coloraxis.colorbar.get("y") is None:
+                coloraxis.colorbar.update({"y": 0, "yanchor": "bottom"})
 
         return cls(
             title=axes_specifier.legend.figure_title,
