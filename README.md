@@ -1,11 +1,8 @@
 <div align="center" style="margin-bottom: 6vw;">
 
 ![Logo Dark](docs/assets/statsplotly-dark-mode-logo.png#gh-dark-mode-only)
-</div>
-
-<div align="center">
-
 ![Logo Light](docs/assets/statsplotly-light-mode-logo.png#gh-light-mode-only)
+
 </div>
 
 
