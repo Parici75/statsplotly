@@ -216,7 +216,7 @@ class HistogramSpecifier(_TraceSpecifier):
                 raise StatsPlotSpecificationError(
                     "Histogram norm must be set to"
                     f" {HistogramNormType.PROBABILITY_DENSITY.value} with KDE plotting,"
-                    f" got `{self.histnorm}`"
+                    f" got `{self.histnorm.name}`"
                 )
 
             if self.cumulative:

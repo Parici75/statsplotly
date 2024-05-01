@@ -151,7 +151,7 @@ class TestHistogramSpecifier:
                 data_type=np.dtype("int"),
             )
         assert (
-            "Histogram norm must be set to probability density with KDE plotting, got `HistogramNormType.COUNT`"
+            "Histogram norm must be set to probability density with KDE plotting, got `COUNT`"
             in str(excinfo.value)
         )
 
