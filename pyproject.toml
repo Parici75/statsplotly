@@ -31,8 +31,9 @@ coverage = "^7.4.4"
 [tool.poetry.group.docs]
 [tool.poetry.group.docs.dependencies]
 sphinx = "^7.2.6"
-m2r2 = "^0.3.3"
 furo = "^2023.5.20"
+myst = "^1.0.4"
+myst-nb = "^1.1.0"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -74,7 +75,7 @@ ignore = [
     "PLR0913", # Too many arguments to function call
 ]
 [tool.ruff.lint.per-file-ignores]
-"main.py" = ["C901", "PLR0912", "PLR0915"]
+"statsplotly/_plotting/**.py" = ["C901", "PLR0912", "PLR0915"]
 
 [tool.isort]
 profile = "black"

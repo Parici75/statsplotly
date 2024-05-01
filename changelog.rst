@@ -1,6 +1,6 @@
 Version 0.2.0
 =============
-**2024-04-05**
+**2024-05-01**
 
 The 0.2.0 version introduces new methods enhancing subplots management, and improves plotting features.
 
@@ -12,7 +12,7 @@ The 0.2.0 version introduces new methods enhancing subplots management, and impr
     - :meth:`~statsplotly.utils.SubplotGridFormatter.tidy_subplots` manages post-processing of a subplot grid.
 
 - Enhance the color specification option of the main plotting module : the `color` argument now accepts reference to `datetime` and arbitrary `string` color data.
-- Support 'geometric mean' and 'geometric standard deviation factor' options in :func:`~statsplotly.barplot` `aggregation_fct` and `error_bar` arguments.
+- Support *geometric mean* and *geometric standard deviation factor* options in :func:`~statsplotly.barplot` `aggregation_fct` and `error_bar` arguments.
 - Support Empirical Cumulative Distribution Function option in :func:`~statsplotly.distplot` and :func:`~statsplotly.jointplot`.
 
 🎨 Feature improvements
@@ -21,18 +21,21 @@ The 0.2.0 version introduces new methods enhancing subplots management, and impr
 - Improve :func:`~statsplotly.jointplot` trace visibility group consistency.
 - Add `color` specification option for :func:`~statsplotly.jointplot` scatter traces.
 - Preserve original data ordering in :func:`~statsplotly.barplot` aggregations.
+- Automatic detection of plot orientation for :func:`~statsplotly.barplot` and :func:`~statsplotly.catplot`.
 - Improve colorbar management in layout.
 - Support discrete color mapping in :func:`~statsplotly.heatmap`.
 - Improve `datetime` data handling in :func:`~statsplotly.catplot`.
 - Correct bar layout in multi-trace histograms.
 - Improve step histogram line aesthetics.
-- Display slice name on color-coded barcharts.
+- Display slice name on color-coded bar charts.
+- Integrate statsplotly template with plotly theming framework.
 
 🐛 Bug fixes
 ************
 - Fix data slice visibility inconsistencies in :func:`~statsplotly.heatmap`.
 - Fix `scaleratio` for `axis="id_line"`.
 - Fix cumulative histograms when `cumulative=True` and `step=True`.
+
 
 Version 0.1.5
 =============
