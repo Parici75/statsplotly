@@ -51,6 +51,10 @@ test:
 
 ci: lint typecheck test
 
+coverage:
+	@poetry run coverage run -m pytest
+	@poetry run coverage report
+
 # Pre-commit hooks
 set-pre-commit:
 	@echo "Setting up pre-commit hooks..."
@@ -65,7 +69,7 @@ pre-commit: set-pre-commit run-pre-commit
 
 # Documentation
 update-doc:
-	@poetry run sphinx-apidoc --module-first --no-toc -o docs/source $(PROJECT_NAME)
+	@poetry run sphinx-apidoc --module-first --no-toc --force -o docs/source $(PROJECT_NAME)
 
 build-doc:
 	@poetry run sphinx-build docs ./docs/_build/html/

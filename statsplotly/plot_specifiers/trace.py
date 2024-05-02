@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from collections.abc import Callable
 from enum import Enum
@@ -8,18 +10,16 @@ import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
 from pandas.api.types import is_numeric_dtype
-from pydantic import field_validator
-from pydantic_core.core_schema import ValidationInfo
+from pydantic import ValidationInfo, field_validator, model_validator
 
 from statsplotly import constants
-from statsplotly.exceptions import (
-    StatsPlotInvalidArgumentError,
-    StatsPlotSpecificationError,
-)
+from statsplotly._base import BaseModel
+from statsplotly.exceptions import StatsPlotSpecificationError
 from statsplotly.plot_specifiers.data import (
-    BaseModel,
     CentralTendencyType,
     DataDimension,
+    DataHandler,
+    DataTypes,
     HistogramNormType,
     RegressionType,
     TraceData,
@@ -32,6 +32,7 @@ class TraceMode(str, Enum):
     MARKERS = "markers"
     LINES = "lines"
     MARKERS_LINES = "markers+lines"
+    LINES_TEXT = "lines+text"
 
 
 class CategoricalPlotType(str, Enum):
@@ -55,7 +56,6 @@ class JointplotType(str, Enum):
     HISTOGRAM = "histogram"
 
 
-TS = TypeVar("TS", bound="_TraceSpecifier")
 F = TypeVar("F", bound=Callable[..., Any])
 
 
@@ -63,35 +63,105 @@ class _TraceSpecifier(BaseModel):
     @staticmethod
     def remove_nans(function: F) -> F:
         @wraps(function)
-        def wrapper(self: type[TS], data: pd.Series, *args: Any, **kwargs: Any) -> F:
+        def wrapper(self: _TraceSpecifier, data: pd.Series, *args: Any, **kwargs: Any) -> F:
             return function(self, data.dropna(), *args, **kwargs)
 
         return cast(F, wrapper)
 
 
-class ScatterSpecifier(_TraceSpecifier):
+class _XYTraceValidator(BaseModel):
+    data_types: DataTypes
+
+    @model_validator(mode="after")
+    def validate_model(self) -> _XYTraceValidator:
+        if not (self.data_types.x is not None and self.data_types.y is not None):
+            raise StatsPlotSpecificationError(
+                f"Both `x` and `y`dimensions must be supplied for {self.__class__.__name__}"
+            )
+        return self
+
+
+class PlotOrientation(str, Enum):
+    HORIZONTAL = "horizontal"
+    VERTICAL = "vertical"
+
+
+class OrientedPlotSpecifier(BaseModel):
+    prefered_orientation: PlotOrientation | None = None
+    data_types: DataTypes
+
+    @property
+    def orientation(self) -> PlotOrientation:
+        if self.data_types.x is None:
+            return PlotOrientation.HORIZONTAL
+        if self.data_types.y is None:
+            return PlotOrientation.VERTICAL
+        if self.prefered_orientation is not None:
+            return self.prefered_orientation
+        if is_numeric_dtype(self.data_types.x):
+            return PlotOrientation.HORIZONTAL
+        return PlotOrientation.VERTICAL
+
+    @property
+    def anchor_dimension(self) -> DataDimension:
+        if self.orientation is PlotOrientation.VERTICAL:
+            return DataDimension.X
+        return DataDimension.Y
+
+    @property
+    def anchored_dimension(self) -> DataDimension | None:
+        if self.data_types.x is None or self.data_types.y is None:
+            return None
+        if self.anchor_dimension is DataDimension.X:
+            return DataDimension.Y
+        return DataDimension.X
+
+
+class ScatterSpecifier(_TraceSpecifier, _XYTraceValidator):
     mode: TraceMode | None = None
     regression_type: RegressionType | None = None
 
-    @field_validator("mode", mode="before")
-    def check_mode(cls, value: str | None) -> TraceMode | None:
-        try:
-            return TraceMode(value) if value is not None else None
-        except ValueError as exc:
-            raise StatsPlotInvalidArgumentError(value, TraceMode) from exc  # type: ignore
 
-    @field_validator("regression_type", mode="before")
-    def check_regression_type(cls, value: str | None) -> RegressionType | None:
-        try:
-            return RegressionType(value) if value is not None else None
-        except ValueError as exc:
-            raise StatsPlotInvalidArgumentError(value, RegressionType) from exc  # type: ignore
+class CategoricalPlotSpecifier(OrientedPlotSpecifier, _TraceSpecifier, _XYTraceValidator):
+    plot_type: CategoricalPlotType
+
+    @field_validator("plot_type", mode="before")
+    def validate_plot_type(cls, value: str | None) -> CategoricalPlotType:
+        if value is None:
+            return CategoricalPlotType.STRIP
+        return CategoricalPlotType(value)
+
+    @model_validator(mode="after")
+    def validate_model(self) -> CategoricalPlotSpecifier:
+        if self.data_types.color is not None and self.plot_type is not CategoricalPlotType.STRIP:
+            raise StatsPlotSpecificationError(
+                f"Only slice-level color data can be specified with `{self.plot_type.value}`, got marker-level argument `color={self.data_types.color}`"
+            )
+        return self
+
+    def get_category_strip_map(
+        self, data_handler: DataHandler
+    ) -> dict[DataDimension, dict[str, Any]] | None:
+        categorical_data = data_handler.get_data(self.anchor_dimension)
+        if categorical_data is None:
+            raise StatsPlotSpecificationError(
+                f"Could not find `{self.anchor_dimension.value}` in data pointer"
+            )
+        if is_numeric_dtype(categorical_data):
+            return None
+
+        categorical_data_dict: dict[str, Any] = {}
+        for i, x_level in enumerate(np.sort(categorical_data.dropna().astype(str).unique()), 1):
+            categorical_data_dict[x_level] = i
+
+        return {self.anchor_dimension: categorical_data_dict}
 
 
 class HistogramSpecifier(_TraceSpecifier):
     hist: bool | None = None
     cumulative: bool | None = None
     step: bool | None = None
+    ecdf: bool | None = None
     kde: bool | None = None
     rug: bool | None = None
     histnorm: HistogramNormType
@@ -109,22 +179,12 @@ class HistogramSpecifier(_TraceSpecifier):
             )
         return value
 
-    @field_validator("kde")
-    def check_kde(cls, value: bool | None, info: ValidationInfo) -> bool | None:
-        if value and info.data.get("cumulative"):
-            raise StatsPlotSpecificationError(
-                "KDE is incompatible with cumulative histogram plotting"
-            )
-        if value and info.data.get("step"):
-            raise StatsPlotSpecificationError("KDE is incompatible with step histogram plotting")
-        return value
-
-    @field_validator("bins")
+    @field_validator("bins", mode="before")
     def check_bins(cls, value: str | list[float] | int | None) -> str | list[float] | int:
         return value if value is not None else constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD
 
     @field_validator("histnorm", mode="before")
-    def check_histnorm(cls, value: str | None, info: ValidationInfo) -> HistogramNormType:
+    def check_histnorm(cls, value: str | None, info: ValidationInfo) -> str | None:
         if info.data.get("kde"):
             if value is None:
                 logger.info(
@@ -133,22 +193,7 @@ class HistogramSpecifier(_TraceSpecifier):
                 )
                 return HistogramNormType.PROBABILITY_DENSITY
 
-            if value is not HistogramNormType.PROBABILITY_DENSITY:
-                raise StatsPlotSpecificationError(
-                    "Histogram norm must be set to"
-                    f" {HistogramNormType.PROBABILITY_DENSITY.value} with KDE plotting, got {value}"
-                )
-        try:
-            return HistogramNormType(value) if value is not None else HistogramNormType.COUNT
-        except ValueError as exc:
-            raise StatsPlotInvalidArgumentError(value, HistogramNormType) from exc  # type: ignore
-
-    @field_validator("central_tendency")
-    def check_central_tendency(cls, value: str | None) -> CentralTendencyType | None:
-        try:
-            return CentralTendencyType(value) if value is not None else None
-        except ValueError as exc:
-            raise StatsPlotInvalidArgumentError(value, CentralTendencyType) from exc  # type: ignore
+        return value or HistogramNormType.COUNT
 
     @field_validator("dimension")
     def check_dimension(cls, value: DataDimension, info: ValidationInfo) -> DataDimension:
@@ -158,12 +203,49 @@ class HistogramSpecifier(_TraceSpecifier):
             )
         return value
 
+    @model_validator(mode="after")
+    def check_parameter_consistency(self: HistogramSpecifier) -> HistogramSpecifier:
+        if self.ecdf and self.histnorm is HistogramNormType.PROBABILITY_DENSITY:
+            raise StatsPlotSpecificationError(
+                "Histogram norm can not be set to"
+                f" {HistogramNormType.PROBABILITY_DENSITY.value} with ECDF plotting"
+            )
+
+        if self.kde:
+            if self.histnorm is not HistogramNormType.PROBABILITY_DENSITY:
+                raise StatsPlotSpecificationError(
+                    "Histogram norm must be set to"
+                    f" {HistogramNormType.PROBABILITY_DENSITY.value} with KDE plotting,"
+                    f" got `{self.histnorm.name}`"
+                )
+
+            if self.cumulative:
+                raise StatsPlotSpecificationError(
+                    "KDE is incompatible with cumulative histogram plotting"
+                )
+
+            if self.step:
+                raise StatsPlotSpecificationError(
+                    "KDE is incompatible with step histogram plotting"
+                )
+
+        return self
+
     @property
     def density(self) -> bool:
         return True if self.histnorm is HistogramNormType.PROBABILITY_DENSITY else False
 
+    def get_distribution_max_value(self, data: pd.Series) -> float:
+        dist_function: Callable[[Any], Any]
+        if self.ecdf:
+            dist_function = self.compute_ecdf
+        else:
+            dist_function = self.compute_histogram
+
+        return dist_function(data)[0].max()
+
     @_TraceSpecifier.remove_nans
-    def histogram_bin_edges(self, data: pd.Series) -> tuple[NDArray[Any], float]:
+    def get_histogram_bin_edges(self, data: pd.Series) -> tuple[NDArray[Any], float]:
         bin_edges = np.histogram_bin_edges(
             data,
             bins=self.bin_edges if self.bin_edges is not None else self.bins,
@@ -175,8 +257,8 @@ class HistogramSpecifier(_TraceSpecifier):
         return bin_edges, bin_size
 
     @_TraceSpecifier.remove_nans
-    def histogram(self, data: pd.Series) -> tuple[pd.Series, NDArray[Any], float]:
-        bin_edges, bin_size = self.histogram_bin_edges(data)
+    def compute_histogram(self, data: pd.Series) -> tuple[pd.Series, NDArray[Any], float]:
+        bin_edges, bin_size = self.get_histogram_bin_edges(data)
         hist, bin_edges = np.histogram(data, bins=bin_edges, density=self.density)
 
         # Normalize if applicable
@@ -188,10 +270,32 @@ class HistogramSpecifier(_TraceSpecifier):
             if self.histnorm is HistogramNormType.PERCENT:
                 hist = hist * 100
 
+        if self.cumulative:
+            hist = np.cumsum(hist)
+
         return (
             pd.Series(hist, name=self.histnorm if len(self.histnorm) > 0 else "count"),
             bin_edges,
             bin_size,
+        )
+
+    @_TraceSpecifier.remove_nans
+    def compute_ecdf(self, data: pd.Series) -> tuple[pd.Series, NDArray[Any]]:
+        unique_values, counts = np.unique(np.sort(data), return_counts=True)
+
+        cdf = np.cumsum(counts)
+
+        if (
+            self.histnorm is HistogramNormType.PROBABILITY
+            or self.histnorm is HistogramNormType.PERCENT
+        ):
+            cdf = cdf / data.size
+            if self.histnorm is HistogramNormType.PERCENT:
+                cdf = cdf * 100
+
+        return (
+            pd.Series(cdf, name=self.histnorm if len(self.histnorm) > 0 else "count"),
+            unique_values,
         )
 
 
@@ -201,27 +305,11 @@ class JointplotSpecifier(_TraceSpecifier):
     histogram_specifier: dict[DataDimension, HistogramSpecifier] | None = None
     scatter_specifier: ScatterSpecifier
 
-    @field_validator("plot_type", mode="before")
-    def check_jointplot_type(cls, value: str) -> JointplotType:
-        try:
-            return JointplotType(value)
-        except ValueError as exc:
-            raise StatsPlotInvalidArgumentError(value, JointplotType) from exc  # type: ignore
-
-    @field_validator("marginal_plot", mode="before")
-    def check_marginal_plot(cls, value: str) -> MarginalPlotDimension | None:
-        try:
-            return MarginalPlotDimension(value) if value is not None else None
-        except ValueError as exc:
-            raise StatsPlotInvalidArgumentError(
-                value, MarginalPlotDimension  # type: ignore
-            ) from exc
-
     @field_validator("scatter_specifier")
     def check_scatter_specifier(
         cls, value: ScatterSpecifier, info: ValidationInfo
     ) -> ScatterSpecifier:
-        if value.regression_type is not None and (plot_type := info.data["plot_type"]) not in (
+        if value.regression_type is not None and (plot_type := info.data.get("plot_type")) not in (
             JointplotType.SCATTER,
             JointplotType.SCATTER_KDE,
         ):
@@ -263,8 +351,8 @@ class JointplotSpecifier(_TraceSpecifier):
         if self.histogram_specifier is None:
             raise ValueError("`histogram_specifier` can not be `None`")
         x, y = data.iloc[:, 0], data.iloc[:, 1]
-        xbin_edges, xbin_size = self.histogram_specifier[DataDimension.X].histogram_bin_edges(x)
-        ybin_edges, ybin_size = self.histogram_specifier[DataDimension.X].histogram_bin_edges(y)
+        xbin_edges, xbin_size = self.histogram_specifier[DataDimension.X].get_histogram_bin_edges(x)
+        ybin_edges, ybin_size = self.histogram_specifier[DataDimension.Y].get_histogram_bin_edges(y)
 
         hist, _, _ = np.histogram2d(
             x,
@@ -309,13 +397,13 @@ class JointplotSpecifier(_TraceSpecifier):
             histogram_specifier = self.histogram_specifier[DataDimension.X].model_copy()
 
         # Get and set uniform bin edges along anchor values
-        bin_edges, bin_size = histogram_specifier.histogram_bin_edges(histogram_data)
+        bin_edges, bin_size = histogram_specifier.get_histogram_bin_edges(histogram_data)
         histogram_specifier.bin_edges = bin_edges
 
         # Initialize histogram array
         hist = np.zeros((len(anchor_values.unique()), len(bin_edges) - 1))
         for i, anchor_value in enumerate(anchor_values.unique()):
-            hist[i, :], _, _ = histogram_specifier.histogram(
+            hist[i, :], _, _ = histogram_specifier.compute_histogram(
                 histogram_data[anchor_values == anchor_value]
             )
 

@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath("../"))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "statsplotly"
-copyright = "2023, Benjamin Roland"
+copyright = "2024, Benjamin Roland"
 author = "Benjamin Roland"
 
 # -- General configuration ---------------------------------------------------
@@ -32,10 +32,13 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.githubpages",
-    "m2r2",
+    "myst_nb",
 ]
 
-source_suffix = [".rst", ".md"]
+# myst and myst_nb
+myst_enable_extensions = ["html_image"]
+jupyter_execute_notebooks = "cache"
+nb_kernel_rgx_aliases = {"statsplotly": "python3"}
 
 # Napoleon settings
 napoleon_google_docstring = True
@@ -53,6 +56,7 @@ napoleon_preprocess_types = False
 napoleon_type_aliases = None
 napoleon_attr_annotations = True
 
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
@@ -67,8 +71,15 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # The theme to use for HTML and HTML Help pages. See the documentation for
 # a list of builtin themes.
 html_theme = "furo"
+html_favicon = "assets/favicon.ico"
+
+html_theme_options = {
+    "sidebar_hide_name": True,
+    "light_logo": "statsplotly-light-mode-logo.png",
+    "dark_logo": "statsplotly-dark-mode-logo.png",
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+html_static_path = ["assets"]

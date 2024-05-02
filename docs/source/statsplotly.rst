@@ -14,8 +14,6 @@ Subpackages
 
    statsplotly.plot_objects
    statsplotly.plot_specifiers
-   statsplotly.plotting
-   statsplotly.utils
 
 Submodules
 ----------
@@ -32,6 +30,14 @@ statsplotly.exceptions module
 -----------------------------
 
 .. automodule:: statsplotly.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+statsplotly.utils module
+------------------------
+
+.. automodule:: statsplotly.utils
    :members:
    :undoc-members:
    :show-inheritance:

@@ -15,12 +15,12 @@ jobs:
         fetch-depth: 0
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.x'
 
     - name: Set up Poetry
-      uses: abatilo/actions-poetry@v2
+      uses: abatilo/actions-poetry@v3
 
     - name: Build HTML documentation
       run: |
@@ -29,13 +29,13 @@ jobs:
         poetry run sphinx-build docs ./docs/_build/html/
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: html-docs
         path: docs/_build/
 
     - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       if: github.ref == 'refs/heads/main'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}

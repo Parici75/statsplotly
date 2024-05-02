@@ -1,2 +1,5 @@
-"""This subpackage defines objects to specify data, color, trace and layout properties.
-"""
+"""This subpackage defines objects and methods to specify plot properties."""
+
+from .common import register_statsplotly_template
+
+register_statsplotly_template()

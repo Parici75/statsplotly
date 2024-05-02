@@ -3,29 +3,45 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Statsplotly documentation
-========================
+.. include:: source/getting_started.md
+   :parser: myst_parser.sphinx_
 
-.. mdinclude:: source/api.md
+Features
+---------
+.. toctree::
+   :maxdepth: 2
+   :caption: Features
+
+   notebooks/lineplot.ipynb
+   notebooks/scatterplot.ipynb
+   notebooks/barplot.ipynb
+   notebooks/catplot.ipynb
+   notebooks/heatmap.ipynb
+   notebooks/distplot.ipynb
+   notebooks/jointplot.ipynb
+
+   notebooks/managing_subplots.ipynb
 
 
-Detailed API
-------------
+API
+---
 .. toctree::
    :maxdepth: 1
+   :caption: API
 
    source/statsplotly.rst
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
 
 
 Changelog
-=========
+---------
 .. toctree::
+   :caption: Changelog
+
    source/changelog_link.rst
