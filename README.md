@@ -47,7 +47,7 @@ I thus set out to design a library combining :
 - an independent processing of color coding scheme, data slicer and plot dimensions.
 - a high level interface for [seaborn-like](https://seaborn.pydata.org/tutorial/distributions.html) visualization of data distributions.
 - statistical data processing under the hood.
-- leveraging of the tidy DataFrame structure for easy styling of plot cues (e.g., marker color, symbol, size, and opacity).
+- leveraging of the [tidy DataFrame](https://aeturrell.github.io/python4DS/data-tidy.html) structure for easy styling of plot cues (e.g., marker color, symbol, size, and opacity).
 - sensible cartesian and coloraxis coordinates management across figure subplots.
 
 In summary, `statsplotly` seeks to take advantage of the powerful interactivity offered by `plotly.js` without compromising statistical intelligibility for aesthetic choices, or vice-versa.
