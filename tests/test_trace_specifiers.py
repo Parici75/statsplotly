@@ -111,7 +111,7 @@ class TestCategoricalPlotSpecifier:
             )
             assert (
                 "Only slice-level color data can be specified with `boxplot`, got marker-level argument `color=z`"
-                in str(excinfo)
+                in str(excinfo.value)
             )
 
 

@@ -247,7 +247,7 @@ class TestAggregationSpecifier:
                 data_pointer=DataPointer(x="x", y="y"),
                 data_types=DataTypes(x=np.dtype(float), y=np.dtype(float)),
             )
-            assert "count aggregation only applies to one dimension" in str(excinfo)
+            assert "count aggregation only applies to one dimension" in str(excinfo.value)
 
 
 class TestAggregationTraceData:
