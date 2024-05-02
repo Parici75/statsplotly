@@ -33,7 +33,7 @@ Further, I discovered that real-world data analysis, whether in academia or indu
   - **Exploratory** data visualization: the ideal tool should facilitate effortless immersion into the data to uncover valuable insights.
   - **Explanatory** data visualization: the ideal tool should enable rapid creation of polished, visually appealing plots that effectively support a hypothesis derived from the preceding analysis.
 
-There is no reasons why these two endeavours should require different workflows. On the contrary, working toward both ends using the same tool should increase both analysis and communication efficiency.
+There is no reason these two endeavours should require different workflows. On the contrary, working towards both ends using the same tool should increase both analysis and communication efficiency.
 
 I thus set out to design a library combining :
 - a high level interface with graphical representation entities (e.g., plot, barplot, distplot, etc) as entrypoint functions. As intellectually satisfying the [Grammar of Graphics](https://www.tandfonline.com/doi/pdf/10.1198/jcgs.2009.07098) may be, I find this framework to be quite convoluted for expressing pragmatic visualization needs one has when performing real-world data analysis.
