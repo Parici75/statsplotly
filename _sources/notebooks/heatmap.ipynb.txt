@@ -1,0 +1,301 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "6129780c-315d-4f13-bafa-83e6b9b20944",
+   "metadata": {
+    "editable": true,
+    "slideshow": {
+     "slide_type": ""
+    },
+    "tags": []
+   },
+   "source": [
+    "# Heatmaps\n",
+    "A heatmap uses color to represent the magnitude of a variable across two dimensions, often showing how different categories or groups relate to each other. \n",
+    "\n",
+    "By visualizing the data as a grid of colored squares or cells, heatmaps can quickly convey complex patterns and relationships, such as correlations, clustering, or hierarchical structures, making it easier to identify insights and trends in large datasets."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "98ea1005-a22d-4a77-a81d-8b547152e65f",
+   "metadata": {
+    "editable": true,
+    "slideshow": {
+     "slide_type": ""
+    },
+    "tags": [
+     "hide-input"
+    ]
+   },
+   "outputs": [],
+   "source": [
+    "import plotly.io as pio\n",
+    "\n",
+    "pio.renderers.default = \"sphinx_gallery\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f07dbd5e-74b6-4313-ab7b-b12a3a382bcf",
+   "metadata": {
+    "editable": true,
+    "slideshow": {
+     "slide_type": ""
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import plotly.express as px\n",
+    "from plotly.subplots import make_subplots\n",
+    "import pandas as pd\n",
+    "\n",
+    "import statsplotly"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "85f5b726-9046-4cf6-af4e-92b692eed3a6",
+   "metadata": {
+    "editable": true,
+    "slideshow": {
+     "slide_type": ""
+    },
+    "tags": []
+   },
+   "source": [
+    "> Note that `statsplotly.heatmap` does not operate on wide-form DataFrame, so the data needs to be melted :"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "94780514-2c87-4267-8bd3-f6baa43dfbd6",
+   "metadata": {
+    "editable": true,
+    "slideshow": {
+     "slide_type": ""
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "df = px.data.medals_wide(indexed=True)\n",
+    "\n",
+    "fig = statsplotly.heatmap(\n",
+    "    data=df.melt(ignore_index=False),\n",
+    "    x=\"nation\",\n",
+    "    y=\"medal\",\n",
+    "    z=\"value\",\n",
+    "    opacity=0.8,\n",
+    "    color_palette=[\"#d4f542\", \"#4275f5\"],\n",
+    "    axis=\"square\",\n",
+    ")\n",
+    "fig.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "997f38e6-a516-486f-b340-47266e8e8ef9",
+   "metadata": {
+    "editable": true,
+    "slideshow": {
+     "slide_type": ""
+    },
+    "tags": []
+   },
+   "source": [
+    "## Setting a color logscale\n",
+    "\n",
+    "One can also specify the base of a logscale for the colormap with the `logscale` parameter :"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2ebe3ee1-b583-4748-9a05-59e67272c8d8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = px.data.stocks().set_index(\"date\")\n",
+    "df.index = pd.DatetimeIndex(df.index, yearfirst=True, name=\"date\")\n",
+    "\n",
+    "fig = statsplotly.heatmap(\n",
+    "    data=df.melt(ignore_index=False, var_name=\"company\", value_name=\"stock_value\"),\n",
+    "    x=\"company\",\n",
+    "    y=\"date\",\n",
+    "    z=\"stock_value\",\n",
+    "    color_palette=\"Greens_r\",\n",
+    "    logscale=10,\n",
+    ")\n",
+    "fig.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "309a6a24-beb8-4ebf-9f5d-654ddfcca43f",
+   "metadata": {},
+   "source": [
+    "## One coloraxis per subplot\n",
+    "\n",
+    "Statsplotly makes it easy to draw subplots of heatmaps with sound coloraxis and colorbar managements. \n",
+    "\n",
+    "Here for example we calculate cross-correlation features across the iris species :"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "43152b1f-b5f6-4c8b-b5be-082902dd8a99",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = px.data.iris().set_index(\"species\")\n",
+    "corr_df = pd.concat(\n",
+    "    [\n",
+    "        df.loc[species, [\"sepal_length\", \"sepal_width\", \"petal_length\", \"petal_width\"]].corr()\n",
+    "        for species in df.index.unique()\n",
+    "    ],\n",
+    "    keys=df.index.unique(),\n",
+    "    names=[\"species\", \"index\"],\n",
+    ")\n",
+    "\n",
+    "fig = make_subplots(rows=len(corr_df.index.unique(\"species\")), cols=1, shared_xaxes=True)\n",
+    "for i, species in enumerate(corr_df.index.unique(\"species\"), 1):\n",
+    "    fig = statsplotly.heatmap(\n",
+    "        fig=fig,\n",
+    "        row=i,\n",
+    "        data=corr_df.loc[species].melt(\n",
+    "            ignore_index=False, var_name=species, value_name=\"correlation\"\n",
+    "        ),\n",
+    "        x=\"index\",\n",
+    "        y=species,\n",
+    "        z=\"correlation\",\n",
+    "        title=\"Iris features cross-correlations\",\n",
+    "        color_palette=\"reds\",\n",
+    "        axis=\"equal\",\n",
+    "    )\n",
+    "fig.layout.height = 800\n",
+    "fig.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1db605b3-ffb8-49cd-b04b-dd66b9732039",
+   "metadata": {},
+   "source": [
+    "## Shared coloraxis across subplots\n",
+    "\n",
+    "Statsplotly `SubplotGridFormatter` exposes utility method to define a common coloraxis across subplots :"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "de1cd744-bd28-408d-b8f1-13d678a6de40",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from statsplotly.utils import SubplotGridFormatter\n",
+    "\n",
+    "SubplotGridFormatter(fig=fig).set_common_coloraxis(shared_grid_axis=\"cols\")\n",
+    "fig.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dc99b4e0-5fc8-4ae4-b906-ee29889ac72b",
+   "metadata": {},
+   "source": [
+    "## Heatmap slices\n",
+    "\n",
+    "`statsplotly.heatmap` can slice the data along a particular dimension. This is handy when one seeks to individually inspect subparts of the data :"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f7b88d5f-eb46-49b2-976a-e03b7b2986da",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = px.data.iris().set_index(\"species\")\n",
+    "\n",
+    "\n",
+    "def construct_slicable_cross_correlation_matrix(df: pd.DataFrame) -> pd.DataFrame:\n",
+    "    corr_df = (\n",
+    "        pd.concat(\n",
+    "            [df.loc[species].reset_index(drop=True) for species in df.index.unique()],\n",
+    "            keys=df.index.unique(),\n",
+    "            axis=1,\n",
+    "        )\n",
+    "        .drop(columns=[\"species_id\"], level=1)\n",
+    "        .corr()\n",
+    "    )\n",
+    "    corr_df.columns = [\"-\".join(column) for column in corr_df.columns.to_flat_index()]\n",
+    "    corr_df[\"species\"] = corr_df.index.get_level_values(\"species\")\n",
+    "    corr_df.index = [\"-\".join(idx) for idx in corr_df.index.to_flat_index()]\n",
+    "\n",
+    "    return corr_df\n",
+    "\n",
+    "\n",
+    "fig = statsplotly.heatmap(\n",
+    "    data=construct_slicable_cross_correlation_matrix(df).melt(\n",
+    "        ignore_index=False, id_vars=\"species\", value_name=\"correlation\"\n",
+    "    ),\n",
+    "    x=\"index\",\n",
+    "    y=\"variable\",\n",
+    "    z=\"correlation\",\n",
+    "    title=\"Iris features cross-correlations\",\n",
+    "    color_palette=\"RdBu_r\",\n",
+    "    color_limits=(-1, 1),\n",
+    "    opacity=1,\n",
+    "    slicer=\"species\",\n",
+    "    axis=\"equal\",\n",
+    ")\n",
+    "fig.layout.height = 800\n",
+    "fig.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bf37ec4a-dcf2-4391-8eed-4d4ed5c7d96e",
+   "metadata": {},
+   "source": [
+    "Full details of the API : {func}`~statsplotly.heatmap`."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "statsplotly",
+   "language": "python",
+   "name": "statsplotly"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.5"
+  },
+  "widgets": {
+   "application/vnd.jupyter.widget-state+json": {
+    "state": {},
+    "version_major": 2,
+    "version_minor": 0
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

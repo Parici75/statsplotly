@@ -1,0 +1,664 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="statsplotly.plot_specifiers package" href="statsplotly.plot_specifiers.html" /><link rel="prev" title="statsplotly.plot_objects package" href="statsplotly.plot_objects.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
+        <title>statsplotly.plot_objects.layout package - statsplotly documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">statsplotly  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/statsplotly-light-mode-logo.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/statsplotly-dark-mode-logo.png" alt="Dark Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Features</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/lineplot.html">Line plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/scatterplot.html">Scatter plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/barplot.html">Bar plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/catplot.html">Categorical plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/heatmap.html">Heatmaps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/distplot.html">Distribution plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/jointplot.html">Jointplots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/managing_subplots.html">Managing subplots</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="statsplotly.html">statsplotly package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of statsplotly package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="statsplotly.plot_objects.html">statsplotly.plot_objects package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of statsplotly.plot_objects package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">statsplotly.plot_objects.layout package</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="statsplotly.plot_specifiers.html">statsplotly.plot_specifiers package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of statsplotly.plot_specifiers package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="statsplotly.plot_specifiers.color.html">statsplotly.plot_specifiers.color package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsplotly.plot_specifiers.data.html">statsplotly.plot_specifiers.data package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsplotly.plot_specifiers.figure.html">statsplotly.plot_specifiers.figure package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsplotly.plot_specifiers.layout.html">statsplotly.plot_specifiers.layout package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="changelog_link.html">Version 0.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog_link.html#version-0-1-5">Version 0.1.5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog_link.html#version-0-1-4">Version 0.1.4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog_link.html#version-0-1-3">Version 0.1.3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog_link.html#version-0-1-2">Version 0.1.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog_link.html#version-0-1-1">Version 0.1.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog_link.html#version-0-1-0">Version 0.1.0</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-statsplotly.plot_objects.layout">
+<span id="statsplotly-plot-objects-layout-package"></span><h1>statsplotly.plot_objects.layout package<a class="headerlink" href="#module-statsplotly.plot_objects.layout" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.BarLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.layout.</span></span><span class="sig-name descname"><span class="pre">BarLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autosize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hovermode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'closest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showlegend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coloraxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout._axis.ColorAxis"><span class="pre">ColorAxis</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">barmode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.BarMode" title="statsplotly.plot_specifiers.layout._core.BarMode"><span class="pre">BarMode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#statsplotly.plot_objects.layout.BarLayout" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_XYColorAxisLayout</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.BarLayout.barmode">
+<span class="sig-name descname"><span class="pre">barmode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.BarMode" title="statsplotly.plot_specifiers.layout.BarMode"><span class="pre">BarMode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.BarLayout.barmode" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.BarLayout.build_layout">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes_specifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxesSpecifier" title="statsplotly.plot_specifiers.layout._core.AxesSpecifier"><span class="pre">AxesSpecifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">coloraxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout._axis.ColorAxis"><span class="pre">ColorAxis</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">barmode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#statsplotly.plot_objects.layout.BarLayout" title="statsplotly.plot_objects.layout._layout.BarLayout"><span class="pre">BarLayout</span></a></span></span><a class="headerlink" href="#statsplotly.plot_objects.layout.BarLayout.build_layout" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.BarLayout.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.BarLayout.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.BarLayout.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.BarLayout.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.BarLayout.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'autosize':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'barmode':</span> <span class="pre">FieldInfo(annotation=Union[BarMode,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'coloraxis':</span> <span class="pre">FieldInfo(annotation=ColorAxis,</span> <span class="pre">required=True),</span> <span class="pre">'height':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'hovermode':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='closest'),</span> <span class="pre">'showlegend':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'title':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'width':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'xaxis':</span> <span class="pre">FieldInfo(annotation=XYAxis,</span> <span class="pre">required=True),</span> <span class="pre">'yaxis':</span> <span class="pre">FieldInfo(annotation=XYAxis,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.BarLayout.model_fields" title="Link to this definition">#</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.CategoricalLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.layout.</span></span><span class="sig-name descname"><span class="pre">CategoricalLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autosize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hovermode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'closest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showlegend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coloraxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout._axis.ColorAxis"><span class="pre">ColorAxis</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">boxmode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'group'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">violinmode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'group'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#statsplotly.plot_objects.layout.CategoricalLayout" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_XYColorAxisLayout</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.CategoricalLayout.boxmode">
+<span class="sig-name descname"><span class="pre">boxmode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.CategoricalLayout.boxmode" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.CategoricalLayout.build_layout">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes_specifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxesSpecifier" title="statsplotly.plot_specifiers.layout._core.AxesSpecifier"><span class="pre">AxesSpecifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">categorical_values_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataDimension" title="statsplotly.plot_specifiers.data._core.DataDimension"><span class="pre">DataDimension</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coloraxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout._axis.ColorAxis"><span class="pre">ColorAxis</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#statsplotly.plot_objects.layout.CategoricalLayout" title="statsplotly.plot_objects.layout._layout.CategoricalLayout"><span class="pre">CategoricalLayout</span></a></span></span><a class="headerlink" href="#statsplotly.plot_objects.layout.CategoricalLayout.build_layout" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.CategoricalLayout.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.CategoricalLayout.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.CategoricalLayout.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.CategoricalLayout.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.CategoricalLayout.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'autosize':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'boxmode':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='group'),</span> <span class="pre">'coloraxis':</span> <span class="pre">FieldInfo(annotation=ColorAxis,</span> <span class="pre">required=True),</span> <span class="pre">'height':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'hovermode':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='closest'),</span> <span class="pre">'showlegend':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'title':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'violinmode':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='group'),</span> <span class="pre">'width':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'xaxis':</span> <span class="pre">FieldInfo(annotation=XYAxis,</span> <span class="pre">required=True),</span> <span class="pre">'yaxis':</span> <span class="pre">FieldInfo(annotation=XYAxis,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.CategoricalLayout.model_fields" title="Link to this definition">#</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.CategoricalLayout.set_array_tick_mode">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_array_tick_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis_layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categorical_values_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">XYAxis</span></span></span><a class="headerlink" href="#statsplotly.plot_objects.layout.CategoricalLayout.set_array_tick_mode" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.CategoricalLayout.violinmode">
+<span class="sig-name descname"><span class="pre">violinmode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.CategoricalLayout.violinmode" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ColorAxis">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.layout.</span></span><span class="sig-name descname"><span class="pre">ColorAxis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#statsplotly.plot_objects.layout.ColorAxis" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ColorAxis.cmax">
+<span class="sig-name descname"><span class="pre">cmax</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ColorAxis.cmax" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ColorAxis.cmin">
+<span class="sig-name descname"><span class="pre">cmin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ColorAxis.cmin" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ColorAxis.colorbar">
+<span class="sig-name descname"><span class="pre">colorbar</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ColorAxis.colorbar" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ColorAxis.colorscale">
+<span class="sig-name descname"><span class="pre">colorscale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ColorAxis.colorscale" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ColorAxis.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ColorAxis.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ColorAxis.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ColorAxis.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ColorAxis.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'cmax':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'cmin':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'colorbar':</span> <span class="pre">FieldInfo(annotation=Union[dict[str,</span> <span class="pre">Any],</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'colorscale':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">list[list[Union[float,</span> <span class="pre">str]]],</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'showscale':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False)}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ColorAxis.model_fields" title="Link to this definition">#</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ColorAxis.showscale">
+<span class="sig-name descname"><span class="pre">showscale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ColorAxis.showscale" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HeatmapLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.layout.</span></span><span class="sig-name descname"><span class="pre">HeatmapLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autosize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hovermode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'closest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showlegend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coloraxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout._axis.ColorAxis"><span class="pre">ColorAxis</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#statsplotly.plot_objects.layout.HeatmapLayout" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_XYLayout</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HeatmapLayout.build_layout">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes_specifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxesSpecifier" title="statsplotly.plot_specifiers.layout._core.AxesSpecifier"><span class="pre">AxesSpecifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">coloraxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout._axis.ColorAxis"><span class="pre">ColorAxis</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#statsplotly.plot_objects.layout.HeatmapLayout" title="statsplotly.plot_objects.layout._layout.HeatmapLayout"><span class="pre">HeatmapLayout</span></a></span></span><a class="headerlink" href="#statsplotly.plot_objects.layout.HeatmapLayout.build_layout" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HeatmapLayout.coloraxis">
+<span class="sig-name descname"><span class="pre">coloraxis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout.ColorAxis"><span class="pre">ColorAxis</span></a></em><a class="headerlink" href="#statsplotly.plot_objects.layout.HeatmapLayout.coloraxis" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HeatmapLayout.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.HeatmapLayout.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HeatmapLayout.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.HeatmapLayout.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HeatmapLayout.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'autosize':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'coloraxis':</span> <span class="pre">FieldInfo(annotation=ColorAxis,</span> <span class="pre">required=True),</span> <span class="pre">'height':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'hovermode':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='closest'),</span> <span class="pre">'showlegend':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'title':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'width':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'xaxis':</span> <span class="pre">FieldInfo(annotation=XYAxis,</span> <span class="pre">required=True),</span> <span class="pre">'yaxis':</span> <span class="pre">FieldInfo(annotation=XYAxis,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.HeatmapLayout.model_fields" title="Link to this definition">#</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HeatmapLayout.update_axis_layout">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_axis_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis_layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">XYAxis</span></span></span><a class="headerlink" href="#statsplotly.plot_objects.layout.HeatmapLayout.update_axis_layout" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HeatmapLayout.update_yaxis_layout">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_yaxis_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaxis_layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">XYAxis</span></span></span><a class="headerlink" href="#statsplotly.plot_objects.layout.HeatmapLayout.update_yaxis_layout" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HistogramLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.layout.</span></span><span class="sig-name descname"><span class="pre">HistogramLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autosize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hovermode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'closest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showlegend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">barmode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.HistogramBarMode" title="statsplotly.plot_specifiers.layout._core.HistogramBarMode"><span class="pre">HistogramBarMode</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#statsplotly.plot_objects.layout.HistogramLayout" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_XYLayout</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HistogramLayout.barmode">
+<span class="sig-name descname"><span class="pre">barmode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.HistogramBarMode" title="statsplotly.plot_specifiers.layout.HistogramBarMode"><span class="pre">HistogramBarMode</span></a></em><a class="headerlink" href="#statsplotly.plot_objects.layout.HistogramLayout.barmode" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HistogramLayout.build_layout">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes_specifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxesSpecifier" title="statsplotly.plot_specifiers.layout._core.AxesSpecifier"><span class="pre">AxesSpecifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">barmode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#statsplotly.plot_objects.layout.HistogramLayout" title="statsplotly.plot_objects.layout._layout.HistogramLayout"><span class="pre">HistogramLayout</span></a></span></span><a class="headerlink" href="#statsplotly.plot_objects.layout.HistogramLayout.build_layout" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HistogramLayout.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.HistogramLayout.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HistogramLayout.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.HistogramLayout.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HistogramLayout.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'autosize':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'barmode':</span> <span class="pre">FieldInfo(annotation=HistogramBarMode,</span> <span class="pre">required=True),</span> <span class="pre">'height':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'hovermode':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='closest'),</span> <span class="pre">'showlegend':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'title':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'width':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'xaxis':</span> <span class="pre">FieldInfo(annotation=XYAxis,</span> <span class="pre">required=True),</span> <span class="pre">'yaxis':</span> <span class="pre">FieldInfo(annotation=XYAxis,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.HistogramLayout.model_fields" title="Link to this definition">#</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.HistogramLayout.validate_histogram_barmode">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_histogram_barmode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.HistogramBarMode" title="statsplotly.plot_specifiers.layout._core.HistogramBarMode"><span class="pre">HistogramBarMode</span></a></span></span><a class="headerlink" href="#statsplotly.plot_objects.layout.HistogramLayout.validate_histogram_barmode" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ScatterLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.layout.</span></span><span class="sig-name descname"><span class="pre">ScatterLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autosize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hovermode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'closest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showlegend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">XYAxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coloraxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout._axis.ColorAxis"><span class="pre">ColorAxis</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#statsplotly.plot_objects.layout.ScatterLayout" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_XYColorAxisLayout</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ScatterLayout.build_layout">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes_specifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxesSpecifier" title="statsplotly.plot_specifiers.layout._core.AxesSpecifier"><span class="pre">AxesSpecifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">coloraxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout._axis.ColorAxis"><span class="pre">ColorAxis</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#statsplotly.plot_objects.layout.ScatterLayout" title="statsplotly.plot_objects.layout._layout.ScatterLayout"><span class="pre">ScatterLayout</span></a></span></span><a class="headerlink" href="#statsplotly.plot_objects.layout.ScatterLayout.build_layout" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ScatterLayout.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ScatterLayout.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ScatterLayout.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ScatterLayout.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.ScatterLayout.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'autosize':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'coloraxis':</span> <span class="pre">FieldInfo(annotation=ColorAxis,</span> <span class="pre">required=True),</span> <span class="pre">'height':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'hovermode':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='closest'),</span> <span class="pre">'showlegend':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'title':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'width':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'xaxis':</span> <span class="pre">FieldInfo(annotation=XYAxis,</span> <span class="pre">required=True),</span> <span class="pre">'yaxis':</span> <span class="pre">FieldInfo(annotation=XYAxis,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.ScatterLayout.model_fields" title="Link to this definition">#</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.SceneLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.layout.</span></span><span class="sig-name descname"><span class="pre">SceneLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autosize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hovermode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'closest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showlegend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coloraxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout._axis.ColorAxis"><span class="pre">ColorAxis</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#statsplotly.plot_objects.layout.SceneLayout" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseLayout</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.SceneLayout.build_layout">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes_specifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxesSpecifier" title="statsplotly.plot_specifiers.layout._core.AxesSpecifier"><span class="pre">AxesSpecifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">coloraxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout._axis.ColorAxis"><span class="pre">ColorAxis</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#statsplotly.plot_objects.layout.SceneLayout" title="statsplotly.plot_objects.layout._layout.SceneLayout"><span class="pre">SceneLayout</span></a></span></span><a class="headerlink" href="#statsplotly.plot_objects.layout.SceneLayout.build_layout" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.SceneLayout.coloraxis">
+<span class="sig-name descname"><span class="pre">coloraxis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis" title="statsplotly.plot_objects.layout.ColorAxis"><span class="pre">ColorAxis</span></a></em><a class="headerlink" href="#statsplotly.plot_objects.layout.SceneLayout.coloraxis" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.SceneLayout.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.SceneLayout.model_computed_fields" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.SceneLayout.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.SceneLayout.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.SceneLayout.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'autosize':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'coloraxis':</span> <span class="pre">FieldInfo(annotation=ColorAxis,</span> <span class="pre">required=True),</span> <span class="pre">'height':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'hovermode':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='closest'),</span> <span class="pre">'scene':</span> <span class="pre">FieldInfo(annotation=dict[str,</span> <span class="pre">Any],</span> <span class="pre">required=True),</span> <span class="pre">'showlegend':</span> <span class="pre">FieldInfo(annotation=Union[bool,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'title':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'width':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False)}</span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.SceneLayout.model_fields" title="Link to this definition">#</a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.layout.SceneLayout.scene">
+<span class="sig-name descname"><span class="pre">scene</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#statsplotly.plot_objects.layout.SceneLayout.scene" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="statsplotly.plot_specifiers.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">statsplotly.plot_specifiers package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="statsplotly.plot_objects.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">statsplotly.plot_objects package</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Benjamin Roland
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">statsplotly.plot_objects.layout package</a><ul>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.BarLayout"><code class="docutils literal notranslate"><span class="pre">BarLayout</span></code></a><ul>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.BarLayout.barmode"><code class="docutils literal notranslate"><span class="pre">BarLayout.barmode</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.BarLayout.build_layout"><code class="docutils literal notranslate"><span class="pre">BarLayout.build_layout()</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.BarLayout.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">BarLayout.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.BarLayout.model_config"><code class="docutils literal notranslate"><span class="pre">BarLayout.model_config</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.BarLayout.model_fields"><code class="docutils literal notranslate"><span class="pre">BarLayout.model_fields</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.CategoricalLayout"><code class="docutils literal notranslate"><span class="pre">CategoricalLayout</span></code></a><ul>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.CategoricalLayout.boxmode"><code class="docutils literal notranslate"><span class="pre">CategoricalLayout.boxmode</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.CategoricalLayout.build_layout"><code class="docutils literal notranslate"><span class="pre">CategoricalLayout.build_layout()</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.CategoricalLayout.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">CategoricalLayout.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.CategoricalLayout.model_config"><code class="docutils literal notranslate"><span class="pre">CategoricalLayout.model_config</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.CategoricalLayout.model_fields"><code class="docutils literal notranslate"><span class="pre">CategoricalLayout.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.CategoricalLayout.set_array_tick_mode"><code class="docutils literal notranslate"><span class="pre">CategoricalLayout.set_array_tick_mode()</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.CategoricalLayout.violinmode"><code class="docutils literal notranslate"><span class="pre">CategoricalLayout.violinmode</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis"><code class="docutils literal notranslate"><span class="pre">ColorAxis</span></code></a><ul>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis.cmax"><code class="docutils literal notranslate"><span class="pre">ColorAxis.cmax</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis.cmin"><code class="docutils literal notranslate"><span class="pre">ColorAxis.cmin</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis.colorbar"><code class="docutils literal notranslate"><span class="pre">ColorAxis.colorbar</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis.colorscale"><code class="docutils literal notranslate"><span class="pre">ColorAxis.colorscale</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ColorAxis.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis.model_config"><code class="docutils literal notranslate"><span class="pre">ColorAxis.model_config</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis.model_fields"><code class="docutils literal notranslate"><span class="pre">ColorAxis.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ColorAxis.showscale"><code class="docutils literal notranslate"><span class="pre">ColorAxis.showscale</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HeatmapLayout"><code class="docutils literal notranslate"><span class="pre">HeatmapLayout</span></code></a><ul>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HeatmapLayout.build_layout"><code class="docutils literal notranslate"><span class="pre">HeatmapLayout.build_layout()</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HeatmapLayout.coloraxis"><code class="docutils literal notranslate"><span class="pre">HeatmapLayout.coloraxis</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HeatmapLayout.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">HeatmapLayout.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HeatmapLayout.model_config"><code class="docutils literal notranslate"><span class="pre">HeatmapLayout.model_config</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HeatmapLayout.model_fields"><code class="docutils literal notranslate"><span class="pre">HeatmapLayout.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HeatmapLayout.update_axis_layout"><code class="docutils literal notranslate"><span class="pre">HeatmapLayout.update_axis_layout()</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HeatmapLayout.update_yaxis_layout"><code class="docutils literal notranslate"><span class="pre">HeatmapLayout.update_yaxis_layout()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HistogramLayout"><code class="docutils literal notranslate"><span class="pre">HistogramLayout</span></code></a><ul>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HistogramLayout.barmode"><code class="docutils literal notranslate"><span class="pre">HistogramLayout.barmode</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HistogramLayout.build_layout"><code class="docutils literal notranslate"><span class="pre">HistogramLayout.build_layout()</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HistogramLayout.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">HistogramLayout.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HistogramLayout.model_config"><code class="docutils literal notranslate"><span class="pre">HistogramLayout.model_config</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HistogramLayout.model_fields"><code class="docutils literal notranslate"><span class="pre">HistogramLayout.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.HistogramLayout.validate_histogram_barmode"><code class="docutils literal notranslate"><span class="pre">HistogramLayout.validate_histogram_barmode()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ScatterLayout"><code class="docutils literal notranslate"><span class="pre">ScatterLayout</span></code></a><ul>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ScatterLayout.build_layout"><code class="docutils literal notranslate"><span class="pre">ScatterLayout.build_layout()</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ScatterLayout.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ScatterLayout.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ScatterLayout.model_config"><code class="docutils literal notranslate"><span class="pre">ScatterLayout.model_config</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.ScatterLayout.model_fields"><code class="docutils literal notranslate"><span class="pre">ScatterLayout.model_fields</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.SceneLayout"><code class="docutils literal notranslate"><span class="pre">SceneLayout</span></code></a><ul>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.SceneLayout.build_layout"><code class="docutils literal notranslate"><span class="pre">SceneLayout.build_layout()</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.SceneLayout.coloraxis"><code class="docutils literal notranslate"><span class="pre">SceneLayout.coloraxis</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.SceneLayout.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">SceneLayout.model_computed_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.SceneLayout.model_config"><code class="docutils literal notranslate"><span class="pre">SceneLayout.model_config</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.SceneLayout.model_fields"><code class="docutils literal notranslate"><span class="pre">SceneLayout.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#statsplotly.plot_objects.layout.SceneLayout.scene"><code class="docutils literal notranslate"><span class="pre">SceneLayout.scene</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
+</html>

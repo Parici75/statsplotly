@@ -1,0 +1,485 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Heatmaps" href="heatmap.html" /><link rel="prev" title="Bar plots" href="barplot.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
+        <title>Categorical plots - statsplotly documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">statsplotly  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/statsplotly-light-mode-logo.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/statsplotly-dark-mode-logo.png" alt="Dark Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Features</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="lineplot.html">Line plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scatterplot.html">Scatter plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="barplot.html">Bar plots</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Categorical plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heatmap.html">Heatmaps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distplot.html">Distribution plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jointplot.html">Jointplots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="managing_subplots.html">Managing subplots</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../source/statsplotly.html">statsplotly package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of statsplotly package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../source/statsplotly.plot_objects.html">statsplotly.plot_objects package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of statsplotly.plot_objects package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../source/statsplotly.plot_objects.layout.html">statsplotly.plot_objects.layout package</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../source/statsplotly.plot_specifiers.html">statsplotly.plot_specifiers package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of statsplotly.plot_specifiers package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../source/statsplotly.plot_specifiers.color.html">statsplotly.plot_specifiers.color package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../source/statsplotly.plot_specifiers.data.html">statsplotly.plot_specifiers.data package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../source/statsplotly.plot_specifiers.figure.html">statsplotly.plot_specifiers.figure package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../source/statsplotly.plot_specifiers.layout.html">statsplotly.plot_specifiers.layout package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../source/changelog_link.html">Version 0.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/changelog_link.html#version-0-1-5">Version 0.1.5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/changelog_link.html#version-0-1-4">Version 0.1.4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/changelog_link.html#version-0-1-3">Version 0.1.3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/changelog_link.html#version-0-1-2">Version 0.1.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/changelog_link.html#version-0-1-1">Version 0.1.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/changelog_link.html#version-0-1-0">Version 0.1.0</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="categorical-plots">
+<h1>Categorical plots<a class="headerlink" href="#categorical-plots" title="Link to this heading">#</a></h1>
+<p>A categorical plot combines the features of a bar plot and a scatter plot to visualize categorical data, typically showing how different groups or categories relate to each other based on one continuous variables.</p>
+<p>By plotting a continuous variable against each category, categorical plots provide a clear and intuitive way to compare distributions, identify correlations, and explore patterns in the data.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">plotly.io</span> <span class="k">as</span> <span class="nn">pio</span>
+
+<span class="n">pio</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="s2">&quot;sphinx_gallery&quot;</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="kn">import</span> <span class="nn">statsplotly</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="styling-plots">
+<h2>Styling plots<a class="headerlink" href="#styling-plots" title="Link to this heading">#</a></h2>
+<p>Using marker <code class="docutils literal notranslate"><span class="pre">size</span></code> to cue the tip :</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tips</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">statsplotly</span><span class="o">.</span><span class="n">catplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;total_bill&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span>
+    <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;stripplot&quot;</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="s2">&quot;tip&quot;</span><span class="p">,</span>
+    <span class="n">slicer</span><span class="o">=</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>                <div id="591f42f5-5b76-4c15-9ed3-670e35aa3d58" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("591f42f5-5b76-4c15-9ed3-670e35aa3d58")) {                    Plotly.newPlot(                        "591f42f5-5b76-4c15-9ed3-670e35aa3d58",                        [{"hoverinfo":"name+text+y","legendgroup":"Female","marker":{"color":"rgb(31, 119, 180)","coloraxis":"coloraxis","size":[4.036363636363636,13.49090909090909,18.545454545454547,11.345454545454544,6.436363636363636,13.090909090909092,10.363636363636363,8.472727272727273,11.272727272727273,11.272727272727273,9.272727272727273,11.527272727272727,9.818181818181818,19.272727272727273,5.818181818181818,9.345454545454547,4.0,11.272727272727273,11.781818181818181,18.545454545454547,8.363636363636363,7.0181818181818185,19.163636363636364,4.0,16.0,12.181818181818182,9.454545454545453,11.272727272727273,9.454545454545453,13.018181818181818,15.200000000000001,14.909090909090908,4.0,14.909090909090908,13.090909090909092,5.818181818181818,6.909090909090909,10.98181818181818,6.472727272727273,9.527272727272727,15.636363636363637,7.636363636363637,7.636363636363637,10.654545454545456,5.818181818181818,7.636363636363637,12.181818181818182,4.909090909090909,7.636363636363637,7.636363636363637,10.363636363636363,13.090909090909092,18.545454545454547,8.727272727272727,5.818181818181818,5.3090909090909095,6.290909090909091,19.054545454545455,14.0,9.854545454545454,7.636363636363637,11.272727272727273,6.218181818181819,7.636363636363637,14.909090909090908,13.090909090909092,13.090909090909092,15.600000000000001,18.545454545454547,7.636363636363637,7.672727272727272,7.636363636363637,9.454545454545453,12.10909090909091,8.472727272727273,9.454545454545453,24.0,4.363636363636364,11.6,13.018181818181818,11.272727272727273,9.454545454545453,7.636363636363637,10.836363636363636,17.345454545454544,7.636363636363637,11.272727272727273]},"mode":"markers","name":"Female","x":[0.9834216238990852,1.0238456375497698,1.0043573632701595,0.9953136736643852,1.0083853598299037,1.0071567258969825,1.016560813999864,1.0067956239145526,1.0111122045894552,1.0125166397108756,0.9799818277468396,1.0070615613625,1.000137179525522,1.0017190596902037,0.9986321121663905,1.0079702324113688,0.9925527816255126,1.0092070265152315,1.0054905614803662,0.9878571580399813,1.002666153290452,0.9973741170198257,0.981804682318653,1.00104124712992,0.998007729256944,0.9809610045165288,1.0079796361790074,1.0083952373639646,0.9994571685863497,1.0013602566378237,1.008305954901968,1.0087103612312545,0.9980270975668791,1.0107636079286557,0.9962380446473301,1.011646750940898,1.0062563929112673,1.0094060432276364,0.9988977746268944,0.9947833460464988,0.9806138324700375,1.0041082598327307,0.9832889420458417,0.9951796093551639,0.9989430031875481,0.9963777240598982,1.0092966420724245,1.0002143818523634,1.0066478396085468,0.9905433767152845,1.0113910617080308,1.0083836110901052,1.0054338006990446,0.9977468577930685,0.9973573513261993,1.0099004882067717,1.0190306150447395,0.9956518022461155,0.9842227754883943,0.9952418108285692,0.988336893424183,1.0122887159233993,0.9825489162476088,1.0073725178416513,1.0023313895261372,1.011347882817306,0.9903448662090261,0.9981385310402067,1.0054990488475453,0.996117242001322,0.9860738493137357,1.001073599343214,0.9969030410255946,0.9983852916053103,0.9994160239938177,1.021092557795729,0.9700337155606777,0.9916296180914252,1.009300898214161,1.0075304953435156,0.9964380213923769,0.9942581788436454,0.9978953353854636,1.011433113787892,0.9853438418684036,1.0044003027967197,1.013237906812754],"y":[16.99,24.59,35.26,14.83,10.33,16.97,20.29,15.77,19.65,15.06,20.69,16.93,10.29,34.81,26.41,16.45,3.07,17.07,26.86,25.28,14.73,10.07,34.83,5.75,16.32,22.75,11.35,15.38,44.3,22.42,20.92,14.31,7.25,25.71,17.31,10.65,12.43,24.08,13.42,12.48,29.8,14.52,11.38,20.27,11.17,12.26,18.26,8.51,10.33,14.15,13.16,17.47,27.05,16.43,8.35,18.64,11.87,29.85,25.0,13.39,16.21,17.51,10.59,10.63,9.6,20.9,18.15,19.81,43.11,13.0,12.74,13.0,16.4,16.47,12.76,13.27,28.17,12.9,30.14,13.42,15.98,16.27,10.09,22.12,35.83,27.18,18.78],"type":"scatter"},{"hoverinfo":"name+text+y","legendgroup":"Male","marker":{"color":"rgb(256, 127, 14)","coloraxis":"coloraxis","size":[5.466666666666667,9.555555555555555,9.133333333333333,12.244444444444445,6.222222222222222,8.711111111111112,6.133333333333333,8.955555555555556,5.5777777777777775,5.266666666666667,8.444444444444445,10.488888888888889,10.022222222222222,9.222222222222221,10.844444444444445,18.62222222222222,8.844444444444445,6.977777777777778,6.222222222222222,6.222222222222222,11.333333333333332,5.0,7.333333333333334,9.044444444444444,9.777777777777779,6.222222222222222,6.911111111111111,12.88888888888889,6.755555555555556,7.4222222222222225,8.57777777777778,4.711111111111111,14.222222222222221,8.444444444444445,12.88888888888889,15.11111111111111,6.333333333333333,8.444444444444445,7.333333333333334,5.2444444444444445,11.42222222222222,9.577777777777778,8.444444444444445,5.688888888888889,16.733333333333334,8.911111111111111,6.222222222222222,6.177777777777778,10.133333333333333,7.644444444444445,8.777777777777779,6.244444444444444,6.4222222222222225,6.155555555555555,4.555555555555555,8.622222222222224,10.666666666666668,8.444444444444445,7.800000000000001,8.444444444444445,9.333333333333332,12.88888888888889,6.288888888888888,6.222222222222222,10.666666666666668,14.777777777777779,8.444444444444445,8.444444444444445,9.555555555555555,12.28888888888889,10.666666666666668,5.111111111111111,8.444444444444445,5.111111111111111,5.422222222222222,10.799999999999999,11.31111111111111,10.133333333333333,8.444444444444445,10.666666666666668,7.444444444444445,13.044444444444444,6.911111111111111,7.333333333333334,6.222222222222222,5.066666666666666,6.622222222222222,5.111111111111111,6.222222222222222,16.666666666666664,12.88888888888889,5.622222222222222,6.222222222222222,7.333333333333334,6.222222222222222,7.866666666666667,6.222222222222222,6.222222222222222,12.88888888888889,6.222222222222222,9.555555555555555,7.333333333333334,6.222222222222222,9.511111111111111,6.755555555555556,11.777777777777779,24.0,8.8,13.222222222222221,8.844444444444445,10.666666666666668,8.688888888888888,6.222222222222222,6.222222222222222,9.666666666666668,9.955555555555556,14.333333333333334,9.555555555555555,16.22222222222222,8.444444444444445,12.88888888888889,6.222222222222222,10.666666666666668,5.111111111111111,7.466666666666667,6.266666666666667,10.666666666666668,4.977777777777778,6.222222222222222,6.222222222222222,10.666666666666668,10.666666666666668,9.355555555555556,8.444444444444445,6.288888888888888,6.222222222222222,13.244444444444445,21.77777777777778,8.444444444444445,5.111111111111111,4.977777777777778,6.666666666666667,6.044444444444444,5.288888888888889,8.444444444444445,7.822222222222223,6.222222222222222,8.444444444444445,9.311111111111112,5.044444444444444,8.444444444444445,4.555555555555555,4.0,4.377777777777777,14.933333333333334,6.222222222222222,5.666666666666667]},"mode":"markers","name":"Male","x":[2.017638378844977,1.9971734749053227,2.017681471081413,1.996343904832709,2.0069983154453013,1.993463815560329,2.0020044255568368,2.0080791646770013,1.9830996732508916,2.0076948706999795,2.0030162071006314,2.0007266739813248,1.986229986769826,1.999683285991343,1.9915836859659855,1.9885415110621225,1.9918360906869776,1.9951026269145657,1.9957413173587863,1.9970879869683327,2.00251697328192,2.019272663869651,1.9840394689308174,2.0045670143376166,2.005142862187891,1.9865048748951697,1.9875631163536778,1.993398669957166,2.009688328178734,1.9981299016159275,2.014390348497548,1.9842191586659557,1.9899604179047812,2.0075629167020654,2.010864070762862,2.0167757410278733,1.9990597047073169,1.9857135260720593,1.999864814839186,2.0100709267786683,1.9942338366202035,2.0142441343681847,1.9903990250471708,2.005426219720142,1.9936941593408704,2.002982729618003,1.993063515224712,1.99457281843271,1.9917461977582018,2.004881944293016,2.001020560344018,2.002483353836538,1.9966835131085465,1.999088675253091,1.9861362334561996,1.9982180340017763,1.995900394012725,1.9928512529190145,2.0107388719619315,1.9950179632525773,1.9811869603690564,2.003275075350273,2.0035219207576787,2.007351280347177,1.9995733253900625,2.0012299604879233,2.0012700787674422,2.012486504495745,2.002919949741258,2.011542287145116,1.9957231112295324,1.986653445740636,1.9948353281121678,2.0108398745599434,2.0277662183064264,1.9980052006180504,1.9903011706785911,1.999654034176889,2.0087698718893923,1.9934260576525722,1.9894704417841313,2.0017730474499578,1.9903095712270016,2.005554082901595,1.9880598349206844,2.002064401436398,2.0006691236693177,2.008622001401245,1.9881904800530124,1.9986462056090706,1.9954803273970694,2.014887130115703,1.9936815184536878,2.008553735376142,1.9926487951452658,2.0103335682330643,1.9960785531197005,1.996774494063851,1.996053237934614,2.0092756271273258,2.0009515309029844,1.997116718881349,2.0083834903512985,2.017358622569539,1.997772244594214,2.0038334454963587,1.9949018535276775,1.9833300082121266,1.992047595258289,1.994954849190655,2.0011709756748335,2.0058784282066235,1.9995780917695576,2.0003665712120067,2.0146578776846704,2.0147665904433203,2.005583549240629,2.0045533462873744,1.9940926469035234,1.9803801678519004,2.003938118592623,1.9902126986221398,1.9850704033613429,1.9885304208484256,2.0064252373158795,2.004570883370258,2.0153625619897055,1.9947460175809215,1.996299209121886,2.000807864589304,2.0031777544100917,2.014716972669949,1.997994309803381,2.002958856332467,2.010071729205886,2.014552013429113,1.9999473102640162,1.9940624849173518,1.9965748476642815,1.9886623031403226,1.9990979639939117,2.007102995070144,2.002918823674961,2.0069264915331706,2.007546963392397,1.9834889659850623,2.0129954454625634,1.994372890718396,1.9845779813783357,2.0052235701081984,2.0018851431928595,2.000495113474422,1.990450119706165,2.00610114297704,1.9945858266466074,1.9952003961803955,1.982917459452713],"y":[10.34,21.01,23.68,25.29,8.77,26.88,15.04,14.78,10.27,15.42,18.43,21.58,16.29,20.65,17.92,39.42,19.82,17.81,13.37,12.69,21.7,9.55,18.35,17.78,24.06,16.31,18.69,31.27,16.04,17.46,13.94,9.68,30.4,18.29,22.23,32.4,28.55,18.04,12.54,9.94,25.56,19.49,38.01,11.24,48.27,20.29,13.81,11.02,18.29,17.59,20.08,20.23,15.01,12.02,10.51,17.92,27.2,22.76,17.29,19.44,16.66,32.68,15.98,13.03,18.28,24.71,21.16,28.97,22.49,40.17,27.28,12.03,21.01,12.46,15.36,20.49,25.21,18.24,14.0,38.07,23.95,29.93,11.69,14.26,15.95,8.52,22.82,19.08,16.0,34.3,41.19,9.78,7.51,14.07,13.13,17.26,24.55,19.77,48.17,16.49,21.5,12.66,13.81,24.52,20.76,31.71,50.81,15.81,7.25,31.85,16.82,32.9,17.89,14.48,34.63,34.65,23.33,45.35,23.17,40.55,20.69,30.46,23.1,15.69,28.44,15.48,16.58,7.56,10.34,13.51,18.71,20.53,26.59,38.73,24.27,30.06,25.89,48.33,28.15,11.59,7.74,12.16,8.58,13.42,20.45,13.28,24.01,15.69,11.61,10.77,15.53,10.07,12.6,32.83,29.03,22.67,17.82],"type":"scatter"}],                        {"boxmode":"group","hovermode":"closest","title":{"text":"Total Bill vs Sex Per Sex"},"violinmode":"group","xaxis":{"automargin":true,"tickmode":"array","ticktext":["Female","Male"],"tickvals":[1.0,2.0],"title":{"text":"Sex"}},"yaxis":{"automargin":true,"title":{"text":"Total bill"}},"template":{"layout":{"scene":{"xaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"zaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}}},"title":{"font":{"family":"Arial","size":20}},"xaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}}}}},                        {"responsive": true}                    )                };                            </script>        </div></div></div>
+</div>
+<p>Using marker <code class="docutils literal notranslate"><span class="pre">opacity</span></code> to cue the tip :</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tips</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">statsplotly</span><span class="o">.</span><span class="n">catplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;total_bill&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span>
+    <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;stripplot&quot;</span><span class="p">,</span>
+    <span class="n">opacity</span><span class="o">=</span><span class="s2">&quot;tip&quot;</span><span class="p">,</span>
+    <span class="n">slicer</span><span class="o">=</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>                <div id="b6cc6485-4e6a-4ed5-b093-63d1285d5747" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("b6cc6485-4e6a-4ed5-b093-63d1285d5747")) {                    Plotly.newPlot(                        "b6cc6485-4e6a-4ed5-b093-63d1285d5747",                        [{"hoverinfo":"name+text+y","legendgroup":"Female","marker":{"color":"rgb(31, 119, 180)","coloraxis":"coloraxis","opacity":[0.0018181818181818197,0.47454545454545455,0.7272727272727273,0.36727272727272725,0.12181818181818181,0.45454545454545453,0.3181818181818182,0.22363636363636363,0.36363636363636365,0.36363636363636365,0.26363636363636367,0.37636363636363634,0.29090909090909095,0.7636363636363637,0.09090909090909091,0.26727272727272733,0.0,0.36363636363636365,0.3890909090909091,0.7272727272727273,0.21818181818181823,0.1509090909090909,0.7581818181818182,0.0,0.6,0.4090909090909091,0.2727272727272727,0.36363636363636365,0.2727272727272727,0.4509090909090909,0.56,0.5454545454545454,0.0,0.5454545454545454,0.45454545454545453,0.09090909090909091,0.14545454545454548,0.34909090909090906,0.12363636363636363,0.27636363636363637,0.5818181818181819,0.18181818181818182,0.18181818181818182,0.33272727272727276,0.09090909090909091,0.18181818181818182,0.4090909090909091,0.045454545454545456,0.18181818181818182,0.18181818181818182,0.3181818181818182,0.45454545454545453,0.7272727272727273,0.23636363636363633,0.09090909090909091,0.06545454545454547,0.11454545454545452,0.7527272727272727,0.5,0.2927272727272727,0.18181818181818182,0.36363636363636365,0.11090909090909093,0.18181818181818182,0.5454545454545454,0.45454545454545453,0.45454545454545453,0.5800000000000001,0.7272727272727273,0.18181818181818182,0.1836363636363636,0.18181818181818182,0.2727272727272727,0.40545454545454546,0.22363636363636363,0.2727272727272727,1.0,0.0181818181818182,0.37999999999999995,0.4509090909090909,0.36363636363636365,0.2727272727272727,0.18181818181818182,0.3418181818181818,0.6672727272727272,0.18181818181818182,0.36363636363636365],"size":6.0},"mode":"markers","name":"Female","x":[1.0179641937849837,1.0037987584037382,0.9985435527011912,1.0008073219319966,0.9931558633790034,1.0169704020740815,1.011975587157211,0.9901685225181501,0.9922507055115065,0.9959390177617022,0.9786299043879698,0.9938514466678596,0.988267316387007,1.0161341815497538,0.975528704179754,0.9834357055996201,0.9904091860609135,0.9856275907403124,1.0086210971880036,0.9964754011309219,1.0034984364455257,0.9928278120479779,1.006741649838071,1.0219012167092543,1.01342872046484,1.0044941547431236,0.9972470113163475,0.993226380820592,1.0079900036211382,1.0178981784738184,1.0017450316325218,0.9984084494647609,1.0009106146665308,0.9978179174254687,0.989639335476303,0.9968588084143015,0.9990562768311496,1.01015957875171,0.9880151187378203,0.9892797649735894,0.9986104964992067,1.0025236450143762,1.0032033954570805,1.005945785070457,1.0075298269674764,0.9966058383624553,0.9956288987718622,1.015073777822346,0.9804514399793979,1.0249298122569108,0.996406477732183,0.9963627755745291,1.0130146907448196,0.9977475240776652,0.9880295022014264,1.0162809924180503,0.9960136144821681,1.0187129664942662,1.0127905364583747,1.0016635851546472,0.9995508649464377,0.989638446053578,1.0132810907864862,1.0004424734436639,0.9974798307214269,0.984974701749022,1.0093943440322992,1.0032056221837105,1.0045679424626395,1.0019794874058072,0.9788225350579801,0.9689928665216524,1.004688619060957,1.0161031789773476,1.00782901273904,0.9934281077615695,0.9935506298513928,0.9864348094675678,0.9968317799212347,1.0001319608997232,1.0037339607429658,1.018061200468314,1.0085303657111497,0.9994278687872833,0.991001304006805,1.0171550320428329,0.9930805439371053],"y":[16.99,24.59,35.26,14.83,10.33,16.97,20.29,15.77,19.65,15.06,20.69,16.93,10.29,34.81,26.41,16.45,3.07,17.07,26.86,25.28,14.73,10.07,34.83,5.75,16.32,22.75,11.35,15.38,44.3,22.42,20.92,14.31,7.25,25.71,17.31,10.65,12.43,24.08,13.42,12.48,29.8,14.52,11.38,20.27,11.17,12.26,18.26,8.51,10.33,14.15,13.16,17.47,27.05,16.43,8.35,18.64,11.87,29.85,25.0,13.39,16.21,17.51,10.59,10.63,9.6,20.9,18.15,19.81,43.11,13.0,12.74,13.0,16.4,16.47,12.76,13.27,28.17,12.9,30.14,13.42,15.98,16.27,10.09,22.12,35.83,27.18,18.78],"type":"scatter"},{"hoverinfo":"name+text+y","legendgroup":"Male","marker":{"color":"rgb(256, 127, 14)","coloraxis":"coloraxis","opacity":[0.07333333333333332,0.2777777777777778,0.25666666666666665,0.4122222222222222,0.1111111111111111,0.23555555555555557,0.10666666666666666,0.24777777777777776,0.07888888888888888,0.06333333333333334,0.2222222222222222,0.3244444444444444,0.3011111111111111,0.2611111111111111,0.3422222222222222,0.7311111111111112,0.24222222222222223,0.14888888888888888,0.1111111111111111,0.1111111111111111,0.36666666666666664,0.049999999999999996,0.16666666666666666,0.25222222222222224,0.2888888888888889,0.1111111111111111,0.14555555555555555,0.4444444444444444,0.1377777777777778,0.1711111111111111,0.2288888888888889,0.03555555555555556,0.5111111111111111,0.2222222222222222,0.4444444444444444,0.5555555555555556,0.11666666666666664,0.2222222222222222,0.16666666666666666,0.06222222222222223,0.3711111111111111,0.27888888888888885,0.2222222222222222,0.08444444444444445,0.6366666666666667,0.24555555555555555,0.1111111111111111,0.10888888888888888,0.30666666666666664,0.18222222222222223,0.23888888888888887,0.1122222222222222,0.1211111111111111,0.10777777777777778,0.027777777777777776,0.23111111111111113,0.3333333333333333,0.2222222222222222,0.19,0.2222222222222222,0.26666666666666666,0.4444444444444444,0.11444444444444442,0.1111111111111111,0.3333333333333333,0.5388888888888889,0.2222222222222222,0.2222222222222222,0.2777777777777778,0.4144444444444445,0.3333333333333333,0.05555555555555555,0.2222222222222222,0.05555555555555555,0.0711111111111111,0.33999999999999997,0.3655555555555556,0.30666666666666664,0.2222222222222222,0.3333333333333333,0.1722222222222222,0.45222222222222225,0.14555555555555555,0.16666666666666666,0.1111111111111111,0.05333333333333333,0.13111111111111112,0.05555555555555555,0.1111111111111111,0.6333333333333333,0.4444444444444444,0.0811111111111111,0.1111111111111111,0.16666666666666666,0.1111111111111111,0.19333333333333336,0.1111111111111111,0.1111111111111111,0.4444444444444444,0.1111111111111111,0.2777777777777778,0.16666666666666666,0.1111111111111111,0.27555555555555555,0.1377777777777778,0.3888888888888889,1.0,0.24000000000000002,0.46111111111111114,0.24222222222222223,0.3333333333333333,0.23444444444444443,0.1111111111111111,0.1111111111111111,0.2833333333333333,0.2977777777777778,0.5166666666666667,0.2777777777777778,0.6111111111111112,0.2222222222222222,0.4444444444444444,0.1111111111111111,0.3333333333333333,0.05555555555555555,0.17333333333333334,0.11333333333333334,0.3333333333333333,0.048888888888888885,0.1111111111111111,0.1111111111111111,0.3333333333333333,0.3333333333333333,0.2677777777777778,0.2222222222222222,0.11444444444444442,0.1111111111111111,0.46222222222222226,0.8888888888888888,0.2222222222222222,0.05555555555555555,0.048888888888888885,0.13333333333333336,0.10222222222222221,0.06444444444444446,0.2222222222222222,0.19111111111111112,0.1111111111111111,0.2222222222222222,0.26555555555555554,0.05222222222222222,0.2222222222222222,0.027777777777777776,0.0,0.018888888888888882,0.5466666666666666,0.1111111111111111,0.08333333333333333],"size":6.0},"mode":"markers","name":"Male","x":[1.9857069983656086,2.0034293818339313,2.010206041709681,2.005887179546138,1.9922679772575722,1.9876258363461303,1.9970033560122373,1.9956609435233679,1.999005559365041,1.996053865355728,1.9848609520440594,2.0108631280930007,1.9781336400834841,2.0064553121856292,1.9991787141610198,1.9997236230847233,2.017171842026986,1.9921898314175241,2.0288264722491216,2.0094504319662514,2.0122911890126183,2.0072711896553472,1.9980962352254974,1.9991354746808587,2.005609869378859,1.9853087767193245,2.0195355551188356,1.9837369009515706,2.001979298081726,2.005507884397493,2.006285584573819,1.9959958418638197,1.9795714272800224,2.0009562813234076,1.9872479525551836,2.0055003474959725,2.0181800388666433,1.9869239583870444,2.0129474599599777,2.010806044427728,1.999098146945512,1.9971794243708358,2.007415812437893,2.0067483486465463,2.0198879676503876,2.003878041420512,2.016160819659423,1.9779343659320159,2.008004891497457,1.9852008871529079,2.0018068617763323,1.9982683432975412,2.002882984202651,1.9998175696858154,2.0057660980189205,2.009137954923785,1.9924671203705464,1.9865127156458748,1.9943175095770753,2.0122334521186027,2.005497286472952,2.0201020288146214,1.999018626925954,1.9882257973064503,2.0012292338557365,1.9843370093854198,2.016101523410981,1.9907742594529851,1.9931206826703975,1.9836966408657815,1.9914598420362433,1.9989737184781409,2.0204186987915125,2.00404746937527,1.9752187283194804,1.9986578694352952,2.0038257808064714,2.004705552890246,2.0052098069263065,1.9896293864128372,1.9986750822714787,1.997320649941663,1.9947026898884532,1.9983585297506987,2.0135964936642807,1.991525002709418,2.0006142745390516,1.994421646873168,2.013418231936637,2.012635590915366,2.0009055462233145,2.0086788287649955,2.005183625167205,2.0168788499492183,2.0127927522688234,1.9945711010596632,1.998805229857962,1.9853134532677321,2.0002101565996013,2.006270359393587,2.0051041440357307,2.007459517871648,1.9972297924993818,1.9934281182230849,2.008744960387015,2.002336329225169,2.002108719306104,2.0155056797547752,2.0087242284090667,1.9876324868455995,1.9883016151756228,1.9912665389413047,1.9981799811393237,1.9895346986552793,1.9958536931820903,1.9968816028625058,1.999558888549729,1.9991685119326683,2.0079359380586994,2.006283437923113,2.0117309623774373,2.020930518255723,1.9823354223848724,2.0039168498755107,2.0102260622786945,1.9714327948014696,2.0040871861607923,1.988772019879932,1.9876954117304677,1.9979658869042864,1.983174433304572,2.016424592265729,2.0061437642488245,2.0127716977991836,1.9972131403509068,1.9949700236842813,1.9966684833861965,2.0044207460422667,2.011517671354754,2.0044304015734196,1.9949452242642098,2.002783250032444,2.012943857356424,1.9868657523303885,2.002806780115751,2.0001746543627688,1.9946703220344808,2.016387185759982,2.003074306834521,1.9949236703293955,2.004027677833203,1.9936668638541166,2.000259945576389,2.007485760510967,1.9841482290750532,1.9889190084683384,1.9974255183283933],"y":[10.34,21.01,23.68,25.29,8.77,26.88,15.04,14.78,10.27,15.42,18.43,21.58,16.29,20.65,17.92,39.42,19.82,17.81,13.37,12.69,21.7,9.55,18.35,17.78,24.06,16.31,18.69,31.27,16.04,17.46,13.94,9.68,30.4,18.29,22.23,32.4,28.55,18.04,12.54,9.94,25.56,19.49,38.01,11.24,48.27,20.29,13.81,11.02,18.29,17.59,20.08,20.23,15.01,12.02,10.51,17.92,27.2,22.76,17.29,19.44,16.66,32.68,15.98,13.03,18.28,24.71,21.16,28.97,22.49,40.17,27.28,12.03,21.01,12.46,15.36,20.49,25.21,18.24,14.0,38.07,23.95,29.93,11.69,14.26,15.95,8.52,22.82,19.08,16.0,34.3,41.19,9.78,7.51,14.07,13.13,17.26,24.55,19.77,48.17,16.49,21.5,12.66,13.81,24.52,20.76,31.71,50.81,15.81,7.25,31.85,16.82,32.9,17.89,14.48,34.63,34.65,23.33,45.35,23.17,40.55,20.69,30.46,23.1,15.69,28.44,15.48,16.58,7.56,10.34,13.51,18.71,20.53,26.59,38.73,24.27,30.06,25.89,48.33,28.15,11.59,7.74,12.16,8.58,13.42,20.45,13.28,24.01,15.69,11.61,10.77,15.53,10.07,12.6,32.83,29.03,22.67,17.82],"type":"scatter"}],                        {"boxmode":"group","hovermode":"closest","title":{"text":"Total Bill vs Sex Per Sex"},"violinmode":"group","xaxis":{"automargin":true,"tickmode":"array","ticktext":["Female","Male"],"tickvals":[1.0,2.0],"title":{"text":"Sex"}},"yaxis":{"automargin":true,"title":{"text":"Total bill"}},"template":{"layout":{"scene":{"xaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"zaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}}},"title":{"font":{"family":"Arial","size":20}},"xaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}}}}},                        {"responsive": true}                    )                };                            </script>        </div></div></div>
+</div>
+</section>
+<section id="controlling-data-spread">
+<h2>Controlling data “spread”<a class="headerlink" href="#controlling-data-spread" title="Link to this heading">#</a></h2>
+<p>The amount of spread over the categorical axis can be controlled with the <code class="docutils literal notranslate"><span class="pre">jitter</span></code> parameter :</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tips</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">statsplotly</span><span class="o">.</span><span class="n">catplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;total_bill&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span>
+    <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;stripplot&quot;</span><span class="p">,</span>
+    <span class="n">opacity</span><span class="o">=</span><span class="s2">&quot;tip&quot;</span><span class="p">,</span>
+    <span class="n">jitter</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>                <div id="6fa32e9d-021e-4431-b3f5-5659d40f6021" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("6fa32e9d-021e-4431-b3f5-5659d40f6021")) {                    Plotly.newPlot(                        "6fa32e9d-021e-4431-b3f5-5659d40f6021",                        [{"hoverinfo":"name+text+y","legendgroup":"total_bill","marker":{"color":"rgb(31, 119, 180)","coloraxis":"coloraxis","opacity":[0.0011111111111111122,0.07333333333333332,0.2777777777777778,0.25666666666666665,0.29,0.4122222222222222,0.1111111111111111,0.23555555555555557,0.10666666666666666,0.24777777777777776,0.07888888888888888,0.4444444444444444,0.06333333333333334,0.2222222222222222,0.22444444444444445,0.3244444444444444,0.07444444444444444,0.3011111111111111,0.2777777777777778,0.2611111111111111,0.3422222222222222,0.19444444444444445,0.13666666666666666,0.7311111111111112,0.24222222222222223,0.14888888888888888,0.1111111111111111,0.1111111111111111,0.36666666666666664,0.2222222222222222,0.049999999999999996,0.16666666666666666,0.2222222222222222,0.16111111111111112,0.25222222222222224,0.2888888888888889,0.1111111111111111,0.22999999999999998,0.14555555555555555,0.4444444444444444,0.1377777777777778,0.1711111111111111,0.2288888888888889,0.03555555555555556,0.5111111111111111,0.2222222222222222,0.4444444444444444,0.5555555555555556,0.11666666666666664,0.2222222222222222,0.16666666666666666,0.17777777777777778,0.4666666666666667,0.06222222222222223,0.3711111111111111,0.27888888888888885,0.2222222222222222,0.05555555555555555,0.08444444444444445,0.6366666666666667,0.24555555555555555,0.1111111111111111,0.10888888888888888,0.30666666666666664,0.18222222222222223,0.23888888888888887,0.16333333333333336,0.0,0.1122222222222222,0.1211111111111111,0.10777777777777778,0.2222222222222222,0.23777777777777778,0.4444444444444444,0.13333333333333336,0.027777777777777776,0.23111111111111113,0.3333333333333333,0.2222222222222222,0.19,0.2222222222222222,0.26666666666666666,0.09222222222222223,0.4444444444444444,0.11444444444444442,0.4633333333333333,0.1111111111111111,0.3333333333333333,0.5388888888888889,0.2222222222222222,0.2222222222222222,0.2777777777777778,0.0,0.36666666666666664,0.25,0.4144444444444445,0.3333333333333333,0.05555555555555555,0.2222222222222222,0.05555555555555555,0.16666666666666666,0.2222222222222222,0.16666666666666666,0.27555555555555555,0.3422222222222222,0.0711111111111111,0.33999999999999997,0.3655555555555556,0.30666666666666664,0.3333333333333333,0.2222222222222222,0.0,0.3333333333333333,0.1722222222222222,0.3333333333333333,0.2777777777777778,0.45222222222222225,0.05555555555555555,0.08888888888888889,0.21333333333333332,0.14555555555555555,0.07555555555555554,0.16666666666666666,0.1111111111111111,0.1688888888888889,0.35555555555555557,0.05333333333333333,0.1111111111111111,0.1111111111111111,0.13111111111111112,0.05555555555555555,0.20333333333333334,0.05555555555555555,0.1111111111111111,0.25,0.027777777777777776,0.1111111111111111,0.1111111111111111,0.1111111111111111,0.19444444444444445,0.2777777777777778,0.6333333333333333,0.4444444444444444,0.4444444444444444,0.14444444444444443,0.05555555555555555,0.04000000000000001,0.06999999999999999,0.0811111111111111,0.1111111111111111,0.16666666666666666,0.1111111111111111,0.19333333333333336,0.1111111111111111,0.1111111111111111,0.45999999999999996,0.4444444444444444,0.3055555555555556,0.17888888888888888,0.1111111111111111,0.2777777777777778,0.16666666666666666,0.1111111111111111,0.1111111111111111,0.2222222222222222,0.27555555555555555,0.1377777777777778,0.3888888888888889,0.06777777777777778,0.1111111111111111,1.0,0.24000000000000002,0.46111111111111114,0.24222222222222223,0.3333333333333333,0.23444444444444443,0.1111111111111111,0.1111111111111111,0.3333333333333333,0.2833333333333333,0.2977777777777778,0.5166666666666667,0.2777777777777778,0.6111111111111112,0.2222222222222222,0.4444444444444444,0.2777777777777778,0.1111111111111111,0.2777777777777778,0.3333333333333333,0.05555555555555555,0.3544444444444445,0.17333333333333334,0.11333333333333334,0.3333333333333333,0.048888888888888885,0.1111111111111111,0.4444444444444444,0.1111111111111111,0.1111111111111111,0.3333333333333333,0.1122222222222222,0.1111111111111111,0.16666666666666666,0.3333333333333333,0.24777777777777776,0.2677777777777778,0.2222222222222222,0.11444444444444442,0.13666666666666666,0.1111111111111111,0.46222222222222226,0.8888888888888888,0.16666666666666666,0.6111111111111112,0.01111111111111112,0.2222222222222222,0.05555555555555555,0.048888888888888885,0.23222222222222222,0.13333333333333336,0.27555555555555555,0.10222222222222221,0.2222222222222222,0.06444444444444446,0.16666666666666666,0.1111111111111111,0.2222222222222222,0.19111111111111112,0.20888888888888887,0.1111111111111111,0.2222222222222222,0.26555555555555554,0.05222222222222222,0.2222222222222222,0.027777777777777776,0.0,0.018888888888888882,0.4077777777777778,0.5466666666666666,0.1111111111111111,0.1111111111111111,0.08333333333333333,0.2222222222222222],"size":6.0},"mode":"markers","name":"total_bill","x":[0.9982543805037736,2.0000289609439865,1.998053188782492,1.9975356951956909,1.0000690318674241,1.9993190162806063,2.002890644486822,1.996432447730795,2.0000894133965135,2.0009241214629325,2.0000445274409646,0.9978504352061842,1.9982845956363307,1.9968447160141636,0.9995685816824375,1.9962260903109152,1.0000604596824179,1.9994583543115443,1.0017530054947292,1.9969113160252825,1.9997536632248636,1.0029919979144044,0.9999665168471846,2.0002796540575045,2.001217734567954,2.0006311728472754,2.000299822235398,1.997702539367488,1.998785465658309,1.0009761314358416,1.9992610654427205,1.999826899898329,0.9991727844586659,0.9978505681502425,1.9991929686793277,2.0020442780807883,1.9995599279591083,1.0001659751134364,2.001625101912137,2.001169468536737,2.003043813592179,2.000448091307879,2.000404587416952,2.0012947604922298,2.003330676084075,1.998329564034066,2.0004719517359493,2.0017330570024026,1.9994211341174324,2.001326280327771,2.000616378801589,1.001234940433164,1.0030360548680033,1.9980648283247384,1.999052405102462,1.9984440046366578,2.0030930268901823,1.0000720275133674,1.9984216217701387,1.995562613586033,2.002544870504565,1.9997955484722303,1.9973125514629286,1.998086094874191,2.0004312874426273,2.001633507581638,0.9979232352627232,1.0005685778323536,1.9969746491309104,1.9984081892116543,2.00156143795995,1.0018211890783126,0.9976111314756344,1.0006303449065714,0.9973735634217026,1.9983014214754133,1.9993502204365892,1.9969987679639336,2.0019712897544033,1.998889819305169,2.001545738923308,2.002059390142201,1.0011805592409722,1.9991024693590596,2.0002012553361137,1.0009841733074398,1.9968953801064184,2.001264751428065,1.9964023686168497,1.9964784471310002,1.9995250680393502,1.9999758299110482,0.9959116547517476,0.9988879812643939,0.9992211524928073,2.000531738863305,1.9965089322306164,2.00038487170488,1.999764985283737,2.0008630866584696,0.9981426994219136,0.9993491553163188,0.9996767217627832,1.0005015109291509,1.0008819316790378,2.0020514858777427,2.0005637070873625,2.0013133843859885,1.9963080268818145,0.9973406112824453,1.9986615151532963,1.000102376878738,2.0014892596473923,2.000084322364297,0.9977202306278738,1.0000669619878477,2.002288089368859,0.9976998664481912,0.9982407588358038,1.000967623667658,2.0008174116587587,0.9982079714186436,2.0014941199358876,2.0046052654699413,1.0021958791307903,1.0014358777383587,1.9969356053013212,0.9997092702706216,1.0006069880797162,2.001727053205571,2.0022393621284045,0.9994730591816089,0.9976034062399233,0.9994963421586085,1.0052782261005702,0.9994694254400647,0.9977918777621256,1.0040122750795482,2.0003390467548803,0.9995469830723671,0.9998485689974721,2.0008821355229354,2.0019798745805395,1.00051594644806,1.0012996120043252,1.0012716871083174,0.9971954988276133,0.9984134270534809,2.001996384754165,1.9992827948057705,2.0002855389677325,2.000715544006576,1.9990375665929647,1.9991886223054975,1.998045265680085,0.9993473744619108,1.9982319044036805,1.0018448041130796,0.9975834944528991,1.999623361892509,2.0029629758893495,2.0048104323264746,0.9949576717718674,2.0013313161373216,1.0018014352661642,1.9966447632179654,1.9978901094126775,2.0044276184501473,0.9970535580806307,1.0020443755285995,2.003528671475326,2.002730700376117,1.9984756220034376,2.0007580431488425,1.997768985224772,2.0004998236988207,1.997176672603931,1.9992636874134362,0.9966830710891094,2.0016759143177913,1.998671236968738,1.9985591165451266,2.0007155840834048,1.999977433559078,2.001586239873558,2.0036448034889354,1.0008390830551124,1.9957953367942598,0.9991807929360335,1.9983671657217916,2.0034367244001694,0.9991647376733883,1.9991346151321554,1.9983759675385806,2.002880293218558,1.9984199680521033,1.9986367327324635,0.9979875193460109,1.0004127040993738,1.999520972834968,2.000747763992802,1.004287455272013,0.9996737478740443,1.0047087521756268,2.0026998300502763,0.996603015801531,2.0007617008513088,2.0014413813104794,1.995815698493993,1.000097934934494,2.0006467982280842,1.9986384376691266,1.9978765353196442,1.004015500930197,0.9991330321114569,0.9977039513979048,1.9953636588959884,1.9993063524923762,1.9981922884555328,1.0027424269005387,1.9986529673973477,1.0006466936241127,1.9966707011725122,1.0041241233262064,2.0024395249594944,0.9997626575417782,1.0012583161108308,1.999201024704075,1.9991845653126086,1.0021037698319477,2.0008042624088156,1.998985353867188,1.9992057845987794,2.000447041224137,1.9984119283540185,1.998817205232554,2.004230082951443,2.000324277019014,1.0023133306918581,1.9982727890333,1.000120910427491,2.004247130372415,1.9980955933359528,0.9972964508758271],"y":[16.99,10.34,21.01,23.68,24.59,25.29,8.77,26.88,15.04,14.78,10.27,35.26,15.42,18.43,14.83,21.58,10.33,16.29,16.97,20.65,17.92,20.29,15.77,39.42,19.82,17.81,13.37,12.69,21.7,19.65,9.55,18.35,15.06,20.69,17.78,24.06,16.31,16.93,18.69,31.27,16.04,17.46,13.94,9.68,30.4,18.29,22.23,32.4,28.55,18.04,12.54,10.29,34.81,9.94,25.56,19.49,38.01,26.41,11.24,48.27,20.29,13.81,11.02,18.29,17.59,20.08,16.45,3.07,20.23,15.01,12.02,17.07,26.86,25.28,14.73,10.51,17.92,27.2,22.76,17.29,19.44,16.66,10.07,32.68,15.98,34.83,13.03,18.28,24.71,21.16,28.97,22.49,5.75,16.32,22.75,40.17,27.28,12.03,21.01,12.46,11.35,15.38,44.3,22.42,20.92,15.36,20.49,25.21,18.24,14.31,14.0,7.25,38.07,23.95,25.71,17.31,29.93,10.65,12.43,24.08,11.69,13.42,14.26,15.95,12.48,29.8,8.52,14.52,11.38,22.82,19.08,20.27,11.17,12.26,18.26,8.51,10.33,14.15,16.0,13.16,17.47,34.3,41.19,27.05,16.43,8.35,18.64,11.87,9.78,7.51,14.07,13.13,17.26,24.55,19.77,29.85,48.17,25.0,13.39,16.49,21.5,12.66,16.21,13.81,17.51,24.52,20.76,31.71,10.59,10.63,50.81,15.81,7.25,31.85,16.82,32.9,17.89,14.48,9.6,34.63,34.65,23.33,45.35,23.17,40.55,20.69,20.9,30.46,18.15,23.1,15.69,19.81,28.44,15.48,16.58,7.56,10.34,43.11,13.0,13.51,18.71,12.74,13.0,16.4,20.53,16.47,26.59,38.73,24.27,12.76,30.06,25.89,48.33,13.27,28.17,12.9,28.15,11.59,7.74,30.14,12.16,13.42,8.58,15.98,13.42,16.27,10.09,20.45,13.28,22.12,24.01,15.69,11.61,10.77,15.53,10.07,12.6,32.83,35.83,29.03,27.18,22.67,17.82,18.78],"type":"scatter"}],                        {"boxmode":"group","hovermode":"closest","title":{"text":"Total Bill vs Sex"},"violinmode":"group","xaxis":{"automargin":true,"tickmode":"array","ticktext":["Female","Male"],"tickvals":[1.0,2.0],"title":{"text":"Sex"}},"yaxis":{"automargin":true,"title":{"text":"Total bill"}},"template":{"layout":{"scene":{"xaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"zaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}}},"title":{"font":{"family":"Arial","size":20}},"xaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}}}}},                        {"responsive": true}                    )                };                            </script>        </div></div></div>
+</div>
+</section>
+<section id="controlling-data-points-color">
+<h2>Controlling data points color<a class="headerlink" href="#controlling-data-points-color" title="Link to this heading">#</a></h2>
+<p>Color can be specified independently of the <code class="docutils literal notranslate"><span class="pre">slicer</span></code> :</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tips</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">statsplotly</span><span class="o">.</span><span class="n">catplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;total_bill&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
+    <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;stripplot&quot;</span><span class="p">,</span>
+    <span class="n">opacity</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span>
+    <span class="n">slicer</span><span class="o">=</span><span class="s2">&quot;day&quot;</span><span class="p">,</span>
+    <span class="n">jitter</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>                <div id="ead3f44b-294e-4b9c-8b2c-98e76c8ca06d" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("ead3f44b-294e-4b9c-8b2c-98e76c8ca06d")) {                    Plotly.newPlot(                        "ead3f44b-294e-4b9c-8b2c-98e76c8ca06d",                        [{"hoverinfo":"name+text+y","legendgroup":"Sun","marker":{"color":[0,1,1,1,0,1,1,1,1,1,1,0,1,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,0,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,0,1,1],"coloraxis":"coloraxis","opacity":0.8,"size":6.0},"mode":"markers","name":"Sun","opacity":0.8,"x":[1.0017210402359145,0.9887355294110607,1.0066957459885115,0.9982106196790193,0.9974372525361647,0.9912200756949603,0.9923136236895861,0.9963215458377639,0.9996446201748871,0.993064681108403,0.9946313551734415,1.0107704348017563,0.9943075504517208,1.0045091818126488,0.9975647113070428,1.004223082933048,1.0027201500723135,0.9943945913398968,1.0017927997419753,1.0009525732572973,0.9994439267658152,1.0031343571683025,0.9968585837903935,0.9981110352047556,1.0010958146456743,0.9943875483786949,1.0050728050015882,1.0042758164476495,0.9992403120148363,1.0143745001428883,1.0095986779565818,0.9997439970236371,1.0072067316920785,1.0040641732319722,0.9982145975027973,0.9991662763712528,1.0042997501438615,0.9953756894696232,1.0026255442727061,1.0023077228967006,1.0089760070367333,0.9998740700162934,1.0051484520924276,1.0006887711452859,1.0016579173113456,1.0004755074887992,0.9993372190749318,1.0072400055652186,1.0103604859922526,1.0028665000813275,1.0085108788112427,1.0041933248970318,0.9880476707943835,0.9974968072938749,0.9991176424152258,0.9996072542738839,1.0083304877132455,0.9964005827857928,1.00193588259583,1.0015536367437965,0.996476331293713,0.9980159922881064,0.9956341029914402,0.9939194764329441,0.9962859794989933,1.000402540447279,0.995424553261122,0.9938394367224732,0.999618241553549,0.9885169879420652,1.0054451730293472,0.996649653009251,1.000244100097344,1.001114748398828,0.9997150606388404,1.002505389330933],"y":[16.99,10.34,21.01,23.68,24.59,25.29,8.77,26.88,15.04,14.78,10.27,35.26,15.42,18.43,14.83,21.58,10.33,16.29,16.97,17.46,13.94,9.68,30.4,18.29,22.23,32.4,28.55,18.04,12.54,10.29,34.81,9.94,25.56,19.49,38.07,23.95,25.71,17.31,29.93,14.07,13.13,17.26,24.55,19.77,29.85,48.17,25.0,13.39,16.49,21.5,12.66,16.21,13.81,17.51,24.52,20.76,31.71,7.25,31.85,16.82,32.9,17.89,14.48,9.6,34.63,34.65,23.33,45.35,23.17,40.55,20.69,20.9,30.46,18.15,23.1,15.69],"type":"scatter"},{"hoverinfo":"name+text+y","legendgroup":"Sat","marker":{"color":[1,1,0,0,1,1,1,1,1,1,0,1,1,0,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1,1,0,0,1,1,1,0,0,0,0,1,1,0,0,0,1,1,1,1,0,1,0,0,0,1,1,1,1,1,0,1,1,1,0,0,0,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,0,1,1],"coloraxis":"coloraxis","opacity":0.8,"size":6.0},"mode":"markers","name":"Sat","opacity":0.8,"x":[0.996625658885227,1.0007304596364508,0.9954736404432043,1.0043380755655527,0.9904215110639617,0.9962597125772624,1.0048067972599928,0.9917703376669962,0.9970174823512484,1.003304406368012,1.007530910114459,1.0018457803862106,0.9979719464196747,1.0051161144560705,1.001394690240805,1.0047690256213506,1.0024990076746507,0.994264103360005,0.994653950446778,1.0053384273838992,0.9962383295958376,0.9989884486905963,1.0078641747077997,0.9980283898562543,1.0035712707735127,0.99866313104349,1.002493885576406,1.0002035461744534,1.001412526746757,1.0016000051674667,1.005382651022678,1.0021415382591792,1.002818772255216,1.0013241552317849,0.997447103105919,1.005980444837654,1.007039038118195,1.0117909658499809,0.9948050327568122,0.9993959926547128,1.00167667169095,1.0027123398999553,0.9923398467624179,1.0012247183573646,0.9968083792726754,0.9898761600341441,0.9912455501313105,0.9988363981920907,1.0016960521503369,1.0042202763038357,0.9996696938139017,1.0023192569213708,1.0111705086069223,0.9944531421337308,1.003716107406885,1.001677778814177,0.9983402514073487,0.9950395241344466,1.0130226428576012,0.9840254114217912,0.9990795107629553,1.0058604381793712,0.999101586970861,1.0006164544930527,1.0041941225634372,1.006574582575587,0.9955311596913857,0.9992216579774266,0.9990353488280597,0.9975075471490473,1.0038478670018598,0.9878177461938494,1.003645566312185,1.00285340723772,1.00237797745278,0.9957855438922311,1.0049739925613352,0.9973624077894501,1.0072085362327978,1.0139791824160533,1.0039948047581968,1.00412108434204,0.9934969021990233,0.994923253549445,0.9999584052440721,1.0009117229614295,0.9935740472537752],"y":[20.65,17.92,20.29,15.77,39.42,19.82,17.81,13.37,12.69,21.7,19.65,9.55,18.35,15.06,20.69,17.78,24.06,16.31,16.93,18.69,31.27,16.04,38.01,26.41,11.24,48.27,20.29,13.81,11.02,18.29,17.59,20.08,16.45,3.07,20.23,15.01,12.02,17.07,26.86,25.28,14.73,10.51,17.92,44.3,22.42,20.92,15.36,20.49,25.21,18.24,14.31,14.0,7.25,10.59,10.63,50.81,15.81,26.59,38.73,24.27,12.76,30.06,25.89,48.33,13.27,28.17,12.9,28.15,11.59,7.74,30.14,20.45,13.28,22.12,24.01,15.69,11.61,10.77,15.53,10.07,12.6,32.83,35.83,29.03,27.18,22.67,17.82],"type":"scatter"},{"hoverinfo":"name+text+y","legendgroup":"Thur","marker":{"color":[1,1,1,1,1,0,1,1,0,1,1,1,1,0,0,0,1,0,1,1,0,0,1,0,0,1,1,0,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,1,1,0,1,1,1,1,1,0,0,1,1,0,0,0,1,0,0],"coloraxis":"coloraxis","opacity":0.8,"size":6.0},"mode":"markers","name":"Thur","opacity":0.8,"x":[1.9970617396750683,2.0009917432198625,2.0075457291549426,2.0024785896316817,1.9985219203686637,1.9983713672952523,2.0016793017471266,2.0072158969725953,2.005756032421265,1.9961133336134773,2.0009260278988843,2.0028009498590116,2.0020142253132094,2.0029262050463275,2.00094700223995,2.0019225506398106,2.0045441637072385,1.996168442556341,1.9931522467921476,1.991217072206274,2.002957273854258,2.0032855044542948,1.9975182532037619,1.9983604054834532,1.9930438777010677,1.9965235698529689,2.0048078597890493,1.99785491398562,2.0046668857242507,2.0070938488331955,1.9904178071250693,2.009284959224633,2.0029588145689816,1.995787206917554,1.9990659563444095,1.9982513917681046,2.0013231783108254,2.0028278519107547,1.9972498115391148,2.007278141649072,1.994520350997257,2.006173058837771,2.005074672350988,1.9997922639258143,2.0008202840460356,2.0022629129174256,2.0000393308411804,2.0051077167529194,1.9946920199709168,2.001656299718023,1.9966909955983685,2.000975045790317,2.0077813168420824,2.0009382166037653,1.9988781208950601,1.9985891575402144,2.000386942224951,1.9980191093220188,1.9959282469155983,1.9936218922640863,2.0030986967023017,0.996279838353266],"y":[27.2,22.76,17.29,19.44,16.66,10.07,32.68,15.98,34.83,13.03,18.28,24.71,21.16,10.65,12.43,24.08,11.69,13.42,14.26,15.95,12.48,29.8,8.52,14.52,11.38,22.82,19.08,20.27,11.17,12.26,18.26,8.51,10.33,14.15,16.0,13.16,17.47,34.3,41.19,27.05,16.43,8.35,18.64,11.87,9.78,7.51,19.81,28.44,15.48,16.58,7.56,10.34,43.11,13.0,13.51,18.71,12.74,13.0,16.4,20.53,16.47,18.78],"type":"scatter"},{"hoverinfo":"name+text+y","legendgroup":"Fri","marker":{"color":[1,1,0,0,0,1,1,1,1,1,0,0,1,0,1,0,1,0,0],"coloraxis":"coloraxis","opacity":0.8,"size":6.0},"mode":"markers","name":"Fri","opacity":0.8,"x":[0.9981453656243623,1.0040116455512038,1.0043446124822455,1.0051981379670925,1.0023278632469432,1.0021593137050309,1.000295356843801,1.0046494588620452,1.002027768203487,0.994192241473369,1.0054594446820837,1.0043748886810722,2.000389655597056,2.0080812651120947,2.0022551382610447,1.9994704089785589,2.0025518141021235,2.001530549395951,1.9971363465135183],"y":[28.97,22.49,5.75,16.32,22.75,40.17,27.28,12.03,21.01,12.46,11.35,15.38,12.16,13.42,8.58,15.98,13.42,16.27,10.09],"type":"scatter"}],                        {"boxmode":"group","coloraxis":{"colorbar":{"len":0.5,"tickmode":"array","ticktext":["Female","Male"],"tickvals":[0.25,0.75],"title":{"text":"Sex"},"x":1.2,"xanchor":"left","y":0,"yanchor":"bottom"},"colorscale":[[0.0,"rgb(31, 119, 180)"],[0.5,"rgb(31, 119, 180)"],[0.5,"rgb(256, 127, 14)"],[1.0,"rgb(256, 127, 14)"]]},"hovermode":"closest","title":{"text":"Total Bill vs Time Per Day"},"violinmode":"group","xaxis":{"automargin":true,"tickmode":"array","ticktext":["Dinner","Lunch"],"tickvals":[1.0,2.0],"title":{"text":"Time"}},"yaxis":{"automargin":true,"title":{"text":"Total bill"}},"template":{"layout":{"scene":{"xaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"zaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}}},"title":{"font":{"family":"Arial","size":20}},"xaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}}}}},                        {"responsive": true}                    )                };                            </script>        </div></div></div>
+</div>
+</section>
+<section id="specifying-categorical-plot-type">
+<h2>Specifying categorical plot type<a class="headerlink" href="#specifying-categorical-plot-type" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">plot_type</span></code> parameter controls the kind of categorical plot (see <a class="reference internal" href="../source/statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.CategoricalPlotType" title="statsplotly.plot_specifiers.trace.CategoricalPlotType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">categorical</span> <span class="pre">plot</span> <span class="pre">type</span></code></a>) :</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tips</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">statsplotly</span><span class="o">.</span><span class="n">catplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;total_bill&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span>
+    <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;violinplot&quot;</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">slicer</span><span class="o">=</span><span class="s2">&quot;smoker&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;diamond&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>                <div id="666d8b55-9b97-413c-b0f9-d12a9075ca60" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("666d8b55-9b97-413c-b0f9-d12a9075ca60")) {                    Plotly.newPlot(                        "666d8b55-9b97-413c-b0f9-d12a9075ca60",                        [{"hoverinfo":"name+text+y","legendgroup":"No","marker":{"color":"rgb(31, 119, 180)","size":8.0,"symbol":"diamond"},"meanline":{"visible":true},"name":"No","orientation":"v","scalemode":"width","x":[1,2,2,2,1,2,2,2,2,2,2,1,2,2,1,2,1,2,1,2,2,1,1,2,2,2,2,2,2,1,2,2,1,1,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,1,2,2,2,1,2,2,1,1,2,2,2,2,2,1,2,1,2,2,2,2,2,1,2,1,2,2,1,2,2,1,1,2,1,1,1,2,1,2,2,1,1,2,1,1,2,2,1,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,2,2,2,2,2,2,2,1,2,1,1,2,2,2,1,2,2,2,2,2,2,2,1,2,2,2,2,2,1,2,2,1],"y":[16.99,10.34,21.01,23.68,24.59,25.29,8.77,26.88,15.04,14.78,10.27,35.26,15.42,18.43,14.83,21.58,10.33,16.29,16.97,20.65,17.92,20.29,15.77,39.42,19.82,17.81,13.37,12.69,21.7,19.65,9.55,18.35,15.06,20.69,17.78,24.06,16.31,16.93,18.69,31.27,16.04,17.46,13.94,9.68,30.4,18.29,22.23,32.4,28.55,18.04,12.54,10.29,34.81,9.94,25.56,19.49,26.41,48.27,17.59,20.08,16.45,20.23,12.02,17.07,14.73,10.51,27.2,22.76,17.29,16.66,10.07,15.98,34.83,13.03,18.28,24.71,21.16,22.49,22.75,12.46,20.92,18.24,14.0,7.25,38.07,23.95,25.71,17.31,29.93,10.65,12.43,24.08,11.69,13.42,14.26,15.95,12.48,29.8,8.52,14.52,11.38,22.82,19.08,20.27,11.17,12.26,18.26,8.51,10.33,14.15,13.16,17.47,34.3,41.19,27.05,16.43,8.35,18.64,11.87,9.78,7.51,14.07,13.13,17.26,24.55,19.77,29.85,48.17,25.0,13.39,16.49,21.5,12.66,16.21,13.81,24.52,20.76,31.71,20.69,7.56,48.33,15.98,20.45,13.28,11.61,10.77,10.07,35.83,29.03,17.82,18.78],"type":"violin"},{"hoverinfo":"name+text+y","legendgroup":"Yes","marker":{"color":"rgb(256, 127, 14)","size":8.0,"symbol":"diamond"},"meanline":{"visible":true},"name":"Yes","orientation":"v","scalemode":"width","x":[2,2,2,2,2,2,1,2,1,1,2,2,2,2,1,1,2,2,2,2,1,1,1,1,2,2,2,1,2,1,1,1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,1,2,1,2,2,1,2,2,2,2,1,1,2,2,1,1,1,2,1,2,2,2,1,2,2,1,1,1,2,2,2,1,2,1,2,2,1,1,1,2,2,2,2,2,1,2],"y":[38.01,11.24,20.29,13.81,11.02,18.29,3.07,15.01,26.86,25.28,17.92,19.44,32.68,28.97,5.75,16.32,40.17,27.28,12.03,21.01,11.35,15.38,44.3,22.42,15.36,20.49,25.21,14.31,16.0,17.51,10.59,10.63,50.81,15.81,7.25,31.85,16.82,32.9,17.89,14.48,9.6,34.63,34.65,23.33,45.35,23.17,40.55,20.9,30.46,18.15,23.1,15.69,19.81,28.44,15.48,16.58,10.34,43.11,13.0,13.51,18.71,12.74,13.0,16.4,20.53,16.47,26.59,38.73,24.27,12.76,30.06,25.89,13.27,28.17,12.9,28.15,11.59,7.74,30.14,12.16,13.42,8.58,13.42,16.27,10.09,22.12,24.01,15.69,15.53,12.6,32.83,27.18,22.67],"type":"violin"}],                        {"boxmode":"group","hovermode":"closest","title":{"text":"Total Bill vs Sex Per Smoker"},"violinmode":"group","xaxis":{"automargin":true,"tickmode":"array","ticktext":["Female","Male"],"tickvals":[1.0,2.0],"title":{"text":"Sex"}},"yaxis":{"automargin":true,"title":{"text":"Total bill"}},"template":{"layout":{"scene":{"xaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"zaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}}},"title":{"font":{"family":"Arial","size":20}},"xaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}}}}},                        {"responsive": true}                    )                };                            </script>        </div></div></div>
+</div>
+</section>
+<section id="processing-data-under-the-hood">
+<h2>Processing data under the hood<a class="headerlink" href="#processing-data-under-the-hood" title="Link to this heading">#</a></h2>
+<p>Slices can be re-ordered and filtered by providing the <code class="docutils literal notranslate"><span class="pre">slice_order</span></code> argument.</p>
+<p>One can also normalize the data, e.g., centering (i.e., make data 0 mean) (see <a class="reference internal" href="../source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.NormalizationType" title="statsplotly.plot_specifiers.data.NormalizationType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalization</span> <span class="pre">type</span></code></a>):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tips</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">statsplotly</span><span class="o">.</span><span class="n">catplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;total_bill&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span>
+    <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;boxplot&quot;</span><span class="p">,</span>
+    <span class="n">slicer</span><span class="o">=</span><span class="s2">&quot;day&quot;</span><span class="p">,</span>
+    <span class="n">normalizer</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+    <span class="n">slice_order</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Fri&quot;</span><span class="p">,</span> <span class="s2">&quot;Sat&quot;</span><span class="p">,</span> <span class="s2">&quot;Sun&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>                <div id="4c74232c-c265-4395-b8fd-73db764e10cd" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("4c74232c-c265-4395-b8fd-73db764e10cd")) {                    Plotly.newPlot(                        "4c74232c-c265-4395-b8fd-73db764e10cd",                        [{"boxmean":true,"hoverinfo":"name+text+y","legendgroup":"Fri","marker":{"color":"rgb(31, 119, 180)","size":6.0},"name":"Fri","orientation":"v","x":[2,2,1,1,1,2,2,2,2,2,1,1,2,1,2,1,2,1,1],"y":[11.818421052631578,5.338421052631578,-11.40157894736842,-0.8315789473684205,5.598421052631579,23.01842105263158,10.12842105263158,-5.1215789473684215,3.8584210526315807,-4.69157894736842,-5.801578947368421,-1.77157894736842,-4.991578947368421,-3.731578947368421,-8.57157894736842,-1.1715789473684204,-3.731578947368421,-0.8815789473684212,-7.061578947368421],"type":"box"},{"boxmean":true,"hoverinfo":"name+text+y","legendgroup":"Sat","marker":{"color":"rgb(256, 127, 14)","size":6.0},"name":"Sat","orientation":"v","x":[2,2,1,1,2,2,2,2,2,2,1,2,2,1,1,2,2,2,1,2,2,2,2,1,2,2,2,2,2,2,2,2,1,1,2,2,2,1,1,1,1,2,2,1,1,1,2,2,2,2,1,2,1,1,1,2,2,2,2,2,1,2,2,2,1,1,1,2,2,2,1,2,2,1,2,2,2,2,2,2,2,2,1,2,1,2,2],"y":[0.20862068965517366,-2.521379310344823,-0.15137931034482577,-4.671379310344825,18.978620689655177,-0.6213793103448246,-2.631379310344826,-7.071379310344826,-7.751379310344825,1.2586206896551744,-0.7913793103448263,-10.891379310344824,-2.0913793103448235,-5.381379310344824,0.24862068965517636,-2.661379310344824,3.618620689655174,-4.131379310344826,-3.511379310344825,-1.7513793103448236,10.828620689655175,-4.401379310344826,17.568620689655173,5.968620689655175,-9.201379310344825,27.828620689655178,-0.15137931034482577,-6.631379310344824,-9.421379310344825,-2.1513793103448258,-2.851379310344825,-0.3613793103448266,-3.9913793103448256,-17.371379310344825,-0.2113793103448245,-5.431379310344825,-8.421379310344825,-3.3713793103448246,6.4186206896551745,4.838620689655176,-5.7113793103448245,-9.931379310344825,-2.521379310344823,23.858620689655172,1.9786206896551768,0.4786206896551768,-5.0813793103448255,0.04862068965517352,4.768620689655176,-2.2013793103448265,-6.131379310344824,-6.441379310344825,-13.191379310344825,-9.851379310344825,-9.811379310344824,30.368620689655177,-4.631379310344824,6.148620689655175,18.288620689655172,3.8286206896551747,-7.681379310344825,9.618620689655174,5.448620689655176,27.888620689655173,-7.171379310344825,7.728620689655177,-7.541379310344825,7.708620689655174,-8.851379310344825,-12.701379310344825,9.698620689655176,0.008620689655174374,-7.1613793103448256,1.678620689655176,3.5686206896551766,-4.751379310344825,-8.831379310344825,-9.671379310344825,-4.9113793103448256,-10.371379310344825,-7.841379310344825,12.388620689655173,15.388620689655173,8.588620689655176,6.738620689655175,2.228620689655177,-2.6213793103448246],"type":"box"},{"boxmean":true,"hoverinfo":"name+text+y","legendgroup":"Sun","marker":{"color":"rgb(44, 160, 44)","size":6.0},"name":"Sun","orientation":"v","x":[1,2,2,2,1,2,2,2,2,2,2,1,2,2,1,2,1,2,1,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,1,1,2,2,2,2,2,2,1,2,1,1,2,2,2,1,2,1,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,1,2,1,2,2],"y":[-4.420000000000002,-11.07,-0.3999999999999986,2.2699999999999996,3.1799999999999997,3.879999999999999,-12.64,5.469999999999999,-6.370000000000001,-6.630000000000001,-11.14,13.849999999999998,-5.99,-2.9800000000000004,-6.58,0.16999999999999815,-11.08,-5.120000000000001,-4.440000000000001,-3.9499999999999993,-7.470000000000001,-11.73,8.989999999999998,-3.120000000000001,0.8200000000000003,10.989999999999998,7.140000000000001,-3.370000000000001,-8.870000000000001,-11.120000000000001,13.400000000000002,-11.47,4.149999999999999,-1.9200000000000017,16.66,2.539999999999999,4.300000000000001,-4.100000000000001,8.52,-7.34,-8.28,-4.149999999999999,3.1400000000000006,-1.6400000000000006,8.440000000000001,26.76,3.59,-8.02,-4.920000000000002,0.08999999999999986,-8.75,-5.199999999999999,-7.6,-3.8999999999999986,3.1099999999999994,-0.6499999999999986,10.3,-14.16,10.440000000000001,-4.59,11.489999999999998,-3.5199999999999996,-6.93,-11.81,13.220000000000002,13.239999999999998,1.9199999999999982,23.94,1.7600000000000016,19.139999999999997,-0.7199999999999989,-0.5100000000000016,9.05,-3.2600000000000016,1.6900000000000013,-5.720000000000001],"type":"box"}],                        {"boxmode":"group","hovermode":"closest","title":{"text":"Total Bill vs Sex Per Day"},"violinmode":"group","xaxis":{"automargin":true,"tickmode":"array","ticktext":["Female","Male"],"tickvals":[1.0,2.0],"title":{"text":"Sex"}},"yaxis":{"automargin":true,"title":{"text":"Total bill"}},"template":{"layout":{"scene":{"xaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}},"zaxis":{"tickfont":{"family":"Arial","size":16},"title":{"font":{"family":"Arial","size":20}}}},"title":{"font":{"family":"Arial","size":20}},"xaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}},"yaxis":{"tickfont":{"family":"Arial","size":18},"title":{"font":{"family":"Arial","size":20}}}}}},                        {"responsive": true}                    )                };                            </script>        </div></div></div>
+</div>
+<p>Full details of the API : <a class="reference internal" href="../source/statsplotly.html#statsplotly.catplot" title="statsplotly.catplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">catplot()</span></code></a>.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="heatmap.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Heatmaps</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="barplot.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Bar plots</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Benjamin Roland
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Categorical plots</a><ul>
+<li><a class="reference internal" href="#styling-plots">Styling plots</a></li>
+<li><a class="reference internal" href="#controlling-data-spread">Controlling data “spread”</a></li>
+<li><a class="reference internal" href="#controlling-data-points-color">Controlling data points color</a></li>
+<li><a class="reference internal" href="#specifying-categorical-plot-type">Specifying categorical plot type</a></li>
+<li><a class="reference internal" href="#processing-data-under-the-hood">Processing data under the hood</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
+</html>

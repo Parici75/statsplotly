@@ -3,12 +3,13 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="statsplotly package" href="source/statsplotly.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Line plots" href="notebooks/lineplot.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
+    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
         <title>statsplotly documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
     
     
@@ -134,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -145,8 +146,11 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="_static/statsplotly-light-mode-logo.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="_static/statsplotly-dark-mode-logo.png" alt="Dark Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">statsplotly  documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -154,17 +158,38 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <p class="caption" role="heading"><span class="caption-text">Features</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/lineplot.html">Line plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/scatterplot.html">Scatter plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/barplot.html">Bar plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/catplot.html">Categorical plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/heatmap.html">Heatmaps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/distplot.html">Distribution plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/jointplot.html">Jointplots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/managing_subplots.html">Managing subplots</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="source/statsplotly.html">statsplotly package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of statsplotly package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="source/statsplotly.plot_objects.html">statsplotly.plot_objects package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/statsplotly.plot_specifiers.html">statsplotly.plot_specifiers package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/statsplotly.plotting.html">statsplotly.plotting package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/statsplotly.utils.html">statsplotly.utils package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="source/statsplotly.plot_objects.html">statsplotly.plot_objects package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of statsplotly.plot_objects package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="source/statsplotly.plot_objects.layout.html">statsplotly.plot_objects.layout package</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="source/statsplotly.plot_specifiers.html">statsplotly.plot_specifiers package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of statsplotly.plot_specifiers package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="source/statsplotly.plot_specifiers.color.html">statsplotly.plot_specifiers.color package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source/statsplotly.plot_specifiers.data.html">statsplotly.plot_specifiers.data package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source/statsplotly.plot_specifiers.figure.html">statsplotly.plot_specifiers.figure package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source/statsplotly.plot_specifiers.layout.html">statsplotly.plot_specifiers.layout package</a></li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html">Version 0.1.5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html">Version 0.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-5">Version 0.1.5</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-4">Version 0.1.4</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-3">Version 0.1.3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-2">Version 0.1.2</a></li>
@@ -198,77 +223,150 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="statsplotly-documentation">
-<h1>Statsplotly documentation<a class="headerlink" href="#statsplotly-documentation" title="Link to this heading">#</a></h1>
-<section id="a-high-level-tidy-api-for-drawing-statistical-visualization-with-plotly">
-<h2>A high-level, tidy API for drawing statistical visualization with <code class="docutils literal notranslate"><span class="pre">plotly</span></code>.<a class="headerlink" href="#a-high-level-tidy-api-for-drawing-statistical-visualization-with-plotly" title="Link to this heading">#</a></h2>
-<p>Compared to <code class="docutils literal notranslate"><span class="pre">plotly.express</span></code> API, <code class="docutils literal notranslate"><span class="pre">statsplotly</span></code> color coding scheme, slicer and plot dimensions are independent.</p>
-<p>This independence allows to leverage the powerful interactivity offered by plotly.js without compromising statistical intelligibility for aesthetics choices, or vice-versa.</p>
-</section>
+          <div class="logo-container" style="width: 50%; margin: auto; margin-bottom: 1.9rem; margin-top: 1.9rem">
+<picture>
+  <img class="only-light" alt="Statsplotly Logo" src="_static/statsplotly-light-mode-logo.png">
+  <img class="only-dark" alt="Statsplotly Logo" src="_static/statsplotly-dark-mode-logo.png">
+</picture>
+</div>
+<p>Statsplotly provides a high-level, declarative API for drawing statistical visualization with <a class="reference external" href="https://plotly.com/">plotly</a>.</p>
+<p>Compared to the <a class="reference external" href="https://plotly.com/python/plotly-express/">plotly.express</a> API, <code class="docutils literal notranslate"><span class="pre">statsplotly</span></code> color coding scheme, slicer and plot dimensions are independent.</p>
+<p>This independence allows to leverage the powerful interactivity offered by <a class="reference external" href="https://plotly.com/javascript/">plotly.js</a> without compromising statistical intelligibility for aesthetics choices, or vice-versa.</p>
 <section id="functions-signature">
-<h2>Functions signature<a class="headerlink" href="#functions-signature" title="Link to this heading">#</a></h2>
-<p>All functions return a <code class="docutils literal notranslate"><span class="pre">plotly.graphic_objects.Figure</span></code> object.</p>
-<p>All plotting functions must be supplied with :</p>
+<h1>Functions signature<a class="headerlink" href="#functions-signature" title="Link to this heading">#</a></h1>
+<p>All plotting functions return a <code class="docutils literal notranslate"><span class="pre">plotly.graphic_objects.Figure</span></code> object, and must be supplied with :</p>
 <ul class="simple">
-<li><p>a tidy (i.e., <a class="reference external" href="https://en.wikipedia.org/wiki/Wide_and_narrow_data">long-form</a>) DataFrame argument for data, with a flat header (hierarchical index are supported).</p></li>
-<li><p>column identifiers to specify plotting dimensions.</p></li>
+<li><p>a tidy (i.e., <a class="reference external" href="https://en.wikipedia.org/wiki/Wide_and_narrow_data">long-form</a>) <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> argument for <code class="docutils literal notranslate"><span class="pre">data</span></code>, with a flat header (hierarchical indexes are supported).</p></li>
+<li><p>column or index identifiers to specify <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> -when applicable- plotting dimensions.</p></li>
 </ul>
+<blockquote>
+<div><p>💡 Read more on <a class="reference external" href="https://aeturrell.github.io/python4DS/data-tidy.html">tidy data</a>.</p>
+</div></blockquote>
 <p>All plotting functions also accept:</p>
 <ul>
-<li><p>a <code class="docutils literal notranslate"><span class="pre">slicer</span></code> argument to slice the data along a particular dimension. Depending on the graphic representation, slices of data are plotted as independent traces (scatter-like representation), or as dropdown items (heatmap).</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">slicer</span></code> argument to slice the data along a particular dimension : each slice of the data is drawed as an independent <code class="docutils literal notranslate"><span class="pre">plotly.js</span></code> trace. Depending on the graphic representation, traces can be toggled via legend clicking, or dropdown selection.</p></li>
 <li><p>a <code class="docutils literal notranslate"><span class="pre">color_palette</span></code> argument which can be :</p>
 <ul class="simple">
-<li><p>a string refering to a built-in <code class="docutils literal notranslate"><span class="pre">plotly</span></code>, <code class="docutils literal notranslate"><span class="pre">seaborn</span></code> or <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> colormap.</p></li>
-<li><p>a list of CSS color names or HTML color codes.
+<li><p>a string refering to a built-in <a class="reference external" href="https://plotly.com/python/builtin-colorscales/">plotly</a>, <a class="reference external" href="https://seaborn.pydata.org/tutorial/color_palettes.html">seaborn</a> or <a class="reference external" href="https://matplotlib.org/stable/gallery/color/colormap_reference.html">matplotlib</a> colormap.</p></li>
+<li><p>a list of CSS color names or HTML color codes:
 The color palette is used, by order of precedence :</p>
 <ul>
-<li><p>to map color data of the <code class="docutils literal notranslate"><span class="pre">color</span></code> parameter onto colors.</p></li>
+<li><p>To map color data specified by the <code class="docutils literal notranslate"><span class="pre">color</span></code> parameter onto the corresponding colormap.</p></li>
 <li><p>to assign discrete colors to <code class="docutils literal notranslate"><span class="pre">slices</span></code> of data.</p></li>
 </ul>
 </li>
 </ul>
-<p>String color data are interpreted as “discrete” (i.e., interval) colorscale. To specify a continuous colorscale, color data should be cast to numeric type.</p>
+<p>String color data are interpreted as “discrete” (i.e., interval) colorscale. To specify a continuous colorscale, color data should be casted to numeric dtype.</p>
 </li>
 <li><p>an <code class="docutils literal notranslate"><span class="pre">axis</span></code> argument to specify axes limits and aspect ratio. The <code class="docutils literal notranslate"><span class="pre">equal</span></code> and <code class="docutils literal notranslate"><span class="pre">square</span></code> styles of <a class="reference external" href="https://fr.mathworks.com/help/matlab/ref/axis.html#buk989s-1-limits">Matlab API</a> are supported.</p></li>
-<li><p>a <code class="docutils literal notranslate"><span class="pre">fig</span></code>, <code class="docutils literal notranslate"><span class="pre">row</span></code>, <code class="docutils literal notranslate"><span class="pre">col</span></code> triplet argument to draw on a pre-declared <code class="docutils literal notranslate"><span class="pre">Figure</span></code>object.</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">title</span></code> argument to replace the default title assembled from the dimension names.</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">fig</span></code>, <code class="docutils literal notranslate"><span class="pre">row</span></code>, <code class="docutils literal notranslate"><span class="pre">col</span></code> triplet argument to draw a subplot on a <code class="docutils literal notranslate"><span class="pre">Figure</span></code> object pre-declared with <code class="docutils literal notranslate"><span class="pre">plotly.subplots.make_subplots</span></code>.</p></li>
 </ul>
-<p>Additional arguments can be provided, depending on the visualisation selected.</p>
-<section id="detailed-api">
-<h3>Detailed API<a class="headerlink" href="#detailed-api" title="Link to this heading">#</a></h3>
+<p>Additional arguments can be provided, depending on the visualization selected.</p>
+</section>
+<section id="features">
+<h1>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Features</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/lineplot.html">Line plots</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/lineplot.html#plotting-regression-lines">Plotting regression lines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/lineplot.html#shaded-error-bar">Shaded error bar</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/scatterplot.html">Scatter plots</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/scatterplot.html#d-plots">3D plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/scatterplot.html#controlling-data-points-colormapping">Controlling data points colormapping</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/barplot.html">Bar plots</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/barplot.html#controlling-bar-colors">Controlling bar colors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/barplot.html#aggregating-data-and-displaying-error-bars">Aggregating data and displaying error bars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/barplot.html#horizontal-bar-plots">Horizontal bar plots</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/catplot.html">Categorical plots</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/catplot.html#styling-plots">Styling plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/catplot.html#controlling-data-spread">Controlling data “spread”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/catplot.html#controlling-data-points-color">Controlling data points color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/catplot.html#specifying-categorical-plot-type">Specifying categorical plot type</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/catplot.html#processing-data-under-the-hood">Processing data under the hood</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/heatmap.html">Heatmaps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/heatmap.html#setting-a-color-logscale">Setting a color logscale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/heatmap.html#one-coloraxis-per-subplot">One coloraxis per subplot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/heatmap.html#shared-coloraxis-across-subplots">Shared coloraxis across subplots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/heatmap.html#heatmap-slices">Heatmap slices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/distplot.html">Distribution plots</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/distplot.html#slicing-data">Slicing data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/distplot.html#setting-histogram-norm">Setting histogram norm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/distplot.html#empirical-cumulative-distribution-function">Empirical Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/distplot.html#horizontal-histograms">Horizontal histograms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/distplot.html#drawing-horizontal-and-vertical-lines">Drawing horizontal and vertical lines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/jointplot.html">Jointplots</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/jointplot.html#d-density-plot">2D density plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/jointplot.html#d-histograms">2D histograms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/jointplot.html#histmaps">“Histmaps”</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/managing_subplots.html">Managing subplots</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/managing_subplots.html#drawing-subplots">Drawing subplots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/managing_subplots.html#setting-common-axis-limits">Setting common axis limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/managing_subplots.html#tidying-subplots">Tidying subplots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/managing_subplots.html#combining-slicer-and-coloraxis-across-subplots">Combining slicer and coloraxis across subplots</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="api">
+<h1>API<a class="headerlink" href="#api" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="source/statsplotly.html">statsplotly package</a></li>
 </ul>
 </div>
-</section>
-</section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">#</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </section>
 <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html">Version 0.1.5</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-4">Version 0.1.4</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-3">Version 0.1.3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-2">Version 0.1.2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-1">Version 0.1.1</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html">Version 0.2.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="source/changelog_link.html#new-features">✨ New features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/changelog_link.html#feature-improvements">🎨 Feature improvements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source/changelog_link.html#bug-fixes">🐛 Bug fixes</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-5">Version 0.1.5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-4">Version 0.1.4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-3">Version 0.1.3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-2">Version 0.1.2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="source/changelog_link.html#id1">✨ New features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/changelog_link.html#id2">🎨 Feature improvements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/changelog_link.html#breaking-changes">💥 Breaking Changes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-1">Version 0.1.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source/changelog_link.html#version-0-1-0">Version 0.1.0</a></li>
 </ul>
 </div>
@@ -279,12 +377,12 @@ The color palette is used, by order of precedence :</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="source/statsplotly.html">
+          <a class="next-page" href="notebooks/lineplot.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">statsplotly package</div>
+                <div class="title">Line plots</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -293,7 +391,7 @@ The color palette is used, by order of precedence :</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2023, Benjamin Roland
+                Copyright &#169; 2024, Benjamin Roland
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -307,33 +405,8 @@ The color palette is used, by order of precedence :</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Statsplotly documentation</a><ul>
-<li><a class="reference internal" href="#a-high-level-tidy-api-for-drawing-statistical-visualization-with-plotly">A high-level, tidy API for drawing statistical visualization with <code class="docutils literal notranslate"><span class="pre">plotly</span></code>.</a></li>
-<li><a class="reference internal" href="#functions-signature">Functions signature</a><ul>
-<li><a class="reference internal" href="#detailed-api">Detailed API</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
-<li><a class="reference internal" href="#changelog">Changelog</a></li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
