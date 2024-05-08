@@ -1,3 +1,12 @@
+Version 0.2.1
+=============
+**2024-05-08**
+
+🐛 Fix a bug in :class:`~statsplotly.plot_specifiers.color.ColorSpecifier` due to "0" and "1" color strings being interpreted as valid color specifications by `matplotlib`.
+
+🎨 Expose `rgb_string_array_from_colormap` in the :mod:`~statsplotly.utils` module.
+
+
 Version 0.2.0
 =============
 **2024-05-01**

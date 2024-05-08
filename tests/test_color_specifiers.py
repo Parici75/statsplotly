@@ -21,7 +21,7 @@ EXAMPLE_DIRECT_COLOR_ARRAY = pd.Series(["green", "red", "blue"], name="colors")
 EXAMPLE_VALID_DATETIME_COLOR_DATA = pd.Series(
     pd.to_datetime(("2020-01-01", "2020-01-02", "2020-02-03")), name="color_data"
 )
-EXAMPLE_MAPPED_COLOR_ARRAY = pd.Series(["a", "b", "c"], name="color_ids")
+EXAMPLE_INT_MAPPED_COLOR_ARRAY = pd.Series(["0", "1", "2"], name="color_ids")
 
 
 logging.getLogger().setLevel(logging.DEBUG)
@@ -123,27 +123,27 @@ class TestColorSpecifier:
 
         # Mapping
         mapped_color_data = ColorSpecifier.build_from_color_data(
-            EXAMPLE_MAPPED_COLOR_ARRAY
-        ).format_color_data(color_data=EXAMPLE_MAPPED_COLOR_ARRAY)
+            EXAMPLE_INT_MAPPED_COLOR_ARRAY
+        ).format_color_data(color_data=EXAMPLE_INT_MAPPED_COLOR_ARRAY)
         assert all(
             mapped_color_data
-            == EXAMPLE_MAPPED_COLOR_ARRAY.map(
+            == EXAMPLE_INT_MAPPED_COLOR_ARRAY.map(
                 dict(
                     zip(
-                        EXAMPLE_MAPPED_COLOR_ARRAY.dropna().unique(),
-                        range(len(EXAMPLE_MAPPED_COLOR_ARRAY.dropna().unique())),
+                        EXAMPLE_INT_MAPPED_COLOR_ARRAY.dropna().unique(),
+                        range(len(EXAMPLE_INT_MAPPED_COLOR_ARRAY.dropna().unique())),
                         strict=True,
                     )
                 )
             )
         )
         assert (
-            f"{EXAMPLE_MAPPED_COLOR_ARRAY.name} values of type='object' are not continuous type, statsplotly will map it to colormap"
+            f"{EXAMPLE_INT_MAPPED_COLOR_ARRAY.name} values of type='object' are not continuous type, statsplotly will map it to colormap"
             in caplog.text
         )
 
         with pytest.raises(StatsPlotSpecificationError) as excinfo:
-            ColorSpecifier().format_color_data(color_data=EXAMPLE_MAPPED_COLOR_ARRAY)
+            ColorSpecifier().format_color_data(color_data=EXAMPLE_INT_MAPPED_COLOR_ARRAY)
         assert (
             f"No colormap attribute to map discrete data onto, check {ColorSpecifier.__name__} instantiation"
             in str(excinfo.value)

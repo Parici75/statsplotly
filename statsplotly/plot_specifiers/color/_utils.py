@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly
 import seaborn as sns
+from matplotlib.colors import to_rgb
 from numpy.typing import NDArray
 
 from statsplotly import constants
@@ -83,12 +84,15 @@ def cmap_to_array(
             raise UnsupportedColormapError(f"{cmap} is not a supported colormap") from exc
 
 
-def to_rgb_string(numeric_rgb: tuple[float, float, float]) -> str:
-    """Transforms a numeric rgb tuple into a rgb string"""
-    return "rgb" + str(tuple(int(color * 256) for color in numeric_rgb)[:3])
+def to_rgb_string(color_reference: tuple[float, float, float] | str) -> str:
+    """Transforms a color reference into a plotly-compatible rgb string"""
+    if isinstance(color_reference, str):
+        color_reference = to_rgb(color_reference)
+
+    return "rgb" + str(tuple(int(color * 256) for color in color_reference)[:3])
 
 
-def get_rgb_discrete_array(
+def rgb_string_array_from_colormap(
     n_colors: int, color_palette: Cmap_specs | matplotlib.colors.Colormap | None
 ) -> list[str]:
     """Color list/Seaborn color_palette wrapper."""
