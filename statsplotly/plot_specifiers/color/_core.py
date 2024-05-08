@@ -20,7 +20,7 @@ from statsplotly.plot_objects.layout import ColorAxis
 from statsplotly.plot_specifiers.common import smart_legend
 from statsplotly.plot_specifiers.layout import BarMode, ColoraxisReference
 
-from ._utils import ColorSystem, compute_colorscale, get_rgb_discrete_array
+from ._utils import ColorSystem, compute_colorscale, rgb_string_array_from_colormap
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,7 @@ class ColorSpecifier(BaseModel):
     @staticmethod
     def _check_is_direct_color_specification(color_data: pd.Series) -> bool:
         if ColorSpecifier._check_is_discrete_color_data_type(color_data):
-            return all(color_data.map(is_color_like))
+            return all(color_data.replace("0|1", "", regex=True).map(is_color_like))
 
         return False
 
@@ -229,7 +229,7 @@ class ColorSpecifier(BaseModel):
         )
 
     def get_color_hues(self, n_colors: int) -> list[str]:
-        return get_rgb_discrete_array(color_palette=self.color_palette, n_colors=n_colors)
+        return rgb_string_array_from_colormap(color_palette=self.color_palette, n_colors=n_colors)
 
     @classmethod
     def build_from_color_data(
