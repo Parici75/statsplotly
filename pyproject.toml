@@ -71,7 +71,7 @@ select = [
     "PL", # pylint
 ]
 ignore = [
-    "E501",
+    "E501", # line too long
     "PLR0913", # Too many arguments to function call
 ]
 [tool.ruff.lint.per-file-ignores]
