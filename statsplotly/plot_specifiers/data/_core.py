@@ -132,7 +132,7 @@ class DataPointer(BaseModel):
     @model_validator(mode="after")
     def check_missing_dimension(self) -> DataPointer:
         if self.x is None and self.y is None:
-            raise ValueError("Both `x` and `y` dimensions can not be None")
+            raise ValueError("Both `x` and `y` dimensions can not be `None`")
         return self
 
     @property

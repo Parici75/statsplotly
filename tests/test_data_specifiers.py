@@ -28,7 +28,7 @@ class TestDataPointer:
     def test_missing_dimension_pointer(self):
         with pytest.raises(ValueError) as excinfo:
             DataPointer(z="z")
-        assert "Both `x` and `y` dimensions can not be None" in str(excinfo.value)
+        assert "Both `x` and `y` dimensions can not be `None`" in str(excinfo.value)
 
 
 class TestDataHandler:
