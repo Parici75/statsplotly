@@ -48,13 +48,13 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 ## Tools
 [tool.black]
-target-version = ['py311']
+target-version = ['py310', 'py311', 'py312']
 line-length = 100
 preview = true
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py310"
 exclude = ["tests"]
 [tool.ruff.lint]
 select = [
