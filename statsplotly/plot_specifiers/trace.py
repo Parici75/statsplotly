@@ -238,7 +238,7 @@ class HistogramSpecifier(_TraceSpecifier):
         return True if self.histnorm is HistogramNormType.PROBABILITY_DENSITY else False
 
     def get_distribution_max_value(self, data: pd.Series) -> float:
-        dist_function: Callable[[pd.Series], tuple[pd.Series, *tuple[NDArray[Any] | float, ...]]]
+        dist_function: Callable[[pd.Series], tuple[pd.Series, NDArray[Any], *Any]]
         if self.ecdf:
             dist_function = self.compute_ecdf
         else:
