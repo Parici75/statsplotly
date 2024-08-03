@@ -54,7 +54,7 @@ class AggregationType(str, Enum):
     COUNT = "count"
     MEDIAN = "median"
     PERCENT = "percent"
-    PROBABILITY = "probability"
+    FRACTION = "fraction"
     SUM = "sum"
 
 
@@ -417,7 +417,7 @@ class AggregationSpecifier(BaseModel):
             if self.data_pointer.text is not None:
                 logger.warning("Text data can not be displayed along aggregated data")
 
-            if aggregation_func is AggregationType.COUNT:
+            if self.is_mono_referenced:
                 if (
                     sum(
                         [
@@ -428,14 +428,24 @@ class AggregationSpecifier(BaseModel):
                     > 1
                 ):
                     raise StatsPlotSpecificationError(
-                        f"{aggregation_func.value} aggregation only applies to one dimension"
+                        f"{aggregation_func.value} aggregation only applies to one dimension"  # type: ignore
                     )
 
         return self
 
     @property
+    def is_mono_referenced(self) -> bool:
+        if self.aggregation_func in (
+            AggregationType.COUNT,
+            AggregationType.FRACTION,
+            AggregationType.PERCENT,
+        ):
+            return True
+        return False
+
+    @property
     def reference_dimension(self) -> DataDimension:
-        if self.aggregation_func is AggregationType.COUNT:
+        if self.is_mono_referenced:
             return self.aggregated_dimension
         if self.aggregated_dimension is DataDimension.X:
             return DataDimension.Y
@@ -443,7 +453,7 @@ class AggregationSpecifier(BaseModel):
 
     @property
     def aggregation_plot_dimension(self) -> DataDimension:
-        if self.aggregation_func is AggregationType.COUNT:
+        if self.is_mono_referenced:
             return (
                 DataDimension.Y if self.aggregated_dimension is DataDimension.X else DataDimension.X
             )
@@ -451,7 +461,7 @@ class AggregationSpecifier(BaseModel):
 
     @property
     def reference_data(self) -> str | None:
-        if self.aggregation_func is AggregationType.COUNT:
+        if self.is_mono_referenced:
             return self.aggregated_data
         if self.reference_dimension is DataDimension.X:
             return self.data_pointer.x
@@ -642,7 +652,7 @@ class AggregationTraceData(TraceData):
         )
         if (
             aggregation_specifier.aggregation_func is AggregationType.COUNT
-            or aggregation_specifier.aggregation_func is AggregationType.PROBABILITY
+            or aggregation_specifier.aggregation_func is AggregationType.FRACTION
             or aggregation_specifier.aggregation_func is AggregationType.PERCENT
         ):
             _aggregated_values: list[NDArray[Any]] = []
@@ -652,19 +662,16 @@ class AggregationTraceData(TraceData):
                 aggregated_value = (
                     data[aggregation_specifier.reference_data] == reference_value
                 ).sum()
-                if aggregation_specifier.aggregation_func is AggregationType.PROBABILITY:
-                    _aggregated_values.append(
-                        aggregated_value
-                        / data[aggregation_specifier.reference_data].notnull().sum()
-                    )
-                elif aggregation_specifier.aggregation_func is AggregationType.PERCENT:
-                    _aggregated_values.append(
-                        aggregated_value
-                        / data[aggregation_specifier.reference_data].notnull().sum()
-                        * 100
-                    )
-                else:
-                    _aggregated_values.append(aggregated_value)
+                if aggregation_specifier.aggregation_func in (
+                    AggregationType.FRACTION,
+                    AggregationType.PERCENT,
+                ):
+                    aggregated_value /= data[aggregation_specifier.reference_data].notnull().sum()
+                if aggregation_specifier.aggregation_func is AggregationType.PERCENT:
+                    aggregated_value *= 100
+
+                _aggregated_values.append(aggregated_value)
+
             trace_data[TRACE_DIMENSION_MAP[aggregation_specifier.aggregation_plot_dimension]] = (
                 pd.Series(
                     _aggregated_values,

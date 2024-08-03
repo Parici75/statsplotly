@@ -98,6 +98,8 @@ class OrientedPlotSpecifier(BaseModel):
             return PlotOrientation.VERTICAL
         if self.prefered_orientation is not None:
             return self.prefered_orientation
+        if is_numeric_dtype(self.data_types.y):
+            return PlotOrientation.VERTICAL
         if is_numeric_dtype(self.data_types.x):
             return PlotOrientation.HORIZONTAL
         return PlotOrientation.VERTICAL

@@ -293,3 +293,24 @@ class TestAggregationTraceData:
         )
         assert (trace_data.x_values.tolist() == example_raw_data.groupby("y")["y"].count()).all()
         assert (trace_data.y_values.tolist() == example_raw_data["y"].unique()).all()
+
+    def test_build_percent_trace_data(self, example_raw_data):
+        trace_data = AggregationTraceData.build_aggregation_trace_data(
+            data=example_raw_data,
+            aggregation_specifier=AggregationSpecifier(
+                aggregation_func="percent",
+                aggregated_dimension="y",
+                data_pointer=DataPointer(y="y"),
+                data_types=DataHandler(
+                    data=example_raw_data,
+                    data_pointer=DataPointer(y="y"),
+                ).data_types,
+            ),
+        )
+        assert (
+            trace_data.x_values.tolist()
+            == example_raw_data.groupby("y")["y"].count()
+            / example_raw_data["y"].notnull().sum()
+            * 100
+        ).all()
+        assert (trace_data.y_values.tolist() == example_raw_data["y"].unique()).all()
