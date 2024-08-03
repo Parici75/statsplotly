@@ -35,7 +35,7 @@ lint-%:
 	@echo lint-"$*"
 	@poetry run black --check "$*"
 	@poetry run isort --check "$*"
-	@poetry run ruff "$*"
+	@poetry run ruff check "$*"
 	@echo "    ✅ All good"
 
 lint: $(addprefix lint-, $(CI_DIRECTORIES))

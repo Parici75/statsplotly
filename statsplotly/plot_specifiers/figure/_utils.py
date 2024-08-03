@@ -198,7 +198,7 @@ class _SubplotGridCommonAxisFormatter(BaseModel, metaclass=ABCMeta):
             return None
         return len(self.fig._grid_ref[0][0])
 
-    def iter_plot_groups(self) -> Generator[list[tuple[plotly.subplots.SubplotRef]], None, None]:
+    def iter_plot_groups(self) -> Generator[list[tuple[plotly.subplots.SubplotRef]]]:
         for plot_group in self._plot_groups:
             yield [subplot for subplot in plot_group if subplot is not None]
 

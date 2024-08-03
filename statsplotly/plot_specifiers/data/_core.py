@@ -210,7 +210,7 @@ class DataHandler(BaseModel):
         if slice_order is not None:
             if len(excluded_slices := set(slice_ids.unique()).difference(set(slice_order))) > 0:
                 logger.info(
-                    f"{list(excluded_slices)} slices are not present in slices {slice_order} and"
+                    f"{np.array([*excluded_slices])} slices are not present in slices {slice_order} and"
                     " will not be plotted"
                 )
             slices = []
@@ -288,7 +288,7 @@ class DataHandler(BaseModel):
 
     def iter_slices(
         self,
-    ) -> Generator[tuple[str, pd.DataFrame], None, None]:
+    ) -> Generator[tuple[str, pd.DataFrame]]:
         levels: list[str] = self.slice_levels or (
             [self.data_pointer.y]
             if self.data_pointer.y is not None
@@ -678,19 +678,18 @@ class AggregationTraceData(TraceData):
             )
 
         else:
-            if isinstance(aggregation_specifier.aggregation_func, AggregationType):
-                agg_func: Callable[[Any], Any]
-                match aggregation_specifier.aggregation_func:
-                    case AggregationType.MEAN:
-                        agg_func = np.mean
-                    case AggregationType.GEO_MEAN:
-                        agg_func = sc.stats.mstats.gmean
-                    case AggregationType.MEDIAN:
-                        agg_func = np.median
-                    case AggregationType.SUM:
-                        agg_func = np.sum
-            else:
-                agg_func = aggregation_specifier.aggregation_func  # type: ignore
+            agg_func: Callable[[Any], float]
+            match aggregation_specifier.aggregation_func:
+                case AggregationType.MEAN:
+                    agg_func = np.mean
+                case AggregationType.GEO_MEAN:
+                    agg_func = sc.stats.mstats.gmean
+                case AggregationType.MEDIAN:
+                    agg_func = np.median
+                case AggregationType.SUM:
+                    agg_func = np.sum
+                case _:
+                    agg_func = aggregation_specifier.aggregation_func  # type: ignore
 
             trace_data[TRACE_DIMENSION_MAP[aggregation_specifier.aggregated_dimension]] = (
                 data.groupby(aggregation_specifier.reference_data, sort=False)[
