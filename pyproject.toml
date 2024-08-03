@@ -83,7 +83,6 @@ profile = "black"
 sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 
 [tool.mypy]
-python_version = "3.11"
 exclude = ["tests"]
 plugins = [
   "pydantic.mypy", "numpy.typing.mypy_plugin"
