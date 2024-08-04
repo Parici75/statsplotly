@@ -4,7 +4,7 @@ default_language_version:
 # Built-in hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
     -   id: check-added-large-files
     -   id: check-ast
@@ -25,21 +25,21 @@ repos:
 
 # Pyupgrade
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.15.2
+  rev: v3.17.0
   hooks:
       - id: pyupgrade
 
 # Ruff
 # We put this hook before Black hook, as autofix results may need to be reformatted by Black linter
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.5
+    rev: v0.5.6
     hooks:
     -   id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
         exclude: ^(tests|docs)/
 # Black
 -   repo: https://github.com/psf/black
-    rev: 24.3.0
+    rev: 24.8.0
     hooks:
     -   id: black
 # Isort
@@ -50,7 +50,7 @@ repos:
         exclude: ^.*/?setup\.py$
 # MyPy
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.9.0  # Use the sha / tag you want to point at
+    rev: v1.11.1  # Use the sha / tag you want to point at
     hooks:
     -   id: mypy
         args: [--ignore-missing-imports]

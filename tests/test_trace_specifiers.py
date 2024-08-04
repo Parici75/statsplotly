@@ -18,6 +18,8 @@ from statsplotly.plot_specifiers.trace import (
     CategoricalPlotSpecifier,
     HistogramSpecifier,
     JointplotSpecifier,
+    OrientedPlotSpecifier,
+    PlotOrientation,
     ScatterSpecifier,
     TraceMode,
 )
@@ -46,8 +48,32 @@ def test_scatter_specifier():
         )
 
 
-class TestCategoricalPlotSpecifier:
+class TestOrientedPlotSpecifier:
+    def test_default_vertical_plot(self):
+        plot_specifier = OrientedPlotSpecifier(
+            data_types=DataTypes(x=np.dtype(float), y=np.dtype(float))
+        )
+        assert plot_specifier.orientation is PlotOrientation.VERTICAL
+        assert plot_specifier.anchor_dimension is DataDimension.X
+        assert plot_specifier.anchored_dimension is DataDimension.Y
 
+    def test_default_horizontal_plot(self):
+        plot_specifier = OrientedPlotSpecifier(
+            data_types=DataTypes(x=np.dtype(float), y=np.dtype(str))
+        )
+        assert plot_specifier.orientation is PlotOrientation.HORIZONTAL
+        assert plot_specifier.anchor_dimension is DataDimension.Y
+        assert plot_specifier.anchored_dimension is DataDimension.X
+
+    def test_forced_horizontal_plot(self):
+        plot_specifier = OrientedPlotSpecifier(
+            data_types=DataTypes(x=np.dtype(float), y=np.dtype(float)),
+            prefered_orientation="horizontal",
+        )
+        assert plot_specifier.orientation is PlotOrientation.HORIZONTAL
+
+
+class TestCategoricalPlotSpecifier:
     def test_string_vertical_x_strip_map(self, example_raw_data):
         data_handler = DataHandler.build_handler(
             data=example_raw_data, data_pointer=DataPointer(x="x", y="y")

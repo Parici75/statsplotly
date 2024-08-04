@@ -33,6 +33,7 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.githubpages",
     "myst_nb",
+    "sphinxcontrib.autodoc_pydantic",
 ]
 
 # myst and myst_nb
@@ -55,6 +56,11 @@ napoleon_use_rtype = True
 napoleon_preprocess_types = False
 napoleon_type_aliases = None
 napoleon_attr_annotations = True
+
+# autodoc-pydantic
+autodoc_pydantic_model_show_json = False
+autodoc_pydantic_model_show_config_summary = False
+autodoc_pydantic_model_show_field_summary = True
 
 
 # Add any paths that contain templates here, relative to this directory.

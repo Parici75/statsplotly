@@ -95,7 +95,11 @@ def to_rgb_string(color_reference: tuple[float, float, float] | str) -> str:
 def rgb_string_array_from_colormap(
     n_colors: int, color_palette: Cmap_specs | matplotlib.colors.Colormap | None
 ) -> list[str]:
-    """Color list/Seaborn color_palette wrapper."""
+    """Returns a list of RGB string given `n_colors` and a `color_palette` reference.
+
+    This function attempts to extract RGB color values from built-in Plotly, Seaborn and finally Matplotlib colormaps.
+
+    """
     rgb_array = cmap_to_array(n_colors, color_palette)
 
     # Convert the RGB value array to a RGB plotly_friendly string array
@@ -108,8 +112,9 @@ def compute_colorscale(  # noqa PLR0912 C901
     logscale: float | None = 10,
     color_palette: Cmap_specs | matplotlib.colors.Colormap | None = None,
 ) -> str | list[list[float | str]]:
-    """Returns a plotly-compatible colorscale depending on color system
-    chosen by user."""
+    """Returns a plotly-compatible colorscale depending on the color system
+    chosen by user.
+    """
 
     if color_palette is None and color_system in (
         ColorSystem.LINEAR,

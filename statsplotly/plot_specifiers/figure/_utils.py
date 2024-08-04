@@ -198,7 +198,7 @@ class _SubplotGridCommonAxisFormatter(BaseModel, metaclass=ABCMeta):
             return None
         return len(self.fig._grid_ref[0][0])
 
-    def iter_plot_groups(self) -> Generator[list[tuple[plotly.subplots.SubplotRef]], None, None]:
+    def iter_plot_groups(self) -> Generator[list[tuple[plotly.subplots.SubplotRef]]]:
         for plot_group in self._plot_groups:
             yield [subplot for subplot in plot_group if subplot is not None]
 
@@ -471,6 +471,13 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
 
 
 class SubplotGridFormatter(_SubplotGridValidator):
+    """Wraps a Plotly Figure with methods to format the subplot grid.
+
+
+    Attributes:
+        fig : A :obj:`plotly.graph_objects.Figure` with a subplot grid.
+
+    """
 
     def _get_row_yaxes_references(self, row_idx: int) -> list[str]:
         return [col[0].layout_keys[1] for col in self.fig._grid_ref[row_idx]]
@@ -513,6 +520,15 @@ class SubplotGridFormatter(_SubplotGridValidator):
             return True
 
     def set_common_coloraxis(self, shared_grid_axis: str) -> SubplotGridFormatter:
+        """Set a common coloraxis along a shared grid axis
+
+        Args:
+            shared_grid_axis: A :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis` value.
+
+        Returns:
+            A :obj:`SubplotGridFormatter` instance.
+        """
+
         _SubplotGridCommonColoraxisFormatter(
             fig=self.fig, shared_grid_axis=shared_grid_axis
         ).update_along_grid_axis()
@@ -526,6 +542,23 @@ class SubplotGridFormatter(_SubplotGridValidator):
         common_range: bool = True,
         link_axes: bool = False,
     ) -> SubplotGridFormatter:
+        """Set common axis limits of a plot axis along a shared grid axis, optionally linking the axes.
+
+        Args:
+            shared_grid_axis: A :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis` value.
+            plot_axis: A :obj:`~statsplotly.plot_specifiers.layout.PlotAxis` value.
+
+                - Default to :obj:`~statsplotly.plot_specifiers.layout.PlotAxis.YAXIS` when `shared_grid_axis` = :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis.ROWS`.
+                - Default to :obj:`~statsplotly.plot_specifiers.layout.PlotAxis.XAXIS` when `shared_grid_axis` = :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis.COLS`.
+                - Raises a :obj:`~statsplotly.exceptions.StatsPlotSpecificationError` when None and `shared_grid_axis` = :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis.ALL`.
+
+            common_range: If True (default), set a common range for the axes targeted by `plot_axis`.
+            link_axes: If True (default to False), links the axes targeted by `plot_axis`.
+
+        Returns:
+            A :obj:`SubplotGridFormatter` instance.
+        """
+
         _SubplotGridCommonXYAxisFormatter(
             fig=self.fig,
             shared_grid_axis=shared_grid_axis,
@@ -587,6 +620,8 @@ class SubplotGridFormatter(_SubplotGridValidator):
         return _apply_grid_titles
 
     def tidy_axes(self) -> None:
+        """Removes titles and ticks of linked axes in a subplot grid."""
+
         for row, subplot_row in enumerate(self.fig._grid_ref):
             for col, subplot_col in enumerate(subplot_row):
                 if subplot_col is None:
@@ -629,7 +664,17 @@ class SubplotGridFormatter(_SubplotGridValidator):
         row_titles: list[str] | None = None,
         col_titles: list[str] | None = None,
     ) -> SubplotGridFormatter:
-        """Tidy a subplot grid by removing redundant axis titles and optionnaly adding annotations."""
+        """Tidy a subplot grid by removing redundant axis titles and optionally adding annotations.
+
+        Args:
+            title: A string for the figure title.
+            no_legend: If True, hides the legend.
+            row_titles: A list of string the size of the row dimension specifying a title for each row.
+            col_titles: A list of string the size of the column dimension specifying a title for each column.
+
+        Returns:
+            A :obj:`SubplotGridFormatter` instance.
+        """
 
         # Replace title if supplied
         if title is not None:

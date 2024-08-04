@@ -101,7 +101,7 @@ def barplot(
         title: A string for the title of the plot.
         x_range: A tuple defining the (min_range, max_range) of the x_axis.
         y_range: A tuple defining the (min_range, max_range) of the y_axis.
-        fig: A :obj:`plotly.graph_obj.Figure` to add the plot to. Use in conjunction with row and col.
+        fig: A :obj:`plotly.graph_obj.Figure` to add the plot to. Use in conjunction with `row` and `col`.
         row: An integer identifying the row to add the plot to.
         col: An integer identifying the column to add the plot to.
 

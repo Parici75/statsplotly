@@ -54,7 +54,7 @@ class AggregationType(str, Enum):
     COUNT = "count"
     MEDIAN = "median"
     PERCENT = "percent"
-    PROBABILITY = "probability"
+    FRACTION = "fraction"
     SUM = "sum"
 
 
@@ -132,7 +132,7 @@ class DataPointer(BaseModel):
     @model_validator(mode="after")
     def check_missing_dimension(self) -> DataPointer:
         if self.x is None and self.y is None:
-            raise ValueError("Both `x` and `y` dimensions can not be None")
+            raise ValueError("Both `x` and `y` dimensions can not be `None`")
         return self
 
     @property
@@ -210,7 +210,7 @@ class DataHandler(BaseModel):
         if slice_order is not None:
             if len(excluded_slices := set(slice_ids.unique()).difference(set(slice_order))) > 0:
                 logger.info(
-                    f"{list(excluded_slices)} slices are not present in slices {slice_order} and"
+                    f"{np.array([*excluded_slices])} slices are not present in slices {slice_order} and"
                     " will not be plotted"
                 )
             slices = []
@@ -288,7 +288,7 @@ class DataHandler(BaseModel):
 
     def iter_slices(
         self,
-    ) -> Generator[tuple[str, pd.DataFrame], None, None]:
+    ) -> Generator[tuple[str, pd.DataFrame]]:
         levels: list[str] = self.slice_levels or (
             [self.data_pointer.y]
             if self.data_pointer.y is not None
@@ -417,7 +417,7 @@ class AggregationSpecifier(BaseModel):
             if self.data_pointer.text is not None:
                 logger.warning("Text data can not be displayed along aggregated data")
 
-            if aggregation_func is AggregationType.COUNT:
+            if self.is_mono_referenced:
                 if (
                     sum(
                         [
@@ -428,14 +428,24 @@ class AggregationSpecifier(BaseModel):
                     > 1
                 ):
                     raise StatsPlotSpecificationError(
-                        f"{aggregation_func.value} aggregation only applies to one dimension"
+                        f"{aggregation_func.value} aggregation only applies to one dimension"  # type: ignore
                     )
 
         return self
 
     @property
+    def is_mono_referenced(self) -> bool:
+        if self.aggregation_func in (
+            AggregationType.COUNT,
+            AggregationType.FRACTION,
+            AggregationType.PERCENT,
+        ):
+            return True
+        return False
+
+    @property
     def reference_dimension(self) -> DataDimension:
-        if self.aggregation_func is AggregationType.COUNT:
+        if self.is_mono_referenced:
             return self.aggregated_dimension
         if self.aggregated_dimension is DataDimension.X:
             return DataDimension.Y
@@ -443,7 +453,7 @@ class AggregationSpecifier(BaseModel):
 
     @property
     def aggregation_plot_dimension(self) -> DataDimension:
-        if self.aggregation_func is AggregationType.COUNT:
+        if self.is_mono_referenced:
             return (
                 DataDimension.Y if self.aggregated_dimension is DataDimension.X else DataDimension.X
             )
@@ -451,7 +461,7 @@ class AggregationSpecifier(BaseModel):
 
     @property
     def reference_data(self) -> str | None:
-        if self.aggregation_func is AggregationType.COUNT:
+        if self.is_mono_referenced:
             return self.aggregated_data
         if self.reference_dimension is DataDimension.X:
             return self.data_pointer.x
@@ -642,7 +652,7 @@ class AggregationTraceData(TraceData):
         )
         if (
             aggregation_specifier.aggregation_func is AggregationType.COUNT
-            or aggregation_specifier.aggregation_func is AggregationType.PROBABILITY
+            or aggregation_specifier.aggregation_func is AggregationType.FRACTION
             or aggregation_specifier.aggregation_func is AggregationType.PERCENT
         ):
             _aggregated_values: list[NDArray[Any]] = []
@@ -652,19 +662,16 @@ class AggregationTraceData(TraceData):
                 aggregated_value = (
                     data[aggregation_specifier.reference_data] == reference_value
                 ).sum()
-                if aggregation_specifier.aggregation_func is AggregationType.PROBABILITY:
-                    _aggregated_values.append(
-                        aggregated_value
-                        / data[aggregation_specifier.reference_data].notnull().sum()
-                    )
-                elif aggregation_specifier.aggregation_func is AggregationType.PERCENT:
-                    _aggregated_values.append(
-                        aggregated_value
-                        / data[aggregation_specifier.reference_data].notnull().sum()
-                        * 100
-                    )
-                else:
-                    _aggregated_values.append(aggregated_value)
+                if aggregation_specifier.aggregation_func in (
+                    AggregationType.FRACTION,
+                    AggregationType.PERCENT,
+                ):
+                    aggregated_value /= data[aggregation_specifier.reference_data].notnull().sum()
+                if aggregation_specifier.aggregation_func is AggregationType.PERCENT:
+                    aggregated_value *= 100
+
+                _aggregated_values.append(aggregated_value)
+
             trace_data[TRACE_DIMENSION_MAP[aggregation_specifier.aggregation_plot_dimension]] = (
                 pd.Series(
                     _aggregated_values,
@@ -678,19 +685,18 @@ class AggregationTraceData(TraceData):
             )
 
         else:
-            if isinstance(aggregation_specifier.aggregation_func, AggregationType):
-                agg_func: Callable[[Any], Any]
-                match aggregation_specifier.aggregation_func:
-                    case AggregationType.MEAN:
-                        agg_func = np.mean
-                    case AggregationType.GEO_MEAN:
-                        agg_func = sc.stats.mstats.gmean
-                    case AggregationType.MEDIAN:
-                        agg_func = np.median
-                    case AggregationType.SUM:
-                        agg_func = np.sum
-            else:
-                agg_func = aggregation_specifier.aggregation_func  # type: ignore
+            agg_func: Callable[[Any], float]
+            match aggregation_specifier.aggregation_func:
+                case AggregationType.MEAN:
+                    agg_func = np.mean
+                case AggregationType.GEO_MEAN:
+                    agg_func = sc.stats.mstats.gmean
+                case AggregationType.MEDIAN:
+                    agg_func = np.median
+                case AggregationType.SUM:
+                    agg_func = np.sum
+                case _:
+                    agg_func = aggregation_specifier.aggregation_func  # type: ignore
 
             trace_data[TRACE_DIMENSION_MAP[aggregation_specifier.aggregated_dimension]] = (
                 data.groupby(aggregation_specifier.reference_data, sort=False)[

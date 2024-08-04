@@ -20,13 +20,14 @@ plotly = "^5.19.0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.2"
 mypy = "^1.8.0"
-ruff = "^0.3.5"
+ruff = "^0.5.6"
 black = "^24.2.0"
 isort = "^5.13.2"
 pyupgrade = "^3.15.1"
 pre-commit = "^3.6.2"
 pyclean = "^2.7.3"
 coverage = "^7.4.4"
+autodoc-pydantic = "^2.2.0"
 
 [tool.poetry.group.docs]
 [tool.poetry.group.docs.dependencies]
@@ -47,13 +48,13 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 ## Tools
 [tool.black]
-target-version = ['py311']
+target-version = ['py310', 'py311', 'py312']
 line-length = 100
 preview = true
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py310"
 exclude = ["tests"]
 [tool.ruff.lint]
 select = [
@@ -82,7 +83,6 @@ profile = "black"
 sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 
 [tool.mypy]
-python_version = "3.11"
 exclude = ["tests"]
 plugins = [
   "pydantic.mypy", "numpy.typing.mypy_plugin"

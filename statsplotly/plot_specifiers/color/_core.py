@@ -38,7 +38,7 @@ class ColorSpecifier(BaseModel):
     @field_validator("opacity", mode="before")
     def check_opacity(cls, value: str | float | None) -> float | None:
         if isinstance(value, str):
-            logger.debug("Opacity argument is string, hence defined for marker level")
+            logger.debug("Opacity argument is a string, hence defined for marker level")
             return None
         return value
 
@@ -160,7 +160,7 @@ class ColorSpecifier(BaseModel):
                     colormap_ticks[0], colormap_ticks[-1], len(colormap_ticks) + 1
                 )
                 tickvals = (_tick_locations[:-1] + _tick_locations[1:]) / 2
-                ticktext = color_values.dropna().unique()
+                ticktext = list(colormap.keys())
 
             elif self._check_is_datetime_color_data_type(color_values):
                 tickvals = self.format_color_data(color_values).iloc[[0, -1]]
@@ -215,7 +215,10 @@ class ColorSpecifier(BaseModel):
         return colorscale
 
     def build_coloraxis(self, color_data: pd.Series | None, shared: bool = False) -> ColorAxis:
-        if shared and color_data is not None:
+        if self.colormap is not None:
+            cmin = np.min(list(self.colormap.values())) if self.cmin is None else self.cmin
+            cmax = np.max(list(self.colormap.values())) if self.cmax is None else self.cmin
+        elif shared and color_data is not None:
             cmin = color_data.min() if self.cmin is None else self.cmin
             cmax = color_data.max() if self.cmax is None else self.cmin
         else:
