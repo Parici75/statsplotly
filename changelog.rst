@@ -1,3 +1,19 @@
+Version 0.2.2
+=============
+**2024-08-04**
+
+The 0.2.2 version fixes bugs with discrete colormaps and aggregation barplots.
+
+🐛 Bug fixes
+************
+- Fix a bug in :class:`~statsplotly.plot_specifiers.color.ColorSpecifier` with discrete colormaps.
+- Fix a bug in :class:`~statsplotly.plot_specifiers.trace.OrientedPlotSpecifier` with default orientation of aggregation barplots.
+
+👕 Update linting and type checking parameters.
+
+📚 Improve documentation with [autodoc-pydantic](https://github.com/mansenfranzen/autodoc_pydantic).
+
+
 Version 0.2.1
 =============
 **2024-05-08**
