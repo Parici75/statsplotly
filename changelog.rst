@@ -1,3 +1,12 @@
+Version 0.2.3
+=============
+**2024-08-26**
+
+The 0.2.3 cleans dependencies.
+
+➖ Remove dependency on `jupyter`.
+
+
 Version 0.2.2
 =============
 **2024-08-04**
