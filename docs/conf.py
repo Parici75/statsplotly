@@ -33,8 +33,15 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.githubpages",
     "myst_nb",
+    "sphinx.ext.intersphinx",
     "sphinxcontrib.autodoc_pydantic",
 ]
+
+# Intersphinx mapping
+intersphinx_mapping = {
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
+    "plotly": ("https://plotly.com/python-api-reference/", None),
+}
 
 # myst and myst_nb
 myst_enable_extensions = ["html_image"]
