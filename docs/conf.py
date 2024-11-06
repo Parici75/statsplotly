@@ -38,7 +38,7 @@ extensions = [
 
 # myst and myst_nb
 myst_enable_extensions = ["html_image"]
-jupyter_execute_notebooks = "cache"
+nb_execution_mode = "cache"
 nb_kernel_rgx_aliases = {"statsplotly": "python3"}
 
 # Napoleon settings
