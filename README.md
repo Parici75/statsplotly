@@ -5,6 +5,7 @@
 
 </div>
 
+<div align="center">
 
 [![Documentation](https://img.shields.io/website?label=docs&url=https://parici75.github.io/statsplotly)](https://parici75.github.io/statsplotly)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/statsplotly)
@@ -15,6 +16,8 @@
 [![CI](https://github.com/Parici75/statsplotly/actions/workflows/test.yml/badge.svg)](https://github.com/Parici75/statsplotly/actions/workflows/test.yml)
 [![PyPI - Package Version](https://img.shields.io/pypi/v/statsplotly)](https://pypi.org/project/statsplotly/)
 [![GitHub License](https://img.shields.io/github/license/Parici75/statsplotly)](https://github.com/Parici75/statsplotly/blob/main/LICENSE)
+
+</div>
 
 ----------------
 [Statsplotly](https://github.com/parici75/statsplotly) is a Python data visualization library based on [Plotly](https://plotly.com/python/). It provides a high-level interface for drawing interactive statistical data visualization plots with a tidy, declarative API.
@@ -95,7 +98,8 @@ The Makefile provides several targets to assist in development and code quality 
 - `ci` launches Black, Ruff, mypy and pytest on your source code.
 - `pre-commit` set up and run pre-commit hooks (see pre-commit [documentation](https://pre-commit.com/)).
 - `update-doc` and `build-doc` generates documentation from source code and builds it with [Sphinx](https://www.sphinx-doc.org/en/master/index.html).
-- `clean` clears bytecode, poetry/pip caches. Use with caution.
+- `coverage` generates code [coverage](https://coverage.readthedocs.io/en/7.6.4/) report.
+- `clean` clears bytecode, `poetry`/`pip` caches and `pre-commit` hooks. Use with caution.
 
 ## Requirements
 
@@ -105,4 +109,4 @@ The Makefile provides several targets to assist in development and code quality 
 
 ## Author
 
-[Benjamin Roland](benjamin.roland@hotmail.fr)
+[Benjamin Roland](https://benjaminroland.onrender.com/)

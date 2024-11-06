@@ -87,7 +87,6 @@ plugins = [
   "pydantic.mypy", "numpy.typing.mypy_plugin"
 ]
 cache_dir = ".mypy_cache/strict"
-show_error_codes = true
 show_column_numbers = true
 
 follow_imports = "normal"

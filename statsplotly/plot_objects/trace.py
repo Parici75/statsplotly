@@ -214,7 +214,7 @@ class HeatmapTrace(_DensityTrace, _BasePlotlyTrace):
 
 
 class ScatterTrace(_ScatterBaseTrace, _BasePlotlyTrace):
-    _PLOTLY_GRAPH_FCT = go.Scatter
+    _PLOTLY_GRAPH_FCT = go.Scattergl
 
     hoverinfo: str = "x+y+name+text"
     line: dict[str, Any] | None = None
