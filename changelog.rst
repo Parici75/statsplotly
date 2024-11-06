@@ -1,3 +1,12 @@
+Version 0.2.4
+=============
+**2024-11-06**
+
+The 0.2.4 increases performance of 2D scatter plots.
+
+🎨 Use :class:`plotly.graph_objects.Scattergl` for :class:`~statsplotly.plot_objects.trace.ScatterTrace` traces.
+
+
 Version 0.2.3
 =============
 **2024-08-26**
