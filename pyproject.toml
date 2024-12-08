@@ -11,6 +11,7 @@ documentation = "https://parici75.github.io/statsplotly/"
 [tool.poetry.dependencies]
 python = ">=3.10, <3.13"
 pydantic = "^2.6.2"
+pandas = ">=1.5.0"
 seaborn = "^0.13.2"
 scipy = "^1.11.1"
 plotly = "^5.19.0"
