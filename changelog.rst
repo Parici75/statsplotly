@@ -8,7 +8,6 @@ The 0.2.5 release adds support for `pyarrow <https://arrow.apache.org/docs/pytho
 Version 0.2.4
 =============
 **2024-11-06**
-
 The 0.2.4 release increases performance of 2D scatter plots.
 
 🎨 Use :class:`plotly.graph_objects.Scattergl` for :class:`~statsplotly.plot_objects.trace.ScatterTrace` traces.
