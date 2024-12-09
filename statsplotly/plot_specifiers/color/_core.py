@@ -36,7 +36,7 @@ class ColorSpecifier(BaseModel):
     opacity: float | None = None
 
     @field_validator("opacity", mode="before")
-    def check_opacity(cls, value: str | float | None) -> float | None:
+    def check_opacity(cls, value: str | float | None, info: ValidationInfo) -> float | None:
         if isinstance(value, str):
             logger.debug("Opacity argument is a string, hence defined for marker level")
             return None

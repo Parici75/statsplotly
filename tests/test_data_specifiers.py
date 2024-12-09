@@ -74,6 +74,13 @@ class TestDataHandler:
         assert data_handler.data_types.x is np.dtype("object")
         assert "Casting categorical x data to string" in caplog.text
 
+    def test_datetime_dtype(self, example_raw_datetime_data):
+        data_handler = DataHandler.build_handler(
+            data=example_raw_datetime_data,
+            data_pointer=DataPointer(x="x", y="y", slicer="z"),
+        )
+        assert data_handler.data_types.x == np.dtype("datetime64[ns]")
+
     def test_slicer_groupby_mean_aggregation(self, example_raw_data):
         agg_df = DataHandler.build_handler(
             data=example_raw_data,
