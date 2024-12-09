@@ -1,8 +1,15 @@
+Version 0.2.5
+=============
+**2024-12-09**
+
+The 0.2.5 release adds support for `pyarrow <https://arrow.apache.org/docs/python/data.html>`_ data type hinting.
+
+
 Version 0.2.4
 =============
 **2024-11-06**
 
-The 0.2.4 increases performance of 2D scatter plots.
+The 0.2.4 release increases performance of 2D scatter plots.
 
 🎨 Use :class:`plotly.graph_objects.Scattergl` for :class:`~statsplotly.plot_objects.trace.ScatterTrace` traces.
 
@@ -11,16 +18,16 @@ Version 0.2.3
 =============
 **2024-08-26**
 
-The 0.2.3 cleans dependencies.
+The 0.2.3 release cleans dependencies.
 
-➖ Remove dependency on `jupyter`.
+➖ Drop dependency on `jupyter <https://jupyter.org/>`_.
 
 
 Version 0.2.2
 =============
 **2024-08-04**
 
-The 0.2.2 version fixes bugs with discrete colormaps and aggregation barplots.
+The 0.2.2 release fixes bugs with discrete colormaps and aggregation barplots.
 
 🐛 Bug fixes
 ************
@@ -29,14 +36,14 @@ The 0.2.2 version fixes bugs with discrete colormaps and aggregation barplots.
 
 👕 Update linting and type checking parameters.
 
-📚 Improve documentation with [autodoc-pydantic](https://github.com/mansenfranzen/autodoc_pydantic).
+📚 Improve documentation with `autodoc-pydantic <https://github.com/mansenfranzen/autodoc_pydantic>`_.
 
 
 Version 0.2.1
 =============
 **2024-05-08**
 
-The 0.2.1 version fixes a bug in color specification with "0" and "1" color identifiers.
+The 0.2.1 release fixes a bug in color specification with "0" and "1" color identifiers.
 
 🐛 Fix a bug in :class:`~statsplotly.plot_specifiers.color.ColorSpecifier` due to "0" and "1" color strings being interpreted as valid color specifications by `matplotlib`.
 
@@ -47,7 +54,7 @@ Version 0.2.0
 =============
 **2024-05-01**
 
-The 0.2.0 version introduces new methods enhancing subplots management, and improves plotting features.
+The 0.2.0 release introduces new methods enhancing subplots management, and improves plotting features.
 
 ✨ New features
 ***************
@@ -56,8 +63,8 @@ The 0.2.0 version introduces new methods enhancing subplots management, and impr
     - :meth:`~statsplotly.utils.SubplotGridFormatter.set_common_axis_limit` manages axis limits across a subplot grid.
     - :meth:`~statsplotly.utils.SubplotGridFormatter.tidy_subplots` manages post-processing of a subplot grid.
 
-- Enhance the color specification option of the main plotting module : the `color` argument now accepts reference to `datetime` and arbitrary `string` color data.
-- Support *geometric mean* and *geometric standard deviation factor* options in :func:`~statsplotly.barplot` `aggregation_fct` and `error_bar` arguments.
+- Enhance the color specification option of the main plotting module : the `color` argument now accepts reference to :obj:`~datetime.datetime` and arbitrary `string` color data.
+- Support :obj:`~statsplotly.plot_specifiers.data.AggregationType.GEO_MEAN` and :obj:`~statsplotly.plot_specifiers.data.ErrorBarType.GEO_STD` options in :func:`~statsplotly.barplot` for `aggregation_fct` and `error_bar` arguments.
 - Support Empirical Cumulative Distribution Function option in :func:`~statsplotly.distplot` and :func:`~statsplotly.jointplot`.
 
 🎨 Feature improvements
@@ -69,7 +76,7 @@ The 0.2.0 version introduces new methods enhancing subplots management, and impr
 - Automatic detection of plot orientation for :func:`~statsplotly.barplot` and :func:`~statsplotly.catplot`.
 - Improve colorbar management in layout.
 - Support discrete color mapping in :func:`~statsplotly.heatmap`.
-- Improve `datetime` data handling in :func:`~statsplotly.catplot`.
+- Improve :obj:`~datetime.datetime` data handling in :func:`~statsplotly.catplot`.
 - Correct bar layout in multi-trace histograms.
 - Improve step histogram line aesthetics.
 - Display slice name on color-coded bar charts.
@@ -78,7 +85,7 @@ The 0.2.0 version introduces new methods enhancing subplots management, and impr
 🐛 Bug fixes
 ************
 - Fix data slice visibility inconsistencies in :func:`~statsplotly.heatmap`.
-- Fix `scaleratio` for `axis="id_line"`.
+- Fix :obj:`~statsplotly.plot_specifiers.layout.AxesSpecifier.scaleratio` for `axis="id_line"`.
 - Fix cumulative histograms when `cumulative=True` and `step=True`.
 
 
@@ -86,14 +93,14 @@ Version 0.1.5
 =============
 **2023-11-25**
 
-The 0.1.5 version ensures compatibility with Python>=3.10.
+The 0.1.5 release ensures compatibility with Python>=3.10.
 
 
 Version 0.1.4
 =============
 **2023-09-27**
 
-The 0.1.4 version fix inconsistencies in color coding.
+The 0.1.4 release fix inconsistencies in color coding.
 
 🐛 Make casting color coding string array to integer consistent.
 
@@ -106,7 +113,7 @@ Version 0.1.3
 =============
 **2023-09-20**
 
-The 0.1.3 version fixes a bug when processing color coding arrays.
+The 0.1.3 release fixes a bug when processing color coding arrays.
 
 🐛 Handle `null` values when casting color coding array to integer data type.
 
@@ -121,7 +128,7 @@ Version 0.1.2
 =============
 **2023-07-11**
 
-The 0.1.2 version allows to combine several subplots with different `ColorAxis` on the same figure, and improve axes management.
+The 0.1.2 release allows to combine several subplots with different `ColorAxis` on the same figure, and improve axes management.
 
 ✨ New features
 ***************
@@ -149,7 +156,7 @@ Version 0.1.1
 =============
 **2022-03-10**
 
-The 0.1.1 version fixes a bug in the :mod:`~statsplot.plot_specifiers.color` module.
+The 0.1.1 release fixes a bug in the :mod:`~statsplot.plot_specifiers.color` module.
 
 🐛 Fix bug in :obj:`ColorAxis` specification when using direct color assignments (i.e., CSS or hex color codes). The `colorscale` and `colorbar` attributes are now set to None.
 
@@ -158,4 +165,4 @@ Version 0.1.0
 =============
 **2023-02-15**
 
-The 0.1.0 version is the first tagged release of the Statsplot package.
+The 0.1.0 release is the first tagged release of the Statsplot package.

@@ -39,6 +39,7 @@ extensions = [
 
 # Intersphinx mapping
 intersphinx_mapping = {
+    "python": ("https://docs.python.org/3/", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "plotly": ("https://plotly.com/python-api-reference/", None),
 }
