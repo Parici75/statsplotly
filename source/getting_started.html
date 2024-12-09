@@ -189,7 +189,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="changelog_link.html">Version 0.2.4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog_link.html">Version 0.2.5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog_link.html#version-0-2-4">Version 0.2.4</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog_link.html#version-0-2-3">Version 0.2.3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog_link.html#version-0-2-2">Version 0.2.2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog_link.html#version-0-2-1">Version 0.2.1</a></li>
@@ -245,9 +246,9 @@
 <p>This independence allows to leverage the powerful interactivity offered by <a class="reference external" href="https://plotly.com/javascript/">plotly.js</a> without compromising statistical intelligibility for aesthetics choices, or vice-versa.</p>
 <section id="functions-signature">
 <h1>Functions signature<a class="headerlink" href="#functions-signature" title="Link to this heading">¶</a></h1>
-<p>All plotting functions return a <code class="docutils literal notranslate"><span class="pre">plotly.graphic_objects.Figure</span></code> object, and must be supplied with :</p>
+<p>All plotting functions return a <a class="reference external" href="https://plotly.com/python-api-reference/generated/plotly.graph_objects.html#plotly.graph_objects.Figure" title="(in )"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotly.graph_objects.Figure</span></code></a> object, and must be supplied with :</p>
 <ul class="simple">
-<li><p>a tidy (i.e., <a class="reference external" href="https://en.wikipedia.org/wiki/Wide_and_narrow_data">long-form</a>) <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> argument for <code class="docutils literal notranslate"><span class="pre">data</span></code>, with a flat header (hierarchical indexes are supported).</p></li>
+<li><p>a tidy (i.e., <a class="reference external" href="https://en.wikipedia.org/wiki/Wide_and_narrow_data">long-form</a>) <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> argument for <code class="docutils literal notranslate"><span class="pre">data</span></code>, with a flat header (hierarchical indexes are supported only on DataFrame’s <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.index.html#pandas.DataFrame.index" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>).</p></li>
 <li><p>column or index identifiers to specify <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> -when applicable- plotting dimensions.</p></li>
 </ul>
 <blockquote>

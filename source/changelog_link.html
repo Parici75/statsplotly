@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="statsplotly.plot_specifiers.layout package" href="statsplotly.plot_specifiers.layout.html" />
 
     <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.09.10 -->
-        <title>Version 0.2.4 - statsplotly documentation</title>
+        <title>Version 0.2.5 - statsplotly documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -189,7 +189,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.2.4</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.2.5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#version-0-2-4">Version 0.2.4</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-3">Version 0.2.3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-2">Version 0.2.2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-1">Version 0.2.1</a></li>
@@ -234,22 +235,27 @@
           </label>
         </div>
         <article role="main">
-          <section id="version-0-2-4">
+          <section id="version-0-2-5">
+<h1>Version 0.2.5<a class="headerlink" href="#version-0-2-5" title="Link to this heading">¶</a></h1>
+<p><strong>2024-12-09</strong></p>
+<p>The 0.2.5 release adds support for <a class="reference external" href="https://arrow.apache.org/docs/python/data.html">pyarrow</a> data type hinting.</p>
+</section>
+<section id="version-0-2-4">
 <h1>Version 0.2.4<a class="headerlink" href="#version-0-2-4" title="Link to this heading">¶</a></h1>
-<p><strong>2024-11-06</strong></p>
-<p>The 0.2.4 increases performance of 2D scatter plots.</p>
+<p><strong>2024-11-06</strong>
+The 0.2.4 release increases performance of 2D scatter plots.</p>
 <p>🎨 Use <a class="reference external" href="https://plotly.com/python-api-reference/generated/plotly.graph_objects.html#plotly.graph_objects.Scattergl" title="(in )"><code class="xref py py-class docutils literal notranslate"><span class="pre">plotly.graph_objects.Scattergl</span></code></a> for <a class="reference internal" href="statsplotly.plot_objects.html#statsplotly.plot_objects.trace.ScatterTrace" title="statsplotly.plot_objects.trace.ScatterTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScatterTrace</span></code></a> traces.</p>
 </section>
 <section id="version-0-2-3">
 <h1>Version 0.2.3<a class="headerlink" href="#version-0-2-3" title="Link to this heading">¶</a></h1>
 <p><strong>2024-08-26</strong></p>
-<p>The 0.2.3 cleans dependencies.</p>
-<p>➖ Remove dependency on <cite>jupyter</cite>.</p>
+<p>The 0.2.3 release cleans dependencies.</p>
+<p>➖ Drop dependency on <a class="reference external" href="https://jupyter.org/">jupyter</a>.</p>
 </section>
 <section id="version-0-2-2">
 <h1>Version 0.2.2<a class="headerlink" href="#version-0-2-2" title="Link to this heading">¶</a></h1>
 <p><strong>2024-08-04</strong></p>
-<p>The 0.2.2 version fixes bugs with discrete colormaps and aggregation barplots.</p>
+<p>The 0.2.2 release fixes bugs with discrete colormaps and aggregation barplots.</p>
 <section id="bug-fixes">
 <h2>🐛 Bug fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h2>
 <ul class="simple">
@@ -257,20 +263,20 @@
 <li><p>Fix a bug in <a class="reference internal" href="statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.OrientedPlotSpecifier" title="statsplotly.plot_specifiers.trace.OrientedPlotSpecifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrientedPlotSpecifier</span></code></a> with default orientation of aggregation barplots.</p></li>
 </ul>
 <p>👕 Update linting and type checking parameters.</p>
-<p>📚 Improve documentation with [autodoc-pydantic](<a class="reference external" href="https://github.com/mansenfranzen/autodoc_pydantic">https://github.com/mansenfranzen/autodoc_pydantic</a>).</p>
+<p>📚 Improve documentation with <a class="reference external" href="https://github.com/mansenfranzen/autodoc_pydantic">autodoc-pydantic</a>.</p>
 </section>
 </section>
 <section id="version-0-2-1">
 <h1>Version 0.2.1<a class="headerlink" href="#version-0-2-1" title="Link to this heading">¶</a></h1>
 <p><strong>2024-05-08</strong></p>
-<p>The 0.2.1 version fixes a bug in color specification with “0” and “1” color identifiers.</p>
+<p>The 0.2.1 release fixes a bug in color specification with “0” and “1” color identifiers.</p>
 <p>🐛 Fix a bug in <a class="reference internal" href="statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier" title="statsplotly.plot_specifiers.color.ColorSpecifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorSpecifier</span></code></a> due to “0” and “1” color strings being interpreted as valid color specifications by <cite>matplotlib</cite>.</p>
 <p>🎨 Expose <a class="reference internal" href="statsplotly.html#statsplotly.utils.rgb_string_array_from_colormap" title="statsplotly.utils.rgb_string_array_from_colormap"><code class="xref py py-class docutils literal notranslate"><span class="pre">rgb_string_array_from_colormap</span></code></a> in the <a class="reference internal" href="statsplotly.html#module-statsplotly.utils" title="statsplotly.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a> module.</p>
 </section>
 <section id="version-0-2-0">
 <h1>Version 0.2.0<a class="headerlink" href="#version-0-2-0" title="Link to this heading">¶</a></h1>
 <p><strong>2024-05-01</strong></p>
-<p>The 0.2.0 version introduces new methods enhancing subplots management, and improves plotting features.</p>
+<p>The 0.2.0 release introduces new methods enhancing subplots management, and improves plotting features.</p>
 <section id="new-features">
 <h2>✨ New features<a class="headerlink" href="#new-features" title="Link to this heading">¶</a></h2>
 <ul class="simple">
@@ -283,8 +289,8 @@
 </dd>
 </dl>
 </li>
-<li><p>Enhance the color specification option of the main plotting module : the <cite>color</cite> argument now accepts reference to <cite>datetime</cite> and arbitrary <cite>string</cite> color data.</p></li>
-<li><p>Support <em>geometric mean</em> and <em>geometric standard deviation factor</em> options in <a class="reference internal" href="statsplotly.html#statsplotly.barplot" title="statsplotly.barplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">barplot()</span></code></a> <cite>aggregation_fct</cite> and <cite>error_bar</cite> arguments.</p></li>
+<li><p>Enhance the color specification option of the main plotting module : the <cite>color</cite> argument now accepts reference to <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime</span></code></a> and arbitrary <cite>string</cite> color data.</p></li>
+<li><p>Support <a class="reference internal" href="statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.AggregationType.GEO_MEAN" title="statsplotly.plot_specifiers.data.AggregationType.GEO_MEAN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEO_MEAN</span></code></a> and <a class="reference internal" href="statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.ErrorBarType.GEO_STD" title="statsplotly.plot_specifiers.data.ErrorBarType.GEO_STD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEO_STD</span></code></a> options in <a class="reference internal" href="statsplotly.html#statsplotly.barplot" title="statsplotly.barplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">barplot()</span></code></a> for <cite>aggregation_fct</cite> and <cite>error_bar</cite> arguments.</p></li>
 <li><p>Support Empirical Cumulative Distribution Function option in <a class="reference internal" href="statsplotly.html#statsplotly.distplot" title="statsplotly.distplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">distplot()</span></code></a> and <a class="reference internal" href="statsplotly.html#statsplotly.jointplot" title="statsplotly.jointplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">jointplot()</span></code></a>.</p></li>
 </ul>
 </section>
@@ -298,7 +304,7 @@
 <li><p>Automatic detection of plot orientation for <a class="reference internal" href="statsplotly.html#statsplotly.barplot" title="statsplotly.barplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">barplot()</span></code></a> and <a class="reference internal" href="statsplotly.html#statsplotly.catplot" title="statsplotly.catplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">catplot()</span></code></a>.</p></li>
 <li><p>Improve colorbar management in layout.</p></li>
 <li><p>Support discrete color mapping in <a class="reference internal" href="statsplotly.html#statsplotly.heatmap" title="statsplotly.heatmap"><code class="xref py py-func docutils literal notranslate"><span class="pre">heatmap()</span></code></a>.</p></li>
-<li><p>Improve <cite>datetime</cite> data handling in <a class="reference internal" href="statsplotly.html#statsplotly.catplot" title="statsplotly.catplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">catplot()</span></code></a>.</p></li>
+<li><p>Improve <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime</span></code></a> data handling in <a class="reference internal" href="statsplotly.html#statsplotly.catplot" title="statsplotly.catplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">catplot()</span></code></a>.</p></li>
 <li><p>Correct bar layout in multi-trace histograms.</p></li>
 <li><p>Improve step histogram line aesthetics.</p></li>
 <li><p>Display slice name on color-coded bar charts.</p></li>
@@ -309,7 +315,7 @@
 <h2>🐛 Bug fixes<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fix data slice visibility inconsistencies in <a class="reference internal" href="statsplotly.html#statsplotly.heatmap" title="statsplotly.heatmap"><code class="xref py py-func docutils literal notranslate"><span class="pre">heatmap()</span></code></a>.</p></li>
-<li><p>Fix <cite>scaleratio</cite> for <cite>axis=”id_line”</cite>.</p></li>
+<li><p>Fix <a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxesSpecifier.scaleratio" title="statsplotly.plot_specifiers.layout.AxesSpecifier.scaleratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scaleratio</span></code></a> for <cite>axis=”id_line”</cite>.</p></li>
 <li><p>Fix cumulative histograms when <cite>cumulative=True</cite> and <cite>step=True</cite>.</p></li>
 </ul>
 </section>
@@ -317,12 +323,12 @@
 <section id="version-0-1-5">
 <h1>Version 0.1.5<a class="headerlink" href="#version-0-1-5" title="Link to this heading">¶</a></h1>
 <p><strong>2023-11-25</strong></p>
-<p>The 0.1.5 version ensures compatibility with Python&gt;=3.10.</p>
+<p>The 0.1.5 release ensures compatibility with Python&gt;=3.10.</p>
 </section>
 <section id="version-0-1-4">
 <h1>Version 0.1.4<a class="headerlink" href="#version-0-1-4" title="Link to this heading">¶</a></h1>
 <p><strong>2023-09-27</strong></p>
-<p>The 0.1.4 version fix inconsistencies in color coding.</p>
+<p>The 0.1.4 release fix inconsistencies in color coding.</p>
 <p>🐛 Make casting color coding string array to integer consistent.</p>
 <p>🎨 Add support for all Plotly / Seaborn and Matplotlib colorscales.</p>
 <p>💥 Bump to pydantic==v2.4</p>
@@ -330,7 +336,7 @@
 <section id="version-0-1-3">
 <h1>Version 0.1.3<a class="headerlink" href="#version-0-1-3" title="Link to this heading">¶</a></h1>
 <p><strong>2023-09-20</strong></p>
-<p>The 0.1.3 version fixes a bug when processing color coding arrays.</p>
+<p>The 0.1.3 release fixes a bug when processing color coding arrays.</p>
 <p>🐛 Handle <cite>null</cite> values when casting color coding array to integer data type.</p>
 <p>💚 Set up pre-commit hooks.</p>
 <p>🔨 Clean up deprecated Pandas code.</p>
@@ -339,7 +345,7 @@
 <section id="version-0-1-2">
 <h1>Version 0.1.2<a class="headerlink" href="#version-0-1-2" title="Link to this heading">¶</a></h1>
 <p><strong>2023-07-11</strong></p>
-<p>The 0.1.2 version allows to combine several subplots with different <cite>ColorAxis</cite> on the same figure, and improve axes management.</p>
+<p>The 0.1.2 release allows to combine several subplots with different <cite>ColorAxis</cite> on the same figure, and improve axes management.</p>
 <section id="id2">
 <h2>✨ New features<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
@@ -367,13 +373,13 @@
 <section id="version-0-1-1">
 <h1>Version 0.1.1<a class="headerlink" href="#version-0-1-1" title="Link to this heading">¶</a></h1>
 <p><strong>2022-03-10</strong></p>
-<p>The 0.1.1 version fixes a bug in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">color</span></code> module.</p>
+<p>The 0.1.1 release fixes a bug in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">color</span></code> module.</p>
 <p>🐛 Fix bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorAxis</span></code> specification when using direct color assignments (i.e., CSS or hex color codes). The <cite>colorscale</cite> and <cite>colorbar</cite> attributes are now set to None.</p>
 </section>
 <section id="version-0-1-0">
 <h1>Version 0.1.0<a class="headerlink" href="#version-0-1-0" title="Link to this heading">¶</a></h1>
 <p><strong>2023-02-15</strong></p>
-<p>The 0.1.0 version is the first tagged release of the Statsplot package.</p>
+<p>The 0.1.0 release is the first tagged release of the Statsplot package.</p>
 </section>
 
         </article>

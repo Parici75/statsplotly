@@ -13,9 +13,9 @@ This independence allows to leverage the powerful interactivity offered by [plot
 
 ## Functions signature
 
-All plotting functions return a `plotly.graphic_objects.Figure` object, and must be supplied with :
+All plotting functions return a {obj}`plotly.graph_objects.Figure` object, and must be supplied with :
 
-- a tidy (i.e., [long-form](https://en.wikipedia.org/wiki/Wide_and_narrow_data)) `pandas.DataFrame` argument for `data`, with a flat header (hierarchical indexes are supported).
+- a tidy (i.e., [long-form](https://en.wikipedia.org/wiki/Wide_and_narrow_data)) {obj}`pandas.DataFrame` argument for `data`, with a flat header (hierarchical indexes are supported only on DataFrame's {obj}`~pandas.DataFrame.index`).
 - column or index identifiers to specify `x`, `y` and `z` -when applicable- plotting dimensions.
 
 > 💡 Read more on [tidy data](https://aeturrell.github.io/python4DS/data-tidy.html).
