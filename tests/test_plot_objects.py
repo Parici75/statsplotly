@@ -18,7 +18,7 @@ TRACE_NAME = "dummy_name"
 
 def test_base_trace(example_trace_data):
     with pytest.raises(TypeError):
-        BaseTrace(x=example_trace_data.x_values, y=example_trace_data.y_values, name="dummy_name")
+        BaseTrace(x=example_trace_data.x_values, y=example_trace_data.y_values, name=TRACE_NAME)
 
 
 def test_heatmap_trace(example_3dtrace_data):
@@ -105,7 +105,7 @@ def test_histogram_trace(example_trace_data):
     )
     assert histogram_trace.x is None
     assert all(histogram_trace.y == example_trace_data.y_values)
-    assert histogram_trace.name == "dummy_name distribution"
+    assert histogram_trace.name == f"{TRACE_NAME} distribution"
     assert histogram_trace.opacity is None
     assert histogram_trace.legendgroup == TRACE_NAME
     assert histogram_trace.showlegend is None

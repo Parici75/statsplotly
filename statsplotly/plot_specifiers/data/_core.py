@@ -4,7 +4,7 @@ import logging
 from collections.abc import Callable, Generator
 from enum import Enum
 from functools import wraps
-from typing import Any, TypeVar
+from typing import Any, TypeAlias, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -103,15 +103,17 @@ AGG_DIMENSION_TO_ERROR_DIMENSION = dict(
 
 F = TypeVar("F", bound=Callable[..., Any])
 
+DTYPE: TypeAlias = np.dtype[Any] | pd.ArrowDtype
+
 
 class DataTypes(BaseModel):
-    x: np.dtype[Any] | None = None
-    y: np.dtype[Any] | None = None
-    z: np.dtype[Any] | None = None
-    color: np.dtype[Any] | None = None
-    marker: np.dtype[Any] | None = None
-    size: np.dtype[Any] | None = None
-    text: np.dtype[Any] | None = None
+    x: DTYPE | None = None
+    y: DTYPE | None = None
+    z: DTYPE | None = None
+    color: DTYPE | None = None
+    marker: DTYPE | None = None
+    size: DTYPE | None = None
+    text: DTYPE | None = None
 
 
 class DataPointer(BaseModel):
