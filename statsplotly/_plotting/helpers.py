@@ -11,6 +11,7 @@ from statsplotly.plot_objects.trace import (
     KdeTrace,
     RugTrace,
     ScatterTrace,
+    ShadedTrace,
     StepHistogramTrace,
 )
 from statsplotly.plot_specifiers.color import ColorSpecifier
@@ -96,14 +97,14 @@ def plot_scatter_traces(
     ).to_plotly_trace()
 
     if trace_data.shaded_error is not None:
-        upper_bound_trace = ScatterTrace.build_upper_error_trace(
+        upper_bound_trace = ShadedTrace.build_upper_error_trace(
             trace_data=trace_data,
             trace_name=trace_name,
             trace_color=trace_color,
         )
         traces[upper_bound_trace.name] = upper_bound_trace.to_plotly_trace()
 
-        lower_bound_trace = ScatterTrace.build_lower_error_trace(
+        lower_bound_trace = ShadedTrace.build_lower_error_trace(
             trace_data=trace_data,
             trace_name=trace_name,
             trace_color=trace_color,
