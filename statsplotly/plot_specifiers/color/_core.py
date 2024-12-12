@@ -9,7 +9,7 @@ from matplotlib.colors import is_color_like
 from pandas.core.dtypes.common import (
     is_bool_dtype,
     is_datetime64_any_dtype,
-    is_object_dtype,
+    is_string_dtype,
 )
 from pydantic import ValidationInfo, field_validator
 
@@ -68,7 +68,7 @@ class ColorSpecifier(BaseModel):
 
     @staticmethod
     def _check_is_discrete_color_data_type(color_data: pd.Series) -> bool:
-        return is_bool_dtype(color_data) or is_object_dtype(color_data)
+        return is_bool_dtype(color_data) or is_string_dtype(color_data)
 
     @staticmethod
     def _check_is_direct_color_specification(color_data: pd.Series) -> bool:

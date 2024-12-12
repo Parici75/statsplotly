@@ -391,7 +391,7 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
 
         if not self._check_numeric_cast(trace_data):
             logger.debug(
-                f"Can not be cast {trace.name} data of type {trace_data.dtype} to numeric dtype"
+                f"Can not cast {trace.name} data of type {trace_data.dtype} to numeric dtype"
             )
             return None
 

@@ -34,6 +34,12 @@ def test_scatter_specifier():
     assert scatter_specifier.mode is TraceMode.LINES
     assert scatter_specifier.regression_type is RegressionType.LINEAR
 
+    scatter_specifier = ScatterSpecifier(
+        mode=None,
+        data_types=DataTypes(x=np.dtype(object), y=np.dtype(float)),
+    )
+    assert scatter_specifier.mode is TraceMode.MARKERS
+
     with pytest.raises(ValueError) as excinfo:
         ScatterSpecifier(mode="circles")
         assert (

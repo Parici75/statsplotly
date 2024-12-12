@@ -64,7 +64,7 @@ class BaseTrace(BaseModel, metaclass=ABCMeta):
         trace_data: TraceData,
     ) -> list[dict[str, Any] | None]:
         """Computes error bars.
-        `Upper` and `lower` length are calculated relative to the underlying data.
+        'Upper' and 'lower' bounds are calculated relative to the underlying data.
         """
 
         error_parameters = [
@@ -213,13 +213,67 @@ class HeatmapTrace(_DensityTrace, _BasePlotlyTrace):
         )
 
 
+class ShadedTrace(_ScatterBaseTrace, _BasePlotlyTrace):
+    _PLOTLY_GRAPH_FCT = go.Scatter
+
+    hoverinfo: str = "x+y+name+text"
+    line: dict[str, Any]
+    fill: str
+    fillcolor: str
+
+    @classmethod
+    def build_lower_error_trace(
+        cls, trace_data: TraceData, trace_name: str, trace_color: str | None
+    ) -> ShadedTrace:
+        if trace_data.shaded_error is None:
+            raise ValueError("`trace_data.shaded_error` can not be `None`")
+
+        return cls(
+            x=trace_data.x_values,
+            y=trace_data.shaded_error.apply(lambda x: x[0]),
+            name=f"{trace_name} {trace_data.shaded_error.name} lower bound",
+            mode=TraceMode.LINES,
+            line={"width": 0, "color": trace_color},
+            fill="tonexty",
+            fillcolor=(
+                set_rgb_alpha(trace_color, constants.SHADED_ERROR_ALPHA)
+                if trace_color is not None
+                else None
+            ),
+            legendgroup=trace_name,
+            showlegend=False,
+        )
+
+    @classmethod
+    def build_upper_error_trace(
+        cls, trace_data: TraceData, trace_name: str, trace_color: str | None
+    ) -> ShadedTrace:
+        if trace_data.shaded_error is None:
+            raise ValueError("`trace_data.shaded_error` can not be `None`")
+
+        return cls(
+            x=trace_data.x_values,
+            y=trace_data.shaded_error.apply(lambda x: x[1]),
+            name=f"{trace_name} {trace_data.shaded_error.name} upper bound",
+            mode=TraceMode.LINES,
+            marker={"size": trace_data.size_data, "color": trace_color},
+            line={"width": 0, "color": trace_color},
+            fill="none",
+            fillcolor=(
+                set_rgb_alpha(trace_color, constants.SHADED_ERROR_ALPHA)
+                if trace_color is not None
+                else None
+            ),
+            legendgroup=trace_name,
+            showlegend=False,
+        )
+
+
 class ScatterTrace(_ScatterBaseTrace, _BasePlotlyTrace):
     _PLOTLY_GRAPH_FCT = go.Scattergl
 
     hoverinfo: str = "x+y+name+text"
     line: dict[str, Any] | None = None
-    fill: str | None = None
-    fillcolor: str | None = None
 
     @classmethod
     def build_id_line(cls, x_values: pd.Series, y_values: pd.Series) -> ScatterTrace:
@@ -239,51 +293,6 @@ class ScatterTrace(_ScatterBaseTrace, _BasePlotlyTrace):
                 "width": constants.DEFAULT_ID_LINE_WIDTH,
                 "dash": constants.DEFAULT_ID_LINE_DASH,
             },
-        )
-
-    @classmethod
-    def build_lower_error_trace(
-        cls, trace_data: TraceData, trace_name: str, trace_color: str | None
-    ) -> ScatterTrace:
-        if trace_data.shaded_error is None:
-            raise ValueError("`trace_data.shaded_error` can not be `None`")
-
-        return cls(
-            x=trace_data.x_values,
-            y=trace_data.shaded_error.apply(lambda x: x[0]),
-            name=f"{trace_name} {trace_data.shaded_error.name} lower bound",
-            mode=TraceMode.LINES,
-            line={"width": 0},
-            fill="tonexty",
-            fillcolor=(
-                set_rgb_alpha(trace_color, constants.SHADED_ERROR_ALPHA)
-                if trace_color is not None
-                else None
-            ),
-            legendgroup=trace_name,
-            showlegend=False,
-        )
-
-    @classmethod
-    def build_upper_error_trace(
-        cls, trace_data: TraceData, trace_name: str, trace_color: str | None
-    ) -> ScatterTrace:
-        if trace_data.shaded_error is None:
-            raise ValueError("`trace_data.shaded_error` can not be `None`")
-        return cls(
-            x=trace_data.x_values,
-            y=trace_data.shaded_error.apply(lambda x: x[1]),
-            name=f"{trace_name} {trace_data.shaded_error.name} upper bound",
-            mode=TraceMode.LINES,
-            marker={"size": trace_data.size_data, "color": trace_color},
-            line={"width": 0},
-            fillcolor=(
-                set_rgb_alpha(trace_color, constants.SHADED_ERROR_ALPHA)
-                if trace_color is not None
-                else None
-            ),
-            legendgroup=trace_name,
-            showlegend=False,
         )
 
     @classmethod
@@ -427,7 +436,7 @@ class _CategoricalTrace(BaseTrace):
 
 
 class StripTrace(_CategoricalTrace, _BasePlotlyTrace):
-    _PLOTLY_GRAPH_FCT = go.Scatter
+    _PLOTLY_GRAPH_FCT = go.Scattergl
 
     mode: str = TraceMode.MARKERS
 

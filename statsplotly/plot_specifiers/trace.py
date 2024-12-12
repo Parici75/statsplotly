@@ -9,7 +9,7 @@ from typing import Any, TypeVar, cast
 import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
-from pandas.api.types import is_numeric_dtype
+from pandas.api.types import is_numeric_dtype, is_string_dtype
 from pydantic import ValidationInfo, field_validator, model_validator
 
 from statsplotly import constants
@@ -122,6 +122,14 @@ class OrientedPlotSpecifier(BaseModel):
 class ScatterSpecifier(_TraceSpecifier, _XYTraceValidator):
     mode: TraceMode | None = None
     regression_type: RegressionType | None = None
+
+    @field_validator("mode", mode="before")
+    def validate_mode(cls, value: str | None, info: ValidationInfo) -> TraceMode | None:
+        if value is None and any(
+            is_string_dtype(getattr(info.data.get("data_types"), param)) for param in ["x", "y"]
+        ):
+            return TraceMode.MARKERS
+        return TraceMode(value) if value is not None else value
 
 
 class CategoricalPlotSpecifier(OrientedPlotSpecifier, _TraceSpecifier, _XYTraceValidator):
