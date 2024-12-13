@@ -1,3 +1,14 @@
+Version 0.2.6
+=============
+**2024-12-13**
+
+The 0.2.6 release fixes a bug in continuous error bands (see issue `#3194 <https://github.com/plotly/plotly.py/issues/3194>`_).
+
+🐛 Introduce the :class:`~statsplotly.plot_objects.trace.ShadedTrace` class to draw filled scatter traces.
+
+🎨 Set default scatter trace mode to :class:`~statsplotly.plot_specifiers.trace.TraceMode.MARKERS` when some data types is `string`.
+
+
 Version 0.2.5
 =============
 **2024-12-09**
