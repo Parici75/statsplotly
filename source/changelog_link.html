@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="statsplotly.plot_specifiers.layout package" href="statsplotly.plot_specifiers.layout.html" />
 
     <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.09.10 -->
-        <title>Version 0.2.5 - statsplotly documentation</title>
+        <title>Version 0.2.6 - statsplotly documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -189,7 +189,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.2.5</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.2.6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#version-0-2-5">Version 0.2.5</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-4">Version 0.2.4</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-3">Version 0.2.3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-2">Version 0.2.2</a></li>
@@ -235,7 +236,14 @@
           </label>
         </div>
         <article role="main">
-          <section id="version-0-2-5">
+          <section id="version-0-2-6">
+<h1>Version 0.2.6<a class="headerlink" href="#version-0-2-6" title="Link to this heading">¶</a></h1>
+<p><strong>2024-12-13</strong></p>
+<p>The 0.2.6 release fixes a bug in continuous error bands (see issue <a class="reference external" href="https://github.com/plotly/plotly.py/issues/3194">#3194</a>).</p>
+<p>🐛 Introduce the <a class="reference internal" href="statsplotly.plot_objects.html#statsplotly.plot_objects.trace.ShadedTrace" title="statsplotly.plot_objects.trace.ShadedTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShadedTrace</span></code></a> class to draw filled scatter traces.</p>
+<p>🎨 Set default scatter trace mode to <a class="reference internal" href="statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.TraceMode.MARKERS" title="statsplotly.plot_specifiers.trace.TraceMode.MARKERS"><code class="xref py py-class docutils literal notranslate"><span class="pre">MARKERS</span></code></a> when some data types is <cite>string</cite>.</p>
+</section>
+<section id="version-0-2-5">
 <h1>Version 0.2.5<a class="headerlink" href="#version-0-2-5" title="Link to this heading">¶</a></h1>
 <p><strong>2024-12-09</strong></p>
 <p>The 0.2.5 release adds support for <a class="reference external" href="https://arrow.apache.org/docs/python/data.html">pyarrow</a> data type hinting.</p>
@@ -311,8 +319,8 @@ The 0.2.4 release increases performance of 2D scatter plots.</p>
 <li><p>Integrate statsplotly template with plotly theming framework.</p></li>
 </ul>
 </section>
-<section id="id1">
-<h2>🐛 Bug fixes<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<section id="id2">
+<h2>🐛 Bug fixes<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fix data slice visibility inconsistencies in <a class="reference internal" href="statsplotly.html#statsplotly.heatmap" title="statsplotly.heatmap"><code class="xref py py-func docutils literal notranslate"><span class="pre">heatmap()</span></code></a>.</p></li>
 <li><p>Fix <a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxesSpecifier.scaleratio" title="statsplotly.plot_specifiers.layout.AxesSpecifier.scaleratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scaleratio</span></code></a> for <cite>axis=”id_line”</cite>.</p></li>
@@ -346,14 +354,14 @@ The 0.2.4 release increases performance of 2D scatter plots.</p>
 <h1>Version 0.1.2<a class="headerlink" href="#version-0-1-2" title="Link to this heading">¶</a></h1>
 <p><strong>2023-07-11</strong></p>
 <p>The 0.1.2 release allows to combine several subplots with different <cite>ColorAxis</cite> on the same figure, and improve axes management.</p>
-<section id="id2">
-<h2>✨ New features<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<section id="id3">
+<h2>✨ New features<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Update <cite>layout</cite> and <cite>marker</cite> attributes to preserve each subplot original coloraxis upon adding new traces with <cite>ColorAxis</cite> specification on an existing <cite>Figure</cite>.</p></li>
 </ul>
 </section>
-<section id="id3">
-<h2>🎨 Feature improvements<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<section id="id4">
+<h2>🎨 Feature improvements<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Improve consistency between axis range and axis format.</p></li>
 <li><p>Harmonize plot styling arguments.</p></li>
