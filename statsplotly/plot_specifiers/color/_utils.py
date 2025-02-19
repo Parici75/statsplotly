@@ -1,6 +1,6 @@
 import logging
 import re
-from enum import Enum
+from enum import StrEnum
 from typing import Any, TypeAlias
 
 import matplotlib
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 Cmap_specs: TypeAlias = str | list[str] | list[tuple[float, float, float]]
 
 
-class ColorSystem(str, Enum):
+class ColorSystem(StrEnum):
     LINEAR = "linear"
     LOGARITHMIC = "logarithmic"
     DISCRETE = "discrete"

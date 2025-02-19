@@ -4,7 +4,6 @@ import logging
 from collections.abc import Sequence
 
 import numpy as np
-import pandas as pd
 import plotly
 import plotly.graph_objs as go
 import plotly.io as pio
@@ -20,6 +19,7 @@ from statsplotly.plot_specifiers.data import (
     AggregationSpecifier,
     AggregationTraceData,
     DataDimension,
+    DataFormat,
     DataHandler,
     DataPointer,
     TraceData,
@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 def barplot(
-    data: pd.DataFrame,
+    data: DataFormat,
     x: str | None = None,
     y: str | None = None,
     orientation: str | None = None,

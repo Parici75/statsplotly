@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable, Generator
-from enum import Enum
+from collections.abc import Callable, Generator, Sequence
+from enum import StrEnum
 from functools import wraps
 from typing import Any, TypeAlias, TypeVar
 
 import numpy as np
 import pandas as pd
 import scipy as sc
-from numpy.typing import NDArray
+from numpy.typing import ArrayLike, NDArray
 from pydantic import ValidationInfo, field_validator, model_validator
 
 from statsplotly import constants
@@ -25,30 +25,30 @@ from .statistics import range_normalize, sem
 logger = logging.getLogger(__name__)
 
 
-class DataDimension(str, Enum):
+class DataDimension(StrEnum):
     X = "x"
     Y = "y"
     Z = "z"
 
 
-class SliceTraceType(str, Enum):
+class SliceTraceType(StrEnum):
     ALL_DATA = "all data"
     SLICE = "slice"
 
 
-class NormalizationType(str, Enum):
+class NormalizationType(StrEnum):
     CENTER = "center"
     MIN_MAX = "minmax"
     ZSCORE = "zscore"
 
 
-class RegressionType(str, Enum):
+class RegressionType(StrEnum):
     LINEAR = "linear"
     EXPONENTIAL = "exponential"
     INVERSE = "inverse"
 
 
-class AggregationType(str, Enum):
+class AggregationType(StrEnum):
     MEAN = "mean"
     GEO_MEAN = "geo_mean"
     COUNT = "count"
@@ -58,12 +58,12 @@ class AggregationType(str, Enum):
     SUM = "sum"
 
 
-class CentralTendencyType(str, Enum):
+class CentralTendencyType(StrEnum):
     MEAN = "mean"
     MEDIAN = "median"
 
 
-class ErrorBarType(str, Enum):
+class ErrorBarType(StrEnum):
     SEM = "sem"
     IQR = "iqr"
     STD = "std"
@@ -71,7 +71,7 @@ class ErrorBarType(str, Enum):
     BOOTSTRAP = "bootstrap"
 
 
-class HistogramNormType(str, Enum):
+class HistogramNormType(StrEnum):
     COUNT = ""
     PERCENT = "percent"
     PROBABILITY = "probability"
@@ -103,17 +103,20 @@ AGG_DIMENSION_TO_ERROR_DIMENSION = dict(
 
 F = TypeVar("F", bound=Callable[..., Any])
 
-DTYPE: TypeAlias = np.dtype[Any] | pd.ArrowDtype
+_Dtype: TypeAlias = np.dtype[Any] | pd.ArrowDtype
+DataFormat: TypeAlias = (
+    pd.DataFrame | dict[Any, Sequence[ArrayLike]] | ArrayLike | Sequence[ArrayLike] | pd.Series
+)
 
 
 class DataTypes(BaseModel):
-    x: DTYPE | None = None
-    y: DTYPE | None = None
-    z: DTYPE | None = None
-    color: DTYPE | None = None
-    marker: DTYPE | None = None
-    size: DTYPE | None = None
-    text: DTYPE | None = None
+    x: _Dtype | None = None
+    y: _Dtype | None = None
+    z: _Dtype | None = None
+    color: _Dtype | None = None
+    marker: _Dtype | None = None
+    size: _Dtype | None = None
+    text: _Dtype | None = None
 
 
 class DataPointer(BaseModel):
@@ -173,7 +176,7 @@ class DataHandler(BaseModel):
     def convert_categorical_dtype_columns(cls, value: pd.DataFrame) -> pd.DataFrame:
         for column in value.columns:
             if isinstance(value[column].dtype, pd.CategoricalDtype):
-                logger.debug(f"Casting categorical {column} data to string")
+                logger.debug(f"Casting categorical '{column}' data to string")
                 value[column] = value[column].astype(str)
         return value
 
@@ -246,11 +249,14 @@ class DataHandler(BaseModel):
     @classmethod
     def build_handler(
         cls,
-        data: pd.DataFrame,
+        data: DataFormat,
         data_pointer: DataPointer,
         slice_order: list[str] | None = None,
     ) -> DataHandler:
         slice_logical_indices = None
+
+        if not isinstance(data, pd.DataFrame):
+            data = pd.DataFrame(data)
 
         data = data.reset_index()
         if data_pointer.slicer is not None:

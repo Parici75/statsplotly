@@ -5,7 +5,6 @@ from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
-import pandas as pd
 import plotly
 import plotly.graph_objs as go
 import plotly.io as pio
@@ -17,6 +16,7 @@ from statsplotly.plot_objects.trace import BoxTrace, StripTrace, ViolinTrace
 # Specifiers
 from statsplotly.plot_specifiers.color import ColorSpecifier
 from statsplotly.plot_specifiers.data import (
+    DataFormat,
     DataHandler,
     DataPointer,
     DataProcessor,
@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 def catplot(
-    data: pd.DataFrame,
+    data: DataFormat,
     x: str | None = None,
     y: str | None = None,
     orientation: str | None = None,
