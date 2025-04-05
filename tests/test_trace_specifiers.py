@@ -80,29 +80,25 @@ class TestOrientedPlotSpecifier:
 
 
 class TestCategoricalPlotSpecifier:
-    def test_string_vertical_x_strip_map(self, example_raw_data):
-        data_handler = DataHandler.build_handler(
-            data=example_raw_data, data_pointer=DataPointer(x="x", y="y")
-        )
-
+    def test_string_vertical_x_strip_map(self, example_data_handler):
         x_values_map = CategoricalPlotSpecifier(
             plot_type="stripplot",
             prefered_orientation="vertical",
-            data_types=data_handler.data_types,
-        ).get_category_strip_map(data_handler=data_handler)
+            data_types=example_data_handler.data_types,
+        ).get_category_strip_map(data_handler=example_data_handler)
         assert x_values_map == {
             DataDimension.X: dict(
                 zip(
-                    data_handler.get_data("x").sort_values(),
-                    np.arange(len(data_handler.data)) + 1,
+                    example_data_handler.get_data("x").sort_values(),
+                    np.arange(len(example_data_handler.data)) + 1,
                     strict=False,
                 )
             )
         }
 
-    def test_datetime_horizontal_x_strip_map(self, example_raw_datetime_data):
+    def test_datetime_horizontal_x_strip_map(self, example_input_datetime_dataframe):
         data_handler = DataHandler.build_handler(
-            data=example_raw_datetime_data, data_pointer=DataPointer(x="x", y="y")
+            data=example_input_datetime_dataframe, data_pointer=DataPointer(x="x", y="y")
         )
         y_values_map = CategoricalPlotSpecifier(
             plot_type="stripplot",
@@ -119,31 +115,26 @@ class TestCategoricalPlotSpecifier:
             )
         }
 
-    def test_numeric_data_no_x_strip_map(self, example_raw_data):
-        data_handler = DataHandler.build_handler(
-            data=example_raw_data, data_pointer=DataPointer(x="x", y="y")
-        )
-
+    def test_numeric_data_no_x_strip_map(self, example_data_handler):
         x_values_map = CategoricalPlotSpecifier(
             plot_type="stripplot",
             prefered_orientation="horizontal",
-            data_types=data_handler.data_types,
-        ).get_category_strip_map(data_handler=data_handler)
+            data_types=example_data_handler.data_types,
+        ).get_category_strip_map(data_handler=example_data_handler)
         assert x_values_map is None
 
-    def test_color_data_not_allowed(self, example_raw_data):
+    def test_color_data_not_allowed(self, example_input_data_dict):
         data_handler = DataHandler.build_handler(
-            data=example_raw_data, data_pointer=DataPointer(x="x", y="y", color="z")
+            data=example_input_data_dict, data_pointer=DataPointer(x="x", y="y", color="z")
         )
-        with pytest.raises(ValueError) as excinfo:
+        with pytest.raises(
+            ValueError,
+            match="Only slice-level color data can be specified with `boxplot`, got marker-level argument `color` of type int64",
+        ):
             CategoricalPlotSpecifier(
                 plot_type="boxplot",
                 forced_orientation="vertical",
                 data_types=data_handler.data_types,
-            )
-            assert (
-                "Only slice-level color data can be specified with `boxplot`, got marker-level argument `color=z`"
-                in str(excinfo.value)
             )
 
 

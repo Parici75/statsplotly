@@ -164,12 +164,13 @@ class DataHandler(BaseModel):
         return self
 
     @field_validator("data")
-    def check_dataframe_format(cls, value: pd.DataFrame) -> pd.DataFrame:
+    def check_header_format(cls, value: pd.DataFrame) -> pd.DataFrame:
         if len(value.columns.names) > 1:
             raise ValueError(
                 "Multi-indexed columns are not supported, flatten the header before calling"
                 " statsplotly"
             )
+        value.columns = [str(col) for col in value.columns]
         return value
 
     @field_validator("data")
@@ -218,7 +219,7 @@ class DataHandler(BaseModel):
                     f"{np.array([*excluded_slices])} slices are not present in slices {slice_order} and"
                     " will not be plotted"
                 )
-            slices = []
+            slices: list[str] = []
             for slice_id in slice_order:
                 if slice_id not in slice_ids.to_numpy():
                     raise ValueError(

@@ -143,8 +143,9 @@ def catplot(
         data_values_map=categorical_plot_specifier.get_category_strip_map(data_handler),
         jitter_settings=(
             {
-                categorical_plot_specifier.anchor_dimension: jitter
-                or constants.DEFAULT_STRIPPLOT_JITTER
+                categorical_plot_specifier.anchor_dimension: (
+                    jitter or constants.DEFAULT_STRIPPLOT_JITTER
+                )
             }
             if categorical_plot_specifier.plot_type is CategoricalPlotType.STRIP
             else None
