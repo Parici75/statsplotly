@@ -159,12 +159,16 @@ class HeatmapLayout(_XYLayout):
         heatmap_layout = deep_update(
             base_layout.model_dump(),
             {
-                "xaxis": cls.update_axis_layout(
-                    base_layout.xaxis,
-                ).model_dump(),
-                "yaxis": cls.update_yaxis_layout(
-                    base_layout.yaxis,
-                ).model_dump(),
+                "xaxis": (
+                    cls.update_axis_layout(
+                        base_layout.xaxis,
+                    ).model_dump()
+                ),
+                "yaxis": (
+                    cls.update_yaxis_layout(
+                        base_layout.yaxis,
+                    ).model_dump()
+                ),
             },
         )
         if coloraxis.colorbar is not None:

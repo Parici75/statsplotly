@@ -64,8 +64,6 @@ set-pre-commit:
 run-pre-commit:
 	@poetry run pre-commit run --all-files
 
-pre-commit: set-pre-commit run-pre-commit
-
 
 # Documentation
 update-doc:

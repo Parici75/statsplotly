@@ -451,10 +451,7 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
             range_dict.update({"range": axis_range})
 
         self.fig.update_layout(
-            {
-                axis_reference: range_dict
-                for axis_reference in self.get_target_axes_from_target_traces(target_traces)
-            }
+            dict.fromkeys(self.get_target_axes_from_target_traces(target_traces), range_dict)
         )
 
         # Optionally link axes
@@ -463,10 +460,7 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
             match_dict.update({"matches": target_traces[-1][self.dimension]})
 
         self.fig.update_layout(
-            {
-                axis_reference: match_dict
-                for axis_reference in self.get_target_axes_from_target_traces(target_traces)
-            }
+            dict.fromkeys(self.get_target_axes_from_target_traces(target_traces), match_dict)
         )
 
 
