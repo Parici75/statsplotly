@@ -2,7 +2,7 @@ Version 0.3.0
 =============
 **2025-04-06**
 
-The 0.3.0 release supports :obj:`~pandas.DataFrame`-compatible structure for input data.
+The 0.3.0 release adds support for :obj:`~pandas.DataFrame`-compatible structure in input data.
 
 🧪 Update and clean tests.
 
