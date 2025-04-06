@@ -7,7 +7,7 @@
 
     <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.09.10 -->
         <title>statsplotly documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
@@ -249,7 +249,7 @@
 <h1>Functions signature<a class="headerlink" href="#functions-signature" title="Link to this heading">¶</a></h1>
 <p>All plotting functions return a <a class="reference external" href="https://plotly.com/python-api-reference/generated/plotly.graph_objects.html#plotly.graph_objects.Figure" title="(in )"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotly.graph_objects.Figure</span></code></a> object, and must be supplied with :</p>
 <ul class="simple">
-<li><p>a tidy (i.e., <a class="reference external" href="https://en.wikipedia.org/wiki/Wide_and_narrow_data">long-form</a>) <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> argument for <code class="docutils literal notranslate"><span class="pre">data</span></code>, with a flat header (hierarchical indexes are supported only on DataFrame’s <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.index.html#pandas.DataFrame.index" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>).</p></li>
+<li><p>a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a>-comptatible data structure. Dictionaries or tidy (i.e., <a class="reference external" href="https://en.wikipedia.org/wiki/Wide_and_narrow_data">long-form</a>) DataFrames are the recommended entry point. Note that hierarchical indexes are supported only on DataFrame’s <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.index.html#pandas.DataFrame.index" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>.</p></li>
 <li><p>column or index identifiers to specify <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> -when applicable- plotting dimensions.</p></li>
 </ul>
 <blockquote>
@@ -408,7 +408,7 @@ The color palette is used, by order of precedence :</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2024, Benjamin Roland
+                Copyright &#169; 2025, Benjamin Roland
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
