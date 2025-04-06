@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from enum import StrEnum
+from enum import Enum
 from typing import Any
 
 import numpy as np
@@ -22,36 +22,36 @@ from statsplotly.plot_specifiers.data import (
 logger = logging.getLogger(__name__)
 
 
-class PlotAxis(StrEnum):
+class PlotAxis(str, Enum):
     XAXIS = "xaxis"
     YAXIS = "yaxis"
     COLORAXIS = "coloraxis"
 
 
-class ColoraxisReference(StrEnum):
+class ColoraxisReference(str, Enum):
     MAIN_COLORAXIS = "coloraxis"
 
 
-class HistogramBarMode(StrEnum):
+class HistogramBarMode(str, Enum):
     STACK = "stack"
     OVERLAY = "overlay"
 
 
-class BarMode(StrEnum):
+class BarMode(str, Enum):
     STACK = "stack"
     GROUP = "group"
     OVERLAY = "overlay"
     RELATIVE = "relative"
 
 
-class AxisFormat(StrEnum):
+class AxisFormat(str, Enum):
     SQUARE = "square"
     FIXED_RATIO = "fixed_ratio"
     EQUAL = "equal"
     ID_LINE = "id_line"
 
 
-class AxisType(StrEnum):
+class AxisType(str, Enum):
     TWO_DIMENSIONAL = "two_dimensional"
     THREE_DIMENSIONAL = "three_dimensional"
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable
-from enum import StrEnum
+from enum import Enum
 from functools import wraps
 from typing import Any, TypeVar, cast
 
@@ -28,26 +28,26 @@ from statsplotly.plot_specifiers.data import (
 logger = logging.getLogger(__name__)
 
 
-class TraceMode(StrEnum):
+class TraceMode(str, Enum):
     MARKERS = "markers"
     LINES = "lines"
     MARKERS_LINES = "markers+lines"
     LINES_TEXT = "lines+text"
 
 
-class CategoricalPlotType(StrEnum):
+class CategoricalPlotType(str, Enum):
     STRIP = "stripplot"
     VIOLIN = "violinplot"
     BOX = "boxplot"
 
 
-class MarginalPlotDimension(StrEnum):
+class MarginalPlotDimension(str, Enum):
     X = "x"
     Y = "y"
     ALL = "all"
 
 
-class JointplotType(StrEnum):
+class JointplotType(str, Enum):
     SCATTER = "scatter"
     KDE = "kde"
     SCATTER_KDE = "scatter+kde"
@@ -81,7 +81,7 @@ class _XYTraceValidator(BaseModel):
         return self
 
 
-class PlotOrientation(StrEnum):
+class PlotOrientation(str, Enum):
     HORIZONTAL = "horizontal"
     VERTICAL = "vertical"
 

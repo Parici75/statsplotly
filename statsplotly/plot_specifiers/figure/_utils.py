@@ -6,7 +6,7 @@ import functools
 import logging
 from abc import ABCMeta, abstractmethod
 from collections.abc import Callable, Generator
-from enum import StrEnum
+from enum import Enum
 from typing import Any
 
 import numpy as np
@@ -31,12 +31,12 @@ from statsplotly.plot_specifiers.layout import (
 logger = logging.getLogger(__name__)
 
 
-class GridAxis(StrEnum):
+class GridAxis(str, Enum):
     COLS = "cols"
     ROWS = "rows"
 
 
-class SharedGridAxis(StrEnum):
+class SharedGridAxis(str, Enum):
     COLS = "cols"
     ROWS = "rows"
     ALL = "all"

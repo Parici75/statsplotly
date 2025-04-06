@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable, Generator, Sequence
-from enum import StrEnum
+from enum import Enum
 from functools import wraps
 from typing import Any, TypeAlias, TypeVar
 
@@ -25,30 +25,30 @@ from .statistics import range_normalize, sem
 logger = logging.getLogger(__name__)
 
 
-class DataDimension(StrEnum):
+class DataDimension(str, Enum):
     X = "x"
     Y = "y"
     Z = "z"
 
 
-class SliceTraceType(StrEnum):
+class SliceTraceType(str, Enum):
     ALL_DATA = "all data"
     SLICE = "slice"
 
 
-class NormalizationType(StrEnum):
+class NormalizationType(str, Enum):
     CENTER = "center"
     MIN_MAX = "minmax"
     ZSCORE = "zscore"
 
 
-class RegressionType(StrEnum):
+class RegressionType(str, Enum):
     LINEAR = "linear"
     EXPONENTIAL = "exponential"
     INVERSE = "inverse"
 
 
-class AggregationType(StrEnum):
+class AggregationType(str, Enum):
     MEAN = "mean"
     GEO_MEAN = "geo_mean"
     COUNT = "count"
@@ -58,12 +58,12 @@ class AggregationType(StrEnum):
     SUM = "sum"
 
 
-class CentralTendencyType(StrEnum):
+class CentralTendencyType(str, Enum):
     MEAN = "mean"
     MEDIAN = "median"
 
 
-class ErrorBarType(StrEnum):
+class ErrorBarType(str, Enum):
     SEM = "sem"
     IQR = "iqr"
     STD = "std"
@@ -71,7 +71,7 @@ class ErrorBarType(StrEnum):
     BOOTSTRAP = "bootstrap"
 
 
-class HistogramNormType(StrEnum):
+class HistogramNormType(str, Enum):
     COUNT = ""
     PERCENT = "percent"
     PROBABILITY = "probability"
