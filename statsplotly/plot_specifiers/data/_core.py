@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable, Generator
+from collections.abc import Callable, Generator, Sequence
 from enum import Enum
 from functools import wraps
 from typing import Any, TypeAlias, TypeVar
@@ -9,7 +9,7 @@ from typing import Any, TypeAlias, TypeVar
 import numpy as np
 import pandas as pd
 import scipy as sc
-from numpy.typing import NDArray
+from numpy.typing import ArrayLike, NDArray
 from pydantic import ValidationInfo, field_validator, model_validator
 
 from statsplotly import constants
@@ -103,17 +103,18 @@ AGG_DIMENSION_TO_ERROR_DIMENSION = dict(
 
 F = TypeVar("F", bound=Callable[..., Any])
 
-DTYPE: TypeAlias = np.dtype[Any] | pd.ArrowDtype
+_Dtype: TypeAlias = np.dtype[Any] | pd.ArrowDtype
+DataFormat: TypeAlias = pd.DataFrame | dict[str, Sequence[ArrayLike]] | ArrayLike
 
 
 class DataTypes(BaseModel):
-    x: DTYPE | None = None
-    y: DTYPE | None = None
-    z: DTYPE | None = None
-    color: DTYPE | None = None
-    marker: DTYPE | None = None
-    size: DTYPE | None = None
-    text: DTYPE | None = None
+    x: _Dtype | None = None
+    y: _Dtype | None = None
+    z: _Dtype | None = None
+    color: _Dtype | None = None
+    marker: _Dtype | None = None
+    size: _Dtype | None = None
+    text: _Dtype | None = None
 
 
 class DataPointer(BaseModel):
@@ -147,8 +148,8 @@ class DataPointer(BaseModel):
 class DataHandler(BaseModel):
     data: pd.DataFrame
     data_pointer: DataPointer
-    slice_order: list[Any] | None = None
-    slice_logical_indices: dict[str, Any] | None = None
+    slice_order: list[str] | None = None
+    slice_logical_indices: dict[str, NDArray[Any]] | None = None
 
     @model_validator(mode="after")
     def check_pointers_in_data(self) -> DataHandler:
@@ -161,19 +162,20 @@ class DataHandler(BaseModel):
         return self
 
     @field_validator("data")
-    def check_dataframe_format(cls, value: pd.DataFrame) -> pd.DataFrame:
+    def check_header_format(cls, value: pd.DataFrame) -> pd.DataFrame:
         if len(value.columns.names) > 1:
             raise ValueError(
                 "Multi-indexed columns are not supported, flatten the header before calling"
                 " statsplotly"
             )
+        value.columns = [str(col) for col in value.columns]
         return value
 
     @field_validator("data")
     def convert_categorical_dtype_columns(cls, value: pd.DataFrame) -> pd.DataFrame:
         for column in value.columns:
             if isinstance(value[column].dtype, pd.CategoricalDtype):
-                logger.debug(f"Casting categorical {column} data to string")
+                logger.debug(f"Casting categorical '{column}' data to string")
                 value[column] = value[column].astype(str)
         return value
 
@@ -215,7 +217,7 @@ class DataHandler(BaseModel):
                     f"{np.array([*excluded_slices])} slices are not present in slices {slice_order} and"
                     " will not be plotted"
                 )
-            slices = []
+            slices: list[str] = []
             for slice_id in slice_order:
                 if slice_id not in slice_ids.to_numpy():
                     raise ValueError(
@@ -246,11 +248,14 @@ class DataHandler(BaseModel):
     @classmethod
     def build_handler(
         cls,
-        data: pd.DataFrame,
+        data: DataFormat,
         data_pointer: DataPointer,
         slice_order: list[str] | None = None,
     ) -> DataHandler:
         slice_logical_indices = None
+
+        if not isinstance(data, pd.DataFrame):
+            data = pd.DataFrame(data)
 
         data = data.reset_index()
         if data_pointer.slicer is not None:

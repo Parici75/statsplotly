@@ -4,7 +4,6 @@ import logging
 from collections.abc import Sequence
 
 import numpy as np
-import pandas as pd
 import plotly
 import plotly.graph_objs as go
 import plotly.io as pio
@@ -20,6 +19,7 @@ from statsplotly.plot_specifiers.data import (
     AggregationSpecifier,
     AggregationTraceData,
     DataDimension,
+    DataFormat,
     DataHandler,
     DataPointer,
     TraceData,
@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 def barplot(
-    data: pd.DataFrame,
+    data: DataFormat,
     x: str | None = None,
     y: str | None = None,
     orientation: str | None = None,
@@ -71,7 +71,7 @@ def barplot(
     """Draws a barplot across levels of categorical variable.
 
     Args:
-        data: A :obj:`pandas.DataFrame`
+        data: A :obj:`pandas.DataFrame`-compatible structure of data
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
         orientation: A :obj:`~statsplotly.plot_specifiers.trace.PlotOrientation` value to force the orientation of the plot.

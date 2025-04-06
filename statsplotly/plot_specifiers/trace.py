@@ -145,7 +145,7 @@ class CategoricalPlotSpecifier(OrientedPlotSpecifier, _TraceSpecifier, _XYTraceV
     def validate_model(self) -> CategoricalPlotSpecifier:
         if self.data_types.color is not None and self.plot_type is not CategoricalPlotType.STRIP:
             raise StatsPlotSpecificationError(
-                f"Only slice-level color data can be specified with `{self.plot_type.value}`, got marker-level argument `color={self.data_types.color}`"
+                f"Only slice-level color data can be specified with `{self.plot_type.value}`, got marker-level argument `color` of type {self.data_types.color}"
             )
         return self
 

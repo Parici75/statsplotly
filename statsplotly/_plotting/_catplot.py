@@ -5,7 +5,6 @@ from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
-import pandas as pd
 import plotly
 import plotly.graph_objs as go
 import plotly.io as pio
@@ -17,6 +16,7 @@ from statsplotly.plot_objects.trace import BoxTrace, StripTrace, ViolinTrace
 # Specifiers
 from statsplotly.plot_specifiers.color import ColorSpecifier
 from statsplotly.plot_specifiers.data import (
+    DataFormat,
     DataHandler,
     DataPointer,
     DataProcessor,
@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 def catplot(
-    data: pd.DataFrame,
+    data: DataFormat,
     x: str | None = None,
     y: str | None = None,
     orientation: str | None = None,
@@ -71,7 +71,7 @@ def catplot(
     """Draws a stripplot/boxplot/violinplot across levels of a categorical variable.
 
     Args:
-        data: A :obj:`pandas.DataFrame`
+        data: A :obj:`pandas.DataFrame`-compatible structure of data
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
         orientation: A :obj:`~Astatsplotly.plot_specifiers.trace.PlotOrientation` value to force the orientation of the plot.
@@ -143,8 +143,9 @@ def catplot(
         data_values_map=categorical_plot_specifier.get_category_strip_map(data_handler),
         jitter_settings=(
             {
-                categorical_plot_specifier.anchor_dimension: jitter
-                or constants.DEFAULT_STRIPPLOT_JITTER
+                categorical_plot_specifier.anchor_dimension: (
+                    jitter or constants.DEFAULT_STRIPPLOT_JITTER
+                )
             }
             if categorical_plot_specifier.plot_type is CategoricalPlotType.STRIP
             else None

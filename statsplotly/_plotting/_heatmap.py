@@ -5,7 +5,6 @@ from collections.abc import Sequence
 from functools import reduce
 
 import numpy as np
-import pandas as pd
 import plotly
 import plotly.graph_objs as go
 import plotly.io as pio
@@ -18,6 +17,7 @@ from statsplotly.plot_objects.trace import HeatmapTrace
 from statsplotly.plot_specifiers.color import ColorSpecifier
 from statsplotly.plot_specifiers.data import (
     DataDimension,
+    DataFormat,
     DataHandler,
     DataPointer,
     DataProcessor,
@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 
 def heatmap(
-    data: pd.DataFrame,
+    data: DataFormat,
     x: str | None = None,
     y: str | None = None,
     z: str | None = None,
@@ -68,7 +68,7 @@ def heatmap(
     """Draws a heatmap.
 
     Args:
-        data: A :obj:`pandas.DataFrame`
+        data: A :obj:`pandas.DataFrame`-compatible structure of data
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
         z: The name of the `z` dimension (i.e., color) column in `data`.

@@ -4,7 +4,6 @@ import logging
 from collections.abc import Sequence
 
 import numpy as np
-import pandas as pd
 import plotly
 import plotly.graph_objs as go
 import plotly.io as pio
@@ -20,6 +19,7 @@ from statsplotly.plot_objects.trace import ScatterTrace
 from statsplotly.plot_specifiers.color import ColorSpecifier
 from statsplotly.plot_specifiers.data import (
     DataDimension,
+    DataFormat,
     DataHandler,
     DataPointer,
     DataProcessor,
@@ -60,7 +60,7 @@ logger = logging.getLogger(__name__)
 
 
 def jointplot(
-    data: pd.DataFrame,
+    data: DataFormat,
     x: str | None = None,
     y: str | None = None,
     slicer: str | None = None,
@@ -112,7 +112,7 @@ def jointplot(
     """Draws a plot of two variables with bivariate and univariate graphs.
 
     Args:
-        data: A :obj:`pandas.DataFrame`
+        data: A :obj:`pandas.DataFrame`-compatible structure of data
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
         slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.

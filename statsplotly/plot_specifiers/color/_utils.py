@@ -1,7 +1,7 @@
 import logging
 import re
 from enum import Enum
-from typing import Any, TypeAlias
+from typing import Any, TypeAlias, cast
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -199,7 +199,7 @@ def compute_colorscale(  # noqa PLR0912 C901
         ):
             colorscale.append([map_index, color])
 
-    return colorscale
+    return cast(str | list[list[float | str]], colorscale)
 
 
 def set_rgb_alpha(color_ref: str | tuple[float, float, float], alpha: float = 1) -> str:

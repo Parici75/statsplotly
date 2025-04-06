@@ -38,8 +38,8 @@ def adjust_jointplot_legends(
         JointplotType.SCATTER,
         JointplotType.SCATTER_KDE,
     ):
-        for trace in slices_marginal_traces:
-            slices_marginal_traces[trace].update({"showlegend": False})
+        for trace in slices_marginal_traces.values():
+            trace.update({"showlegend": False})
     elif jointplot_specifier.histogram_specifier is not None:
         # Make sure legends are displayed
         if all(
@@ -47,21 +47,15 @@ def adjust_jointplot_legends(
             for histogram_specifier in jointplot_specifier.histogram_specifier.values()
         ):
             legend_groups = []
-            for trace in slices_marginal_traces:
-                if (legendgroup := slices_marginal_traces[trace].legendgroup) not in legend_groups:
-                    slices_marginal_traces[trace].update({"showlegend": True})
+            for trace in slices_marginal_traces.values():
+                if (legendgroup := trace.legendgroup) not in legend_groups:
+                    trace.update({"showlegend": True})
                     legend_groups.append(legendgroup)
 
         # Separate legend groups if we have only one slice
         if len(slices_marginal_traces) == 1:
-            for trace in slices_marginal_traces:
-                slices_marginal_traces[trace].update(
-                    {
-                        "legendgroup": " ".join(
-                            (slices_marginal_traces[trace].legendgroup, "marginal")
-                        )
-                    }
-                )
+            for trace in slices_marginal_traces.values():
+                trace.update({"legendgroup": " ".join((trace.legendgroup, "marginal"))})
 
 
 def add_update_menu(
