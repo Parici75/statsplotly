@@ -1,3 +1,16 @@
+Version 0.3.0
+=============
+**2025-04-06**
+
+The 0.3.0 release supports :obj:`~pandas.DataFrame`-compatible structure for input data.
+
+🧪 Update and clean tests.
+
+📌 Update dependencies.
+
+👷 Add Python 3.13 CI pipeline.
+
+
 Version 0.2.6
 =============
 **2024-12-13**
@@ -6,7 +19,7 @@ The 0.2.6 release fixes a bug in continuous error bands (see issue `#3194 <https
 
 🐛 Introduce the :class:`~statsplotly.plot_objects.trace.ShadedTrace` class to draw filled scatter traces.
 
-🎨 Set default scatter trace mode to :class:`~statsplotly.plot_specifiers.trace.TraceMode.MARKERS` when some data types is `string`.
+🎨 Set default scatter trace mode to :class:`~statsplotly.plot_specifiers.trace.TraceMode.MARKERS` when some data types are `string`.
 
 
 Version 0.2.5
