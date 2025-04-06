@@ -104,9 +104,7 @@ AGG_DIMENSION_TO_ERROR_DIMENSION = dict(
 F = TypeVar("F", bound=Callable[..., Any])
 
 _Dtype: TypeAlias = np.dtype[Any] | pd.ArrowDtype
-DataFormat: TypeAlias = (
-    pd.DataFrame | dict[Any, Sequence[ArrayLike]] | ArrayLike | Sequence[ArrayLike] | pd.Series
-)
+DataFormat: TypeAlias = pd.DataFrame | dict[str, Sequence[ArrayLike]] | ArrayLike
 
 
 class DataTypes(BaseModel):
@@ -150,8 +148,8 @@ class DataPointer(BaseModel):
 class DataHandler(BaseModel):
     data: pd.DataFrame
     data_pointer: DataPointer
-    slice_order: list[Any] | None = None
-    slice_logical_indices: dict[str, Any] | None = None
+    slice_order: list[str] | None = None
+    slice_logical_indices: dict[str, NDArray[Any]] | None = None
 
     @model_validator(mode="after")
     def check_pointers_in_data(self) -> DataHandler:
