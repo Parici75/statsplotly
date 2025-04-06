@@ -71,7 +71,7 @@ def barplot(
     """Draws a barplot across levels of categorical variable.
 
     Args:
-        data: A :obj:`pandas.DataFrame`
+        data: A :obj:`pandas.DataFrame`-compatible structure of data
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
         orientation: A :obj:`~statsplotly.plot_specifiers.trace.PlotOrientation` value to force the orientation of the plot.

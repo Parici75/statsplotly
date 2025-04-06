@@ -112,7 +112,7 @@ def jointplot(
     """Draws a plot of two variables with bivariate and univariate graphs.
 
     Args:
-        data: A :obj:`pandas.DataFrame`
+        data: A :obj:`pandas.DataFrame`-compatible structure of data
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
         slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.

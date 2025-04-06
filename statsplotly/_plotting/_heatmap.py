@@ -68,7 +68,7 @@ def heatmap(
     """Draws a heatmap.
 
     Args:
-        data: A :obj:`pandas.DataFrame`
+        data: A :obj:`pandas.DataFrame`-compatible structure of data
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
         z: The name of the `z` dimension (i.e., color) column in `data`.

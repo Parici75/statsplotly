@@ -73,7 +73,7 @@ def distplot(
     """Draws the distribution of x (vertical histogram) or y (horizontal histograms) values.
 
     Args:
-        data: A :obj:`pandas.DataFrame`
+        data: A :obj:`pandas.DataFrame`-compatible structure of data
         x: The name of the `x` dimension column in `data`. If not None, draws vertical histograms.
         y: The name of the `y` dimension column in `data`. If not None, draws horizontal histograms.
         slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.
