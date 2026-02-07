@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="statsplotly.plot_specifiers.layout package" href="statsplotly.plot_specifiers.layout.html" />
 
     <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.09.10 -->
-        <title>Version 0.2.6 - statsplotly documentation</title>
+        <title>Version 0.3.0 - statsplotly documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -189,7 +189,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.2.6</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#version-0-2-6">Version 0.2.6</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-5">Version 0.2.5</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-4">Version 0.2.4</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-3">Version 0.2.3</a></li>
@@ -236,12 +237,20 @@
           </label>
         </div>
         <article role="main">
-          <section id="version-0-2-6">
+          <section id="version-0-3-0">
+<h1>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Link to this heading">¶</a></h1>
+<p><strong>2025-04-06</strong></p>
+<p>The 0.3.0 release adds support for <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataFrame</span></code></a>-compatible structure in input data.</p>
+<p>🧪 Update and clean tests.</p>
+<p>📌 Update dependencies.</p>
+<p>👷 Add Python 3.13 CI pipeline.</p>
+</section>
+<section id="version-0-2-6">
 <h1>Version 0.2.6<a class="headerlink" href="#version-0-2-6" title="Link to this heading">¶</a></h1>
 <p><strong>2024-12-13</strong></p>
 <p>The 0.2.6 release fixes a bug in continuous error bands (see issue <a class="reference external" href="https://github.com/plotly/plotly.py/issues/3194">#3194</a>).</p>
 <p>🐛 Introduce the <a class="reference internal" href="statsplotly.plot_objects.html#statsplotly.plot_objects.trace.ShadedTrace" title="statsplotly.plot_objects.trace.ShadedTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShadedTrace</span></code></a> class to draw filled scatter traces.</p>
-<p>🎨 Set default scatter trace mode to <a class="reference internal" href="statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.TraceMode.MARKERS" title="statsplotly.plot_specifiers.trace.TraceMode.MARKERS"><code class="xref py py-class docutils literal notranslate"><span class="pre">MARKERS</span></code></a> when some data types is <cite>string</cite>.</p>
+<p>🎨 Set default scatter trace mode to <a class="reference internal" href="statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.TraceMode.MARKERS" title="statsplotly.plot_specifiers.trace.TraceMode.MARKERS"><code class="xref py py-class docutils literal notranslate"><span class="pre">MARKERS</span></code></a> when some data types are <cite>string</cite>.</p>
 </section>
 <section id="version-0-2-5">
 <h1>Version 0.2.5<a class="headerlink" href="#version-0-2-5" title="Link to this heading">¶</a></h1>
@@ -297,7 +306,7 @@ The 0.2.4 release increases performance of 2D scatter plots.</p>
 </dd>
 </dl>
 </li>
-<li><p>Enhance the color specification option of the main plotting module : the <cite>color</cite> argument now accepts reference to <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime</span></code></a> and arbitrary <cite>string</cite> color data.</p></li>
+<li><p>Enhance the color specification option of the main plotting module : the <cite>color</cite> argument now accepts reference to <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime</span></code></a> and arbitrary <cite>string</cite> color data.</p></li>
 <li><p>Support <a class="reference internal" href="statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.AggregationType.GEO_MEAN" title="statsplotly.plot_specifiers.data.AggregationType.GEO_MEAN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEO_MEAN</span></code></a> and <a class="reference internal" href="statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.ErrorBarType.GEO_STD" title="statsplotly.plot_specifiers.data.ErrorBarType.GEO_STD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEO_STD</span></code></a> options in <a class="reference internal" href="statsplotly.html#statsplotly.barplot" title="statsplotly.barplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">barplot()</span></code></a> for <cite>aggregation_fct</cite> and <cite>error_bar</cite> arguments.</p></li>
 <li><p>Support Empirical Cumulative Distribution Function option in <a class="reference internal" href="statsplotly.html#statsplotly.distplot" title="statsplotly.distplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">distplot()</span></code></a> and <a class="reference internal" href="statsplotly.html#statsplotly.jointplot" title="statsplotly.jointplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">jointplot()</span></code></a>.</p></li>
 </ul>
@@ -312,7 +321,7 @@ The 0.2.4 release increases performance of 2D scatter plots.</p>
 <li><p>Automatic detection of plot orientation for <a class="reference internal" href="statsplotly.html#statsplotly.barplot" title="statsplotly.barplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">barplot()</span></code></a> and <a class="reference internal" href="statsplotly.html#statsplotly.catplot" title="statsplotly.catplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">catplot()</span></code></a>.</p></li>
 <li><p>Improve colorbar management in layout.</p></li>
 <li><p>Support discrete color mapping in <a class="reference internal" href="statsplotly.html#statsplotly.heatmap" title="statsplotly.heatmap"><code class="xref py py-func docutils literal notranslate"><span class="pre">heatmap()</span></code></a>.</p></li>
-<li><p>Improve <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime</span></code></a> data handling in <a class="reference internal" href="statsplotly.html#statsplotly.catplot" title="statsplotly.catplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">catplot()</span></code></a>.</p></li>
+<li><p>Improve <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime</span></code></a> data handling in <a class="reference internal" href="statsplotly.html#statsplotly.catplot" title="statsplotly.catplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">catplot()</span></code></a>.</p></li>
 <li><p>Correct bar layout in multi-trace histograms.</p></li>
 <li><p>Improve step histogram line aesthetics.</p></li>
 <li><p>Display slice name on color-coded bar charts.</p></li>
