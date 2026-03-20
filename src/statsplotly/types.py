@@ -11,6 +11,8 @@ AggregationTypeLiteral = Literal[
 CategoricalPlotTypeLiteral = Literal["box", "violin", "strip"]
 PlotOrientationTypeLiteral = Literal["horizontal", "vertical"]
 BarModeLiteral = Literal["stack", "group", "overlay", "relative"]
+HistogramBarModeLiteral = Literal["stack", "overlay"]
+
 
 CentralTendencyTypeLiteral = Literal["mean", "median", "mode"]
 HistogramNormTypeLiteral = Literal["", "percent", "probability", "probability density"]

@@ -33,8 +33,8 @@ from statsplotly.plot_specifiers.figure import JointplotPlot, create_fig
 from statsplotly.plot_specifiers.layout import (
     AxesSpecifier,
     AxisFormat,
-    BarMode,
     ColoraxisReference,
+    HistogramBarMode,
     LegendSpecifier,
     add_update_menu,
     adjust_jointplot_legends,
@@ -49,6 +49,7 @@ from statsplotly.plot_specifiers.trace import (
 from statsplotly.types import (
     AxisFormatLiteral,
     CentralTendencyTypeLiteral,
+    HistogramBarModeLiteral,
     HistogramNormTypeLiteral,
     JointplotTypeLiteral,
     MarginalPlotDimensionLiteral,
@@ -99,7 +100,7 @@ def jointplot(
     bins_y: Sequence[float] | int | str = constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD,
     histnorm: HistogramNormTypeLiteral | None = None,
     central_tendency: CentralTendencyTypeLiteral | None = None,
-    barmode: BarMode | str | None = None,
+    barmode: HistogramBarModeLiteral | None = None,
     plot_type: JointplotTypeLiteral = JointplotType.SCATTER.value,
     opacity: float = constants.DEFAULT_HISTOGRAM_OPACITY,
     jitter_x: float = 0,
@@ -482,7 +483,9 @@ def jointplot(
             traces={
                 name: trace for name, trace in slices_marginal_traces.items() if dimension in name
             },
-            layout=HistogramLayout.build_layout(axes_specifier=axes_specifier, barmode=barmode),
+            layout=HistogramLayout.build_layout(
+                axes_specifier=axes_specifier, barmode=HistogramBarMode(barmode)
+            ),
             row=marginal_row,
             col=marginal_col,
         )

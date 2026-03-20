@@ -259,7 +259,7 @@ class HistogramLayout(_XYLayout):
 
     @classmethod
     def build_layout(
-        cls, axes_specifier: AxesSpecifier, barmode: BarMode | None
+        cls, axes_specifier: AxesSpecifier, barmode: HistogramBarMode | None
     ) -> HistogramLayout:
         return cls(
             **_XYLayout.build_xy_layout(axes_specifier=axes_specifier).model_dump(), barmode=barmode

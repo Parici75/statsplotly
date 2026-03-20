@@ -113,11 +113,11 @@ class JointplotPlot(BasePlot[JointplotSpecifier]):
         subplot_grid_formatter = SubplotGridFormatter(fig=self.fig)
         if self.plot_specifier.plot_x_distribution:
             subplot_grid_formatter.set_common_axis_limit(
-                shared_grid_axis=SharedGridAxis.COLS, common_range=True, link_axes=True
+                shared_grid_axis=SharedGridAxis.COLS.value, common_range=True, link_axes=True
             )
         if self.plot_specifier.plot_y_distribution:
             subplot_grid_formatter.set_common_axis_limit(
-                shared_grid_axis=SharedGridAxis.ROWS, common_range=True, link_axes=True
+                shared_grid_axis=SharedGridAxis.ROWS.value, common_range=True, link_axes=True
             )
         subplot_grid_formatter.tidy_subplots()
 
