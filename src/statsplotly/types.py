@@ -8,7 +8,7 @@ ErrorBarLiteral = Literal["sem", "iqr", "std", "geo_std", "bootstrap"]
 AggregationTypeLiteral = Literal[
     "mean", "geo_mean", "count", "median", "percent", "fraction", "sum"
 ]
-CategoricalPlotTypeLiteral = Literal["box", "violin", "strip"]
+CategoricalPlotTypeLiteral = Literal["boxplot", "violinplot", "stripplot"]
 PlotOrientationTypeLiteral = Literal["horizontal", "vertical"]
 BarModeLiteral = Literal["stack", "group", "overlay", "relative"]
 HistogramBarModeLiteral = Literal["stack", "overlay"]
