@@ -1,13 +1,13 @@
-"""Line or scatter plots"""
+"""Line or scatter plots."""
 
 import logging
 from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
-import plotly
 import plotly.graph_objs as go
 import plotly.io as pio
+from plotly.basedatatypes import BaseTraceType
 
 from statsplotly import constants
 from statsplotly.exceptions import StatsPlotSpecificationError
@@ -33,7 +33,13 @@ from statsplotly.plot_specifiers.layout import (
 )
 
 # Trace objects
-from statsplotly.plot_specifiers.trace import ScatterSpecifier, TraceMode
+from statsplotly.plot_specifiers.trace import ScatterSpecifier
+from statsplotly.types import (
+    AxisFormatLiteral,
+    NormalizationTypeLiteral,
+    RegressionTypeLiteral,
+    TraceModeLiteral,
+)
 
 # Helpers
 from .helpers import plot_scatter_traces
@@ -50,7 +56,7 @@ def plot(
     y: str | None = None,
     z: str | None = None,
     slicer: str | None = None,
-    slice_order: list[str] | None = None,
+    slice_order: list[Any] | None = None,
     color: str | None = None,
     color_palette: list[str] | str | None = None,
     shared_coloraxis: bool = False,
@@ -59,20 +65,20 @@ def plot(
     colorbar: bool = True,
     text: str | None = None,
     marker: str | None = None,
-    mode: str | None = None,
-    axis: str | None = None,
+    mode: TraceModeLiteral | None = None,
+    axis: AxisFormatLiteral | None = None,
     opacity: str | float | None = None,
     jitter_x: float = 0,
     jitter_y: float = 0,
     jitter_z: float = 0,
-    normalizer_x: str | None = None,
-    normalizer_y: str | None = None,
-    normalizer_z: str | None = None,
+    normalizer_x: NormalizationTypeLiteral | None = None,
+    normalizer_y: NormalizationTypeLiteral | None = None,
+    normalizer_z: NormalizationTypeLiteral | None = None,
     shaded_error: str | None = None,
     error_x: str | None = None,
     error_y: str | None = None,
     error_z: str | None = None,
-    fit: str | None = None,
+    fit: RegressionTypeLiteral | None = None,
     size: float | str | None = None,
     x_label: str | None = None,
     y_label: str | None = None,
@@ -81,7 +87,7 @@ def plot(
     x_range: Sequence[float | str] | None = None,
     y_range: Sequence[float | str] | None = None,
     z_range: Sequence[float | str] | None = None,
-    fig: go.Figure = None,
+    fig: go.Figure | None = None,
     row: int | None = None,
     col: int | None = None,
     secondary_y: bool = False,
@@ -93,7 +99,8 @@ def plot(
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
         z: The name of the `z` dimension column in `data`.
-        slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.
+        slicer: The name of the column in `data` with values to slice the data : one trace is drawn
+        for each level of the `slicer` dimension.
         slice_order: A list of identifiers to order and/or subset data slices specified by `slicer`.
         color: The name of the column in `data` with values to map onto the colormap.
         color_palette:
@@ -101,29 +108,40 @@ def plot(
             - A list of CSS color names or HTML color codes.
 
             The color palette is used, by order of precedence :
-                - To map color data specified by the `color` parameter onto the corresponding colormap.
+                - To map color data specified by the `color` parameter onto the corresponding
+                colormap.
                 - To assign discrete colors to `slices` of data.
 
         shared_coloraxis: If True, colorscale limits are shared across slices of data.
         color_limits: A tuple specifying the (min, max) values of the colormap.
         logscale: A float specifying the log base to use for colorscaling.
         colorbar: If True, draws a colorbar.
-        text: A string or the name of the column in `data` with values to appear in the hover tooltip. Column names can be concatenated with '+' to display values from multiple columns.
-        marker: A valid marker symbol or the name of the column in `data` with values to assign marker symbols.
+        text: A string or the name of the column in `data` with values to appear in the hover
+        tooltip. Column names can be concatenated with '+' to display values from multiple columns.
+        marker: A valid marker symbol or the name of the column in `data` with values to assign
+            marker symbols.
         mode: A :obj:`~statsplotly.plot_specifiers.trace.TraceMode` value.
         axis: A :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
-        opacity: A numeric value in the (0, 1) interval or the name of the column in `data` with values to specify marker opacity.
+        opacity: A numeric value in the (0, 1) interval or the name of the column in `data` with
+            values to specify marker opacity.
         jitter_x: A numeric value to specify jitter amount on the `x` dimension.
         jitter_y: A numeric value to specify jitter amount on the `y` dimension.
         jitter_z: A numeric value to specify jitter amount on the `z` dimension.
-        normalizer_x: The normalizer for the `x` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
-        normalizer_y: The normalizer for the `y` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
-        normalizer_z: The normalizer for the `z` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
+        normalizer_x: A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value for the `x`
+            dimension.
+        normalizer_y: A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value for the `y`
+            dimension.
+        normalizer_z: A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value for the `z`
+            dimension.
         shaded_error: The name of the column in `data` with values to plot continuous error shade.
-        error_x: The name of the column in `data` with values to plot error bar in the `x` dimension.
-        error_y: The name of the column in `data` with values to plot error bar in the `y` dimension.
-        error_z: The name of the column in `data` with values to plot error bar in the `z` dimension.
-        fit: A :obj:`~statsplotly.plot_specifiers.data.RegressionType` value. Computes and plot the corresponding regression.
+        error_x: The name of the column in `data` with values to plot error bar in the `x` dimension
+            .
+        error_y: The name of the column in `data` with values to plot error bar in the `y` dimension
+            .
+        error_z: The name of the column in `data` with values to plot error bar in the `z` dimension
+            .
+        fit: A :obj:`~statsplotly.plot_specifiers.data.RegressionType` value. Computes and plot the
+            corresponding regression.
         size: A numeric value or the name of the column in `data` with values to assign mark sizes.
         x_label: A string to label the x_axis in place of the corresponding column name in `data`.
         y_label: A string to label the y_axis in place of the corresponding column name in `data`.
@@ -132,7 +150,8 @@ def plot(
         x_range: A tuple defining the (min_range, max_range) of the x_axis.
         y_range: A tuple defining the (min_range, max_range) of the y_axis.
         z_range: A tuple defining the (min_range, max_range) of the z_axis.
-        fig: A :obj:`plotly.graph_obj.Figure` to add the plot to. Use in conjunction with row and col.
+        fig: A :obj:`plotly.graph_obj.Figure` to add the plot to. Use in conjunction with row and
+            col.
         row: An integer identifying the row to add the plot to.
         col: An integer identifying the column to add the plot to.
         secondary_y: If True, plot on a secondary y_axis of the `fig` object.
@@ -142,14 +161,14 @@ def plot(
     """
 
     if (color is not None or size is not None or marker is not None) and mode is None:
-        mode = TraceMode.MARKERS
-    if color is not None and mode is TraceMode.LINES:
+        mode = "markers"
+    if color is not None and mode == "lines":
         raise ValueError("Only markers can be mapped to colormap")
-    if size is not None and mode is TraceMode.LINES:
+    if size is not None and mode == "lines":
         raise ValueError("Size specification only applies to markers")
     if z is not None:
         if mode is None:
-            mode = TraceMode.MARKERS
+            mode = "markers"
         if fit is not None:
             raise ValueError("Regression can not be computed on a three-dimensional plot")
         if size is None:
@@ -217,14 +236,14 @@ def plot(
         },
     )
 
-    traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
+    traces: dict[str, BaseTraceType] = {}
     traces_data: list[TraceData] = []
     for (slice_name, slice_data), trace_color in zip(
         data_handler.iter_slices(),
         color_specifier.get_color_hues(n_colors=data_handler.n_slices),
         strict=True,
     ):
-        trace_data = TraceData.build_trace_data(
+        trace_data = TraceData.build_from_data(
             data=slice_data,
             pointer=data_handler.data_pointer,
             processor=data_processor,

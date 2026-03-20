@@ -37,24 +37,12 @@ repos:
       args: []
 
 # Ruff
-# We put this hook before Black hook, as autofix results may need to be reformatted by Black linter
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.4
     hooks:
     -   id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
         exclude: ^(tests|docs)/
-# Black
--   repo: https://github.com/psf/black
-    rev: 25.1.0
-    hooks:
-    -   id: black
-# Isort
--   repo: https://github.com/pycqa/isort
-    rev: 6.0.1
-    hooks:
-    -   id: isort
-        exclude: ^.*/?setup\.py$
 # MyPy
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.15.0  # Use the sha / tag you want to point at

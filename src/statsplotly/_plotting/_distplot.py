@@ -1,13 +1,14 @@
-"""Distribution plots"""
+"""Distribution plots."""
 
 import logging
 from collections.abc import Sequence
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
-import plotly
 import plotly.graph_objs as go
 import plotly.io as pio
+from plotly.basedatatypes import BaseTraceType
 
 from statsplotly import constants
 from statsplotly.plot_objects.layout import HistogramLayout
@@ -24,10 +25,19 @@ from statsplotly.plot_specifiers.data import (
     TraceData,
 )
 from statsplotly.plot_specifiers.figure import HistogramPlot, create_fig
-from statsplotly.plot_specifiers.layout import AxesSpecifier, LegendSpecifier
 
 # Trace objects
+from statsplotly.plot_specifiers.layout import (
+    AxesSpecifier,
+    LegendSpecifier,
+)
 from statsplotly.plot_specifiers.trace import HistogramSpecifier, TraceMode
+from statsplotly.types import (
+    AxisFormatLiteral,
+    BarModeLiteral,
+    CentralTendencyTypeLiteral,
+    HistogramNormTypeLiteral,
+)
 
 # Helpers
 from ._plot import plot
@@ -44,9 +54,9 @@ def distplot(
     x: str | None = None,
     y: str | None = None,
     slicer: str | None = None,
-    slice_order: list[str] | None = None,
+    slice_order: list[Any] | None = None,
     color_palette: list[str] | str | None = None,
-    axis: str | None = None,
+    axis: AxisFormatLiteral | None = None,
     opacity: float | None = None,
     hist: bool = True,
     rug: bool | None = None,
@@ -56,17 +66,17 @@ def distplot(
     equal_bins: bool | None = None,
     bins: Sequence[float] | int | str | None = None,
     cumulative: bool | None = None,
-    histnorm: str | None = None,
-    central_tendency: str | None = None,
+    histnorm: HistogramNormTypeLiteral | None = None,
+    central_tendency: CentralTendencyTypeLiteral | None = None,
     vlines: dict[str, tuple[str, float]] | None = None,
     hlines: dict[str, tuple[str, float]] | None = None,
-    barmode: str | None = None,
+    barmode: BarModeLiteral | None = None,
     x_label: str | None = None,
     y_label: str | None = None,
     title: str | None = None,
     x_range: Sequence[float] | None = None,
     y_range: Sequence[float] | None = None,
-    fig: go.Figure = None,
+    fig: go.Figure | None = None,
     row: int | None = None,
     col: int | None = None,
 ) -> go.Figure:
@@ -76,7 +86,8 @@ def distplot(
         data: A :obj:`pandas.DataFrame`-compatible structure of data
         x: The name of the `x` dimension column in `data`. If not None, draws vertical histograms.
         y: The name of the `y` dimension column in `data`. If not None, draws horizontal histograms.
-        slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.
+        slicer: The name of the column in `data` with values to slice the data : one trace is drawn
+            for each level of the `slicer` dimension.
         slice_order: A list of identifiers to order and/or subset data slices specified by `slicer`.
         color_palette:
             - A string refering to a built-in `plotly`, `seaborn` or `matplotlib` colormap.
@@ -91,19 +102,22 @@ def distplot(
         kde: If True, plot a line of a Kernel Density Estimation of the distribution.
         step: If True, plot a step histogram instead of a standard histogram bars.
         equal_bins: If True, uses the same bins for all `slices` in the data.
-        bins: A string, integer, or sequence specifying the `bins` parameter for :func:`numpy.histogram`.
+        bins: A string, integer, or sequence specifying the `bins` parameter for
+            :func:`numpy.histogram`.
         cumulative: If True, draws a cumulative histogram.
         histnorm: A :obj:`~statsplotly.plot_specifiers.data.HistogramNormType` value.
         central_tendency: A :obj:`~statsplotly.plot_specifiers.data.CentralTendencyType` value.
         vlines: A dictionary of {slice: (line_name, vertical_coordinates)} to draw vertical lines.
-        hlines: A dictionary of {slice: (line_name, horizontal_coordinates)} to draw horizontal lines.
+        hlines: A dictionary of {slice: (line_name, horizontal_coordinates)} to draw horizontal
+            lines.
         barmode: A :obj:`~statsplotly.plot_specifiers.layout.HistogramBarMode` value.
         x_label: A string to label the x_axis in place of the corresponding column name in `data`.
         y_label: A string to label the y_axis in place of the corresponding column name in `data`.
         title: A string for the title of the plot.
         x_range: A tuple defining the (min_range, max_range) of the x_axis.
         y_range: A tuple defining the (min_range, max_range) of the y_axis.
-        fig: A :obj:`plotly.graph_obj.Figure` to add the plot to. Use in conjunction with row and col.
+        fig: A :obj:`plotly.graph_obj.Figure` to add the plot to. Use in conjunction with row and
+            col.
         row: An integer identifying the row to add the plot to.
         col: An integer identifying the column to add the plot to.
 
@@ -144,14 +158,14 @@ def distplot(
         color_palette=color_palette, opacity=opacity, barmode=barmode
     )
 
-    traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
+    traces: dict[str, BaseTraceType] = {}
     traces_data: list[TraceData] = []
     for (slice_name, slice_data), trace_color in zip(
         data_handler.iter_slices(),
         color_specifier.get_color_hues(n_colors=data_handler.n_slices),
         strict=True,
     ):
-        trace_data = TraceData.build_trace_data(data=slice_data, pointer=data_handler.data_pointer)
+        trace_data = TraceData.build_from_data(data=slice_data, pointer=data_handler.data_pointer)
 
         traces.update(
             plot_distplot_traces(
@@ -210,7 +224,7 @@ def distplot(
 
     layout = HistogramLayout.build_layout(axes_specifier=axes_specifier, barmode=barmode)
     figure_plot = HistogramPlot.initialize(
-        plot_specifier=histogram_specifier, fig=fig, row=row, col=col
+        plot_specifier=histogram_specifier, fig=fig, row=row or 1, col=col or 1
     )
 
     if histogram_specifier.central_tendency is not None:
@@ -240,7 +254,7 @@ def distplot(
                 else (slicer or "index")
             ),
             slicer=slicer,
-            mode=TraceMode.MARKERS,
+            mode=TraceMode.MARKERS.value,
             color_palette=color_palette,
             error_x=(
                 AGG_TO_ERROR_MAPPING[histogram_specifier.central_tendency]
@@ -254,6 +268,8 @@ def distplot(
             ),
         )
         # Update name
+        if TYPE_CHECKING:
+            assert histogram_specifier.central_tendency is not None
         fig.for_each_trace(
             lambda trace: trace.update(
                 name=(

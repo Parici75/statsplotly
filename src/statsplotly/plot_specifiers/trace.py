@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from enum import Enum
 from functools import wraps
-from typing import Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import numpy as np
 import pandas as pd
@@ -133,9 +133,9 @@ class ScatterSpecifier(_TraceSpecifier, _XYTraceValidator):
 
 
 class CategoricalPlotSpecifier(OrientedPlotSpecifier, _TraceSpecifier, _XYTraceValidator):
-    plot_type: CategoricalPlotType
+    plot_type: CategoricalPlotType | None
 
-    @field_validator("plot_type", mode="before")
+    @field_validator("plot_type", mode="after")
     def validate_plot_type(cls, value: str | None) -> CategoricalPlotType:
         if value is None:
             return CategoricalPlotType.STRIP
@@ -144,9 +144,13 @@ class CategoricalPlotSpecifier(OrientedPlotSpecifier, _TraceSpecifier, _XYTraceV
     @model_validator(mode="after")
     def validate_model(self) -> CategoricalPlotSpecifier:
         if self.data_types.color is not None and self.plot_type is not CategoricalPlotType.STRIP:
-            raise StatsPlotSpecificationError(
-                f"Only slice-level color data can be specified with `{self.plot_type.value}`, got marker-level argument `color` of type {self.data_types.color}"
+            if TYPE_CHECKING:
+                assert self.plot_type is not None
+            msg = (
+                f"Only slice-level color data can be specified with `{self.plot_type.value}`, "
+                f"got marker-level argument `color` of type {self.data_types.color}"
             )
+            raise StatsPlotSpecificationError(msg)
         return self
 
     def get_category_strip_map(
@@ -174,9 +178,9 @@ class HistogramSpecifier(_TraceSpecifier):
     ecdf: bool | None = None
     kde: bool | None = None
     rug: bool | None = None
-    histnorm: HistogramNormType
+    histnorm: HistogramNormType | None
     bin_edges: NDArray[Any] | None = None
-    bins: str | list[float] | int
+    bins: str | Sequence[float] | int
     central_tendency: CentralTendencyType | None = None
     data_type: np.dtype[Any]
     dimension: DataDimension
@@ -194,7 +198,7 @@ class HistogramSpecifier(_TraceSpecifier):
         return value if value is not None else constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD
 
     @field_validator("histnorm", mode="before")
-    def check_histnorm(cls, value: str | None, info: ValidationInfo) -> str | None:
+    def check_histnorm(cls, value: str | None, info: ValidationInfo) -> HistogramNormType:
         if info.data.get("kde"):
             if value is None:
                 logger.info(
@@ -203,7 +207,7 @@ class HistogramSpecifier(_TraceSpecifier):
                 )
                 return HistogramNormType.PROBABILITY_DENSITY
 
-        return value or HistogramNormType.COUNT
+        return HistogramNormType(value) if value is not None else HistogramNormType.COUNT
 
     @field_validator("dimension")
     def check_dimension(cls, value: DataDimension, info: ValidationInfo) -> DataDimension:
@@ -223,6 +227,8 @@ class HistogramSpecifier(_TraceSpecifier):
 
         if self.kde:
             if self.histnorm is not HistogramNormType.PROBABILITY_DENSITY:
+                if TYPE_CHECKING:
+                    assert self.histnorm is not None
                 raise StatsPlotSpecificationError(
                     "Histogram norm must be set to"
                     f" {HistogramNormType.PROBABILITY_DENSITY.value} with KDE plotting,"
@@ -281,7 +287,7 @@ class HistogramSpecifier(_TraceSpecifier):
             hist = np.cumsum(hist)
 
         return (
-            pd.Series(hist, name=self.histnorm if len(self.histnorm) > 0 else "count"),
+            pd.Series(hist, name=self.histnorm if self.histnorm and len(hist) > 0 else "count"),
             bin_edges,
             bin_size,
         )
@@ -301,7 +307,7 @@ class HistogramSpecifier(_TraceSpecifier):
                 cdf = cdf * 100
 
         return (
-            pd.Series(cdf, name=self.histnorm if len(self.histnorm) > 0 else "count"),
+            pd.Series(cdf, name=self.histnorm if len(cdf) > 0 else "count"),
             unique_values,
         )
 
@@ -402,6 +408,12 @@ class JointplotSpecifier(_TraceSpecifier):
                 trace_data.x_values,
             )
             histogram_specifier = self.histogram_specifier[DataDimension.X].model_copy()
+        else:
+            msg = (
+                f"Invalid plot type for histmap computation: {self.plot_type.value}, expected"
+                f" {JointplotType.X_HISTMAP.value} or {JointplotType.Y_HISTMAP.value}"
+            )
+            raise ValueError(msg)
 
         # Get and set uniform bin edges along anchor values
         bin_edges, bin_size = histogram_specifier.get_histogram_bin_edges(histogram_data)
@@ -417,6 +429,8 @@ class JointplotSpecifier(_TraceSpecifier):
         # Bin centers
         bin_centers = (bin_edges[1:] + bin_edges[:-1]) / 2
 
+        if TYPE_CHECKING:
+            assert histogram_specifier.histnorm is not None
         return (
             pd.Series(
                 np.repeat(anchor_values.unique(), hist.shape[1]),

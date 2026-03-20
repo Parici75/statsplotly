@@ -218,14 +218,12 @@ class CategoricalLayout(_XYColorAxisLayout):
 
 
 class ScatterLayout(_XYColorAxisLayout):
-
     @classmethod
     def build_layout(
         cls,
         axes_specifier: AxesSpecifier,
         coloraxis: ColorAxis,
     ) -> ScatterLayout:
-
         return cls.model_validate(
             super().build_coloraxis_layout(axes_specifier=axes_specifier, coloraxis=coloraxis)
         )
@@ -239,9 +237,8 @@ class BarLayout(_XYColorAxisLayout):
         cls,
         axes_specifier: AxesSpecifier,
         coloraxis: ColorAxis,
-        barmode: str | None,
+        barmode: BarMode | None,
     ) -> BarLayout:
-
         return cls(
             **_XYColorAxisLayout.build_coloraxis_layout(
                 axes_specifier=axes_specifier, coloraxis=coloraxis
@@ -261,8 +258,9 @@ class HistogramLayout(_XYLayout):
         return HistogramBarMode(value)
 
     @classmethod
-    def build_layout(cls, axes_specifier: AxesSpecifier, barmode: str | None) -> HistogramLayout:
-
+    def build_layout(
+        cls, axes_specifier: AxesSpecifier, barmode: BarMode | None
+    ) -> HistogramLayout:
         return cls(
             **_XYLayout.build_xy_layout(axes_specifier=axes_specifier).model_dump(), barmode=barmode
         )

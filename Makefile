@@ -5,7 +5,7 @@ PYTHON_SHELL_VERSION := $(shell python --version | cut -d " " -f 2)
 POETRY_AVAILABLE := $(shell which poetry > /dev/null && echo 1 || echo 0)
 
 # CI variables
-CI_EXCLUDED_DIRS = __pycache__ dist tests docs
+CI_EXCLUDED_DIRS = __pycache__ dist docs
 CI_DIRECTORIES=$(filter-out $(CI_EXCLUDED_DIRS), $(foreach dir, $(dir $(wildcard */)), $(dir:/=)))
 
 # Project targets
@@ -33,12 +33,19 @@ endif
 # CI targets
 lint-%:
 	@echo lint-"$*"
-	@poetry run black --check "$*"
-	@poetry run isort --check "$*"
+	@poetry run ruff format "$*"
 	@poetry run ruff check "$*"
 	@echo "    ✅ All good"
 
 lint: $(addprefix lint-, $(CI_DIRECTORIES))
+
+
+fix-%:
+	@echo fix-"$*"
+	@poetry run ruff check --fix "$*"
+	@echo "    ✅ All fixed"
+
+fix: $(addprefix fix-, $(CI_DIRECTORIES)) ci
 
 typecheck-%:
 	@echo typecheck-"$*"
@@ -67,7 +74,7 @@ run-pre-commit:
 
 # Documentation
 update-doc:
-	@poetry run sphinx-apidoc --module-first --no-toc --force -o docs/source $(PROJECT_NAME)
+	@poetry run sphinx-apidoc --module-first --no-toc --force -o docs/source src/$(PROJECT_NAME)
 
 build-doc:
 	@poetry run sphinx-build docs ./docs/_build/html/

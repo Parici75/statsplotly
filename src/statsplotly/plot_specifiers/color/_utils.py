@@ -85,7 +85,7 @@ def cmap_to_array(
 
 
 def to_rgb_string(color_reference: tuple[float, float, float] | str) -> str:
-    """Transforms a color reference into a plotly-compatible rgb string"""
+    """Transforms a color reference into a plotly-compatible rgb string."""
     if isinstance(color_reference, str):
         color_reference = to_rgb(color_reference)
 
@@ -97,7 +97,8 @@ def rgb_string_array_from_colormap(
 ) -> list[str]:
     """Returns a list of RGB string given `n_colors` and a `color_palette` reference.
 
-    This function attempts to extract RGB color values from built-in Plotly, Seaborn and finally Matplotlib colormaps.
+    This function attempts to extract RGB color values from built-in Plotly, Seaborn and finally
+    Matplotlib colormaps.
 
     """
     rgb_array = cmap_to_array(n_colors, color_palette)

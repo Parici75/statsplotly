@@ -1,11 +1,12 @@
+from typing import Any
+
 import numpy as np
 import pandas as pd
 import pytest
-
 from statsplotly.plot_specifiers.data import DataHandler, DataPointer, TraceData
 from statsplotly.plot_specifiers.layout import LegendSpecifier
 
-_EXAMPLE_INPUT_DATA_DICT = {"x": ["a", "b", "c"], "y": range(3), "z": range(3)}
+_EXAMPLE_INPUT_DATA_DICT = {"x": ["a", "b", "c"], "y": range(3), "z": range(3), "size": [8, 8, 8]}
 
 _EXAMPLE_DATETIME_DATAFRAME = pd.DataFrame(
     zip(
@@ -19,52 +20,52 @@ _EXAMPLE_DATETIME_DATAFRAME = pd.DataFrame(
 
 
 @pytest.fixture(scope="module")
-def example_input_data_dict():
+def example_input_data_dict() -> dict[str, Any]:
     return _EXAMPLE_INPUT_DATA_DICT
 
 
 @pytest.fixture(scope="module")
-def example_input_dataframe():
+def example_input_dataframe() -> pd.DataFrame:
     return pd.DataFrame(_EXAMPLE_INPUT_DATA_DICT)
 
 
 @pytest.fixture(scope="module")
-def example_input_datetime_dataframe():
+def example_input_datetime_dataframe() -> pd.DataFrame:
     return _EXAMPLE_DATETIME_DATAFRAME
 
 
 @pytest.fixture(scope="module")
-def example_data_handler():
+def example_data_handler() -> DataHandler:
     return DataHandler.build_handler(
-        data=_EXAMPLE_INPUT_DATA_DICT, data_pointer=DataPointer(x="x", y="y", text="z")
+        data=_EXAMPLE_INPUT_DATA_DICT, data_pointer=DataPointer(x="x", y="y", text="z", size="size")
     )
 
 
 @pytest.fixture(scope="module")
-def example_trace_data(example_data_handler):
-    return TraceData.build_trace_data(
+def example_trace_data(example_data_handler: DataHandler) -> TraceData:
+    return TraceData.build_from_data(
         data=example_data_handler.data, pointer=example_data_handler.data_pointer
     )
 
 
 @pytest.fixture(scope="module")
-def example_3dtrace_data():
+def example_3dtrace_data() -> TraceData:
     handler = DataHandler.build_handler(
         data=_EXAMPLE_INPUT_DATA_DICT, data_pointer=DataPointer(x="x", y="y", z="z")
     )
-    return TraceData.build_trace_data(
+    return TraceData.build_from_data(
         data=handler.data,
         pointer=handler.data_pointer,
     )
 
 
 @pytest.fixture(scope="module")
-def example_datetime_trace_data():
-    return TraceData.build_trace_data(
+def example_datetime_trace_data() -> TraceData:
+    return TraceData.build_from_data(
         data=_EXAMPLE_DATETIME_DATAFRAME, pointer=DataPointer(x="x", y="y", text="z")
     )
 
 
 @pytest.fixture(scope="module")
-def example_legend():
+def example_legend() -> LegendSpecifier:
     return LegendSpecifier(data_pointer=DataPointer(x="x", y="y", text="z"))

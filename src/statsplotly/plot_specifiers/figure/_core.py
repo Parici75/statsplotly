@@ -3,13 +3,13 @@ from __future__ import annotations
 import logging
 import re
 from abc import ABCMeta, abstractmethod
-from typing import Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
 import plotly.graph_objs as go
+from plotly.basedatatypes import BaseTraceType
 from plotly.subplots import make_subplots
 
 from statsplotly.plot_objects.layout import SceneLayout, layout_type
-from statsplotly.plot_objects.trace import BaseTrace
 from statsplotly.plot_specifiers.data import DataDimension
 from statsplotly.plot_specifiers.layout import ColoraxisReference
 from statsplotly.plot_specifiers.trace import HistogramSpecifier, JointplotSpecifier
@@ -24,16 +24,17 @@ T = TypeVar("T")
 class BasePlot(FigureSubplotFormatter, Generic[T], metaclass=ABCMeta):
     plot_specifier: T
 
+    @classmethod
     @abstractmethod
-    def initialize(
-        cls, fig: go.Figure | None, row: int | None, col: int | None, plot_specifier: T
-    ) -> BasePlot[T]:
-        """This method implements the logic to initialize a subplot layout."""
+    def initialize(cls, fig: go.Figure | None, row: int, col: int, plot_specifier: T) -> Self:
+        """Initializes a subplot layout."""
+        ...
 
     @property
     @abstractmethod
     def main_row(self) -> int:
-        """This method returns the index of the main row in the subplot (i.e., the row with the core Figure object)."""
+        """Returns the index of the main row in the subplot."""
+        ...
 
 
 class HistogramPlot(BasePlot[HistogramSpecifier]):
@@ -58,10 +59,10 @@ class HistogramPlot(BasePlot[HistogramSpecifier]):
     def initialize(
         cls,
         fig: go.Figure | None,
-        row: int | None,
-        col: int | None,
+        row: int,
+        col: int,
         plot_specifier: HistogramSpecifier,
-    ) -> HistogramPlot:
+    ) -> Self:
         if fig is None:
             if plot_specifier.central_tendency is not None:
                 match plot_specifier.dimension:
@@ -84,6 +85,8 @@ class HistogramPlot(BasePlot[HistogramSpecifier]):
             else:
                 fig = make_subplots(rows=1, cols=1)
 
+        if TYPE_CHECKING:
+            assert fig is not None
         return cls(
             fig=fig,
             row=row,
@@ -100,9 +103,13 @@ class JointplotPlot(BasePlot[JointplotSpecifier]):
         return self.row + 1 if self.plot_specifier.plot_x_distribution else self.row
 
     def tidy_plot(self) -> JointplotPlot:
-        # We are limited to formatting only axes in the figure, as in the current implementation of jointplot,
-        # coloraxes are managed at the trace level instead of the layout level.
-        # TODO: Define coloraxes at the layout level and use _SubplotGridCommonColoraxisFormatter class for formatting.
+        """Tidies up the jointplot figure layout.
+
+        We are limited to formatting only axes in the figure, as in the current implementation of
+        jointplot, coloraxes are managed at the trace level instead of the layout level.
+        """
+        # TODO: Define coloraxes at the layout level and use _SubplotGridCommonColoraxisFormatter
+        # class for formatting.
         subplot_grid_formatter = SubplotGridFormatter(fig=self.fig)
         if self.plot_specifier.plot_x_distribution:
             subplot_grid_formatter.set_common_axis_limit(
@@ -120,8 +127,8 @@ class JointplotPlot(BasePlot[JointplotSpecifier]):
     def initialize(
         cls,
         fig: go.Figure | None,
-        row: int | None,
-        col: int | None,
+        row: int,
+        col: int,
         plot_specifier: JointplotSpecifier,
     ) -> JointplotPlot:
         if fig is None:
@@ -145,8 +152,8 @@ class JointplotPlot(BasePlot[JointplotSpecifier]):
 
 
 def create_fig(  # noqa: PLR0912 C901
-    fig: go.Figure,
-    traces: dict[str, BaseTrace],
+    fig: go.Figure | None,
+    traces: dict[str, BaseTraceType],
     layout: layout_type,
     row: int | None,
     col: int | None,

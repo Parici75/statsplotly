@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import pytest
 import seaborn as sns
-
 from statsplotly import constants
 from statsplotly.exceptions import StatsPlotSpecificationError
 from statsplotly.plot_specifiers.color import ColorSpecifier
@@ -28,7 +27,6 @@ logging.getLogger().setLevel(logging.DEBUG)
 
 
 class TestColorSpecifier:
-
     def test_color_specifier(self):
         color_specifier = ColorSpecifier.build_from_color_data(EXAMPLE_VALID_FLOAT_COLOR_DATA)
         assert color_specifier.colormap is None
@@ -98,8 +96,8 @@ class TestColorSpecifier:
         )
         assert all(direct_color_data == EXAMPLE_DIRECT_COLOR_ARRAY)
         assert (
-            f"{EXAMPLE_DIRECT_COLOR_ARRAY.name} values are all color-like, statsplotly will assume direct color specification"
-            in caplog.text
+            f"{EXAMPLE_DIRECT_COLOR_ARRAY.name} values are all color-like, statsplotly will assume "
+            f"direct color specification" in caplog.text
         )
 
         # Integer
@@ -118,8 +116,8 @@ class TestColorSpecifier:
         )
         expected_output = [1.577837e09, 1.577923e09, 1.580688e09]
         assert np.allclose(
-            timestamp_color_data, [1.577837e09, 1.577923e09, 1.580688e09]
-        ), f"Expected {expected_output} but got {result}"
+            timestamp_color_data, expected_output
+        ), f"Expected {expected_output} but got {timestamp_color_data}"
 
         # Mapping
         mapped_color_data = ColorSpecifier.build_from_color_data(
@@ -138,14 +136,14 @@ class TestColorSpecifier:
             )
         )
         assert (
-            f"{EXAMPLE_INT_MAPPED_COLOR_ARRAY.name} values of type='object' are not continuous type, statsplotly will map it to colormap"
-            in caplog.text
+            f"{EXAMPLE_INT_MAPPED_COLOR_ARRAY.name} values of type='object' are not continuous "
+            f"type, statsplotly will map it to colormap" in caplog.text
         )
 
         with pytest.raises(StatsPlotSpecificationError) as excinfo:
             ColorSpecifier().format_color_data(color_data=EXAMPLE_INT_MAPPED_COLOR_ARRAY)
         assert (
-            f"No colormap attribute to map discrete data onto, check {ColorSpecifier.__name__} instantiation"
+            "No colormap defined to map discrete data onto, check ColorSpecifier instantiation"
             in str(excinfo.value)
         )
 
@@ -175,6 +173,7 @@ class TestColorSpecifier:
             color_data=EXAMPLE_VALID_INT_COLOR_DATA.astype(str), color_palette="Set3"
         ).build_coloraxis(color_data=EXAMPLE_VALID_INT_COLOR_DATA.astype(str))
         # Verify colormap indices are repeated every two values
+        assert coloraxis.colorscale is not None
         assert np.diff(np.array([value[0] for value in coloraxis.colorscale]))[1::2].sum() == 0
 
     def test_discrete_shared_coloraxis(self):

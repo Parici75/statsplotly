@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from statsplotly.plot_objects.trace import (
     BaseTrace,
     HeatmapTrace,
@@ -11,6 +10,7 @@ from statsplotly.plot_objects.trace import (
 )
 from statsplotly.plot_specifiers.color import ColorSpecifier
 from statsplotly.plot_specifiers.data import DataDimension, HistogramNormType
+from statsplotly.plot_specifiers.data._core import TraceData
 from statsplotly.plot_specifiers.trace import HistogramSpecifier, TraceMode
 
 TRACE_NAME = "dummy_name"
@@ -38,7 +38,7 @@ def test_heatmap_trace(example_3dtrace_data):
     assert heatmap_trace.colorscale is None
 
 
-def test_scatter_trace(example_trace_data):
+def test_scatter_trace(example_trace_data: TraceData):
     scatter_trace = ScatterTrace.build_trace(
         trace_data=example_trace_data,
         trace_name=TRACE_NAME,
@@ -54,7 +54,7 @@ def test_scatter_trace(example_trace_data):
     assert scatter_trace.legendgroup == TRACE_NAME
     assert scatter_trace.showlegend is None
     assert scatter_trace.marker == {
-        "size": None,
+        "size": example_trace_data.size_data,
         "color": None,
         "opacity": None,
         "symbol": None,

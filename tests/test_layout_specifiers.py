@@ -34,7 +34,7 @@ class TestAxesSpecifier:
     legend_specifier = LegendSpecifier(data_pointer=DataPointer(x="x", y="y", text="z"))
 
     def test_invalid_range(self):
-        trace_data = TraceData.build_trace_data(
+        trace_data = TraceData.build_from_data(
             data=EXAMPLE_DATAFRAME, pointer=DataPointer(x="x", y="y", text="z")
         )
 
@@ -48,7 +48,7 @@ class TestAxesSpecifier:
             assert "Value error, Axis range must be numeric or `datetime`" in str(excinfo.value)
 
     def test_equal_range(self):
-        trace_data = TraceData.build_trace_data(
+        trace_data = TraceData.build_from_data(
             data=EXAMPLE_DATAFRAME.assign(x=np.arange(6, 9)),
             pointer=DataPointer(x="x", y="y", text="z"),
         )
@@ -59,7 +59,7 @@ class TestAxesSpecifier:
         assert axes_specifier.yaxis_range == [0.0, 8.8]
 
     def test_datetime_range(self, caplog):
-        trace_data = TraceData.build_trace_data(
+        trace_data = TraceData.build_from_data(
             data=EXAMPLE_DATETIME_DATAFRAME,
             pointer=DataPointer(x="x", y="y", text="z"),
         )
@@ -73,7 +73,7 @@ class TestAxesSpecifier:
         assert "Can not pad a common range for values of type = 'datetime64[ns]'" in caplog.text
 
     def test_incompatible_axes(self, caplog):
-        trace_data = TraceData.build_trace_data(
+        trace_data = TraceData.build_from_data(
             data=EXAMPLE_DATAFRAME.assign(y=pd.date_range("2020-01-01", "2020-01-03", freq="D")),
             pointer=DataPointer(x="x", y="y", text="z"),
         )

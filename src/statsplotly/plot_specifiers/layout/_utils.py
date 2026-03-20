@@ -5,6 +5,7 @@ from collections.abc import Callable
 from typing import Any
 
 from plotly import graph_objs as go
+from plotly.basedatatypes import BaseTraceType
 
 from statsplotly import constants
 from statsplotly.plot_specifiers.data import DataHandler, SliceTraceType
@@ -29,7 +30,7 @@ def _slice_name_in_trace_name(slice_name: str) -> Callable[[str], re.Match[Any] 
 
 def adjust_jointplot_legends(
     jointplot_specifier: JointplotSpecifier,
-    slices_marginal_traces: dict[str, Any],
+    slices_marginal_traces: dict[str, BaseTraceType],
 ) -> None:
     if len(slices_marginal_traces) == 0:
         return
@@ -61,8 +62,8 @@ def adjust_jointplot_legends(
 def add_update_menu(
     fig: go.Figure,
     data_handler: DataHandler,
-    slices_traces: dict[str, Any] | None = None,
-    preplotted_traces: dict[str, Any] | None = None,
+    slices_traces: dict[str, BaseTraceType] | None = None,
+    preplotted_traces: dict[str, BaseTraceType] | None = None,
 ) -> go.Figure:
     trace_update_rule: dict[str, Any] = {}
     if slices_traces is None:
