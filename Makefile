@@ -33,7 +33,7 @@ endif
 # CI targets
 lint-%:
 	@echo lint-"$*"
-	@poetry run ruff format "$*"
+	@poetry run ruff format --check "$*"
 	@poetry run ruff check "$*"
 	@echo "    ✅ All good"
 
@@ -42,6 +42,7 @@ lint: $(addprefix lint-, $(CI_DIRECTORIES))
 
 fix-%:
 	@echo fix-"$*"
+	@poetry run ruff format "$*"
 	@poetry run ruff check --fix "$*"
 	@echo "    ✅ All fixed"
 
