@@ -237,7 +237,7 @@ class BarLayout(_XYColorAxisLayout):
         cls,
         axes_specifier: AxesSpecifier,
         coloraxis: ColorAxis,
-        barmode: BarMode | None,
+        barmode: str | None,
     ) -> BarLayout:
         return cls(
             **_XYColorAxisLayout.build_coloraxis_layout(
@@ -258,9 +258,7 @@ class HistogramLayout(_XYLayout):
         return HistogramBarMode(value)
 
     @classmethod
-    def build_layout(
-        cls, axes_specifier: AxesSpecifier, barmode: HistogramBarMode | None
-    ) -> HistogramLayout:
+    def build_layout(cls, axes_specifier: AxesSpecifier, barmode: str | None) -> HistogramLayout:
         return cls(
             **_XYLayout.build_xy_layout(axes_specifier=axes_specifier).model_dump(), barmode=barmode
         )

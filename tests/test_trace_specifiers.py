@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from pydantic import ValidationError
+
 from statsplotly.plot_specifiers.data import (
     DataDimension,
     DataHandler,

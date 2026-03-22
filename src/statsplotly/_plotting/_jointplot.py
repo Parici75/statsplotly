@@ -34,7 +34,6 @@ from statsplotly.plot_specifiers.layout import (
     AxesSpecifier,
     AxisFormat,
     ColoraxisReference,
-    HistogramBarMode,
     LegendSpecifier,
     add_update_menu,
     adjust_jointplot_legends,
@@ -483,9 +482,7 @@ def jointplot(
             traces={
                 name: trace for name, trace in slices_marginal_traces.items() if dimension in name
             },
-            layout=HistogramLayout.build_layout(
-                axes_specifier=axes_specifier, barmode=HistogramBarMode(barmode)
-            ),
+            layout=HistogramLayout.build_layout(axes_specifier=axes_specifier, barmode=barmode),
             row=marginal_row,
             col=marginal_col,
         )

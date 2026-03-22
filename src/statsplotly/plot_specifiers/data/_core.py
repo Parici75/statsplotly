@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable, Generator, Sequence
-from enum import Enum
+from enum import StrEnum
 from functools import cached_property, wraps
 from typing import Any, ParamSpec, TypeAlias, TypeVar
 
@@ -27,30 +27,30 @@ from .statistics import range_normalize, sem
 logger = logging.getLogger(__name__)
 
 
-class DataDimension(str, Enum):
+class DataDimension(StrEnum):
     X = "x"
     Y = "y"
     Z = "z"
 
 
-class SliceTraceType(str, Enum):
+class SliceTraceType(StrEnum):
     ALL_DATA = "all data"
     SLICE = "slice"
 
 
-class NormalizationType(str, Enum):
+class NormalizationType(StrEnum):
     CENTER = "center"
     MIN_MAX = "minmax"
     ZSCORE = "zscore"
 
 
-class RegressionType(str, Enum):
+class RegressionType(StrEnum):
     LINEAR = "linear"
     EXPONENTIAL = "exponential"
     INVERSE = "inverse"
 
 
-class AggregationType(str, Enum):
+class AggregationType(StrEnum):
     MEAN = "mean"
     GEO_MEAN = "geo_mean"
     COUNT = "count"
@@ -60,12 +60,12 @@ class AggregationType(str, Enum):
     SUM = "sum"
 
 
-class CentralTendencyType(str, Enum):
+class CentralTendencyType(StrEnum):
     MEAN = "mean"
     MEDIAN = "median"
 
 
-class ErrorBarType(str, Enum):
+class ErrorBarType(StrEnum):
     SEM = "sem"
     IQR = "iqr"
     STD = "std"
@@ -73,7 +73,7 @@ class ErrorBarType(str, Enum):
     BOOTSTRAP = "bootstrap"
 
 
-class HistogramNormType(str, Enum):
+class HistogramNormType(StrEnum):
     COUNT = ""
     PERCENT = "percent"
     PROBABILITY = "probability"
@@ -493,8 +493,9 @@ class _BaseTraceData(BaseModel):
 
         if not all(
             value.apply(
-                lambda x: np.issubdtype(np.asarray(x).dtype, np.number)
-                or any(xx is None for xx in x)
+                lambda x: (
+                    np.issubdtype(np.asarray(x).dtype, np.number) or any(xx is None for xx in x)
+                )
             )
         ):
             raise ValueError(f"{value.name} error data must be numeric")
@@ -706,9 +707,9 @@ class AggregationTraceData(TraceData):
                     agg_func = aggregation_specifier.aggregation_func  # type: ignore
 
             trace_data[TRACE_DIMENSION_MAP[aggregation_specifier.aggregated_dimension]] = (
-                data.groupby(
-                    aggregation_specifier.reference_data, sort=False
-                )[aggregation_specifier.aggregated_data].apply(agg_func)
+                data.groupby(aggregation_specifier.reference_data, sort=False)[
+                    aggregation_specifier.aggregated_data
+                ].apply(agg_func)
             )
 
             if aggregation_specifier.error_bar is not None:

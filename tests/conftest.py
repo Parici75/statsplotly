@@ -1,8 +1,10 @@
-from typing import Any
+from collections.abc import Callable
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
 import pytest
+
 from statsplotly.plot_specifiers.data import DataHandler, DataPointer, TraceData
 from statsplotly.plot_specifiers.layout import LegendSpecifier
 
@@ -25,8 +27,18 @@ def example_input_data_dict() -> dict[str, Any]:
 
 
 @pytest.fixture(scope="module")
-def example_input_dataframe() -> pd.DataFrame:
-    return pd.DataFrame(_EXAMPLE_INPUT_DATA_DICT)
+def dataframe_factory() -> Callable[[Literal["numpy", "pyarrow"]], pd.DataFrame]:
+    def inner(backend: Literal["numpy", "pyarrow"] = "pyarrow") -> pd.DataFrame:
+        return pd.DataFrame(_EXAMPLE_INPUT_DATA_DICT).convert_dtypes(
+            dtype_backend=backend if backend == "pyarrow" else "numpy_nullable"
+        )
+
+    return inner
+
+
+@pytest.fixture(scope="module")
+def example_input_dataframe(dataframe_factory) -> pd.DataFrame:
+    return dataframe_factory(backend="pyarrow")
 
 
 @pytest.fixture(scope="module")

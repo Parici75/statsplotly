@@ -24,7 +24,7 @@ plotly = "^5.19.0"
 ipykernel = "^6.24.0"
 pytest = "^8.0.2"
 mypy = "^1.8.0"
-ruff = "^0.5.6"
+ruff = "0.15.7"
 pyupgrade = "^3.15.1"
 pre-commit = "^3.6.2"
 pyclean = "^2.7.3"
@@ -53,7 +53,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-cache-dir = "~/.cache/ruff"
+cache-dir = ".cache/ruff"
 [tool.ruff.lint]
 select = [
   "E",    # pycodestyle errors
@@ -83,7 +83,7 @@ ignore = ["PLR0913"] # Too many arguments to function call
 
 [tool.mypy]
 plugins = ["pydantic.mypy", "numpy.typing.mypy_plugin"]
-cache_dir = ".mypy_cache/strict"
+cache_dir = ".cache/mypy/strict"
 show_column_numbers = true
 
 follow_imports = "normal"
@@ -125,6 +125,7 @@ warn_required_dynamic_aliases = true
 
 
 [tool.pytest.ini_options]
+cache_dir = ".cache/pytest"
 log_cli = true
 log_cli_level = 10
 testpaths = ["tests"]

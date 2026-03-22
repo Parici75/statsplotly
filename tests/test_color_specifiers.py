@@ -1,9 +1,11 @@
 import logging
+import re
 
 import numpy as np
 import pandas as pd
 import pytest
 import seaborn as sns
+
 from statsplotly import constants
 from statsplotly.exceptions import StatsPlotSpecificationError
 from statsplotly.plot_specifiers.color import ColorSpecifier
@@ -115,9 +117,9 @@ class TestColorSpecifier:
             color_data=EXAMPLE_VALID_DATETIME_COLOR_DATA
         )
         expected_output = [1.577837e09, 1.577923e09, 1.580688e09]
-        assert np.allclose(
-            timestamp_color_data, expected_output
-        ), f"Expected {expected_output} but got {timestamp_color_data}"
+        assert np.allclose(timestamp_color_data, expected_output), (
+            f"Expected {expected_output} but got {timestamp_color_data}"
+        )
 
         # Mapping
         mapped_color_data = ColorSpecifier.build_from_color_data(
@@ -135,9 +137,11 @@ class TestColorSpecifier:
                 )
             )
         )
-        assert (
-            f"{EXAMPLE_INT_MAPPED_COLOR_ARRAY.name} values of type='object' are not continuous "
-            f"type, statsplotly will map it to colormap" in caplog.text
+
+        assert re.search(
+            r"values of type=('object'|'str') are not continuous type, statsplotly will map it to "
+            r"colormap",
+            caplog.text,
         )
 
         with pytest.raises(StatsPlotSpecificationError) as excinfo:

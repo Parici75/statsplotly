@@ -32,7 +32,6 @@ from statsplotly.plot_specifiers.figure import create_fig
 # Trace objects
 from statsplotly.plot_specifiers.layout import (
     AxesSpecifier,
-    BarMode,
     ColoraxisReference,
     LegendSpecifier,
 )
@@ -220,7 +219,7 @@ def barplot(
     )
 
     layout = BarLayout.build_layout(
-        axes_specifier=axes_specifier, coloraxis=coloraxis, barmode=BarMode(barmode)
+        axes_specifier=axes_specifier, coloraxis=coloraxis, barmode=barmode
     )
 
     # Create fig

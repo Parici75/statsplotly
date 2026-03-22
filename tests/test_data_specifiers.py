@@ -3,6 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 import pytest
+
 from statsplotly import constants
 from statsplotly.plot_specifiers.data import (
     AggregationSpecifier,
@@ -39,6 +40,13 @@ class TestDataHandler:
         )
         assert all(data_handler.get_data("x") == pd.Series(np.array((2, 2))))
 
+    def test_numpy_backend(self, dataframe_factory):
+        example_input_dataframe = dataframe_factory(backend="numpy")
+        DataHandler.build_handler(
+            data=example_input_dataframe,
+            data_pointer=DataPointer(x="x", y="y", slicer="z"),
+        )
+
     def test_no_slicer(self, example_input_data_dict):
         data_handler = DataHandler.build_handler(
             data=example_input_data_dict, data_pointer=DataPointer(x="x", y="y")
@@ -53,6 +61,7 @@ class TestDataHandler:
             slice_order=[0, 2, 1],
         )
         assert data_handler.n_slices == 3
+        assert data_handler.get_data("y") is not None
         assert (data_handler.get_data("y").to_numpy() == np.arange(3)).all()
         assert data_handler.slice_levels == [str(x) for x in [0, 2, 1]]
         assert [level for level, trace in list(data_handler.iter_slices())] == ["0", "2", "1"]
@@ -64,6 +73,7 @@ class TestDataHandler:
             slice_order=[0, 1],
         )
         assert data_handler.n_slices == 2
+        assert data_handler.get_data("y") is not None
         assert (data_handler.get_data("y").to_numpy() == np.arange(3)).all()
         assert data_handler.slice_levels == [str(x) for x in [0, 1]]
         assert [level for level, trace in list(data_handler.iter_slices())] == ["0", "1"]
@@ -80,31 +90,22 @@ class TestDataHandler:
                 slice_order=[0, 1, "non_existing_slice_id"],
             )
 
-    def test_data_types(self, example_input_data_dict, example_input_dataframe):
-        data_handler = DataHandler.build_handler(
-            data=example_input_data_dict,
-            data_pointer=DataPointer(x="x", y="y", slicer="z"),
-        )
-        assert all(
-            example_input_dataframe.dtypes.to_dict()[getattr(data_handler.data_pointer, key)] == val
-            for (key, val) in data_handler.data_types.model_dump().items()
-            if val is not None
-        )
-
-    def test_categorical_dtype_cast(self, example_input_dataframe, caplog):
+    @pytest.mark.parametrize(("backend"), ["pyarrow", "numpy"])
+    def test_categorical_dtype_cast(self, dataframe_factory, backend, caplog):
+        example_input_dataframe = dataframe_factory(backend=backend)
         data_handler = DataHandler.build_handler(
             data=example_input_dataframe.assign(x=example_input_dataframe["x"].astype("category")),
             data_pointer=DataPointer(x="x", y="y", slicer="z"),
         )
-        assert data_handler.data_types.x is np.dtype("object")
+        assert isinstance(data_handler.data_types.x, pd.StringDtype)
         assert "Casting categorical 'x' data to string" in caplog.text
 
-    def test_datetimeExtensionDtyp(self, example_input_datetime_dataframe):
+    def test_datetime_dtype(self, example_input_datetime_dataframe):
         data_handler = DataHandler.build_handler(
             data=example_input_datetime_dataframe,
             data_pointer=DataPointer(x="x", y="y", slicer="z"),
         )
-        assert data_handler.data_types.x == np.dtype("datetime64[ns]")
+        assert np.issubdtype(data_handler.data_types.x, np.datetime64)
 
     def test_slicer_groupby_mean_aggregation(self, example_input_data_dict):
         agg_df = DataHandler.build_handler(

@@ -5,8 +5,8 @@ from __future__ import annotations
 import functools
 import logging
 from abc import ABCMeta, abstractmethod
-from collections.abc import Callable, Generator
-from enum import Enum
+from collections.abc import Callable, Generator, Sequence
+from enum import StrEnum
 from typing import Any
 
 import numpy as np
@@ -32,12 +32,12 @@ from statsplotly.types import AxisFormatLiteral, SharedGridAxisLiteral
 logger = logging.getLogger(__name__)
 
 
-class GridAxis(str, Enum):
+class GridAxis(StrEnum):
     COLS = "cols"
     ROWS = "rows"
 
 
-class SharedGridAxis(str, Enum):
+class SharedGridAxis(StrEnum):
     COLS = "cols"
     ROWS = "rows"
     ALL = "all"
@@ -291,22 +291,16 @@ class _SubplotGridCommonColoraxisFormatter(_SubplotGridCommonAxisFormatter):
             reference_coloraxis = target_traces[-1][PlotAxis.COLORAXIS]
             color_limit_function = self._get_heatmap_trace_colorlimit
             self.fig.for_each_trace(
-                lambda trace,
-                reference_coloraxis=reference_coloraxis,
-                target_traces=target_traces: (
-                    trace.update(coloraxis=reference_coloraxis) if trace in target_traces else ()
+                lambda trace, ref_coloraxis=reference_coloraxis, target_traces=target_traces: (
+                    trace.update(coloraxis=ref_coloraxis) if trace in target_traces else ()
                 )
             )
         except PlotlyKeyError:
             reference_coloraxis = target_traces[-1].marker[PlotAxis.COLORAXIS]
             color_limit_function = self._get_scatter_trace_colorlimit
             self.fig.for_each_trace(
-                lambda trace,
-                reference_coloraxis=reference_coloraxis,
-                target_traces=target_traces: (
-                    trace.update(marker_coloraxis=reference_coloraxis)
-                    if trace in target_traces
-                    else ()
+                lambda trace, ref_coloraxis=reference_coloraxis, target_traces=target_traces: (
+                    trace.update(marker_coloraxis=ref_coloraxis) if trace in target_traces else ()
                 )
             )
 
@@ -647,8 +641,8 @@ class SubplotGridFormatter(_SubplotGridValidator):
         self,
         title: str | None = None,
         no_legend: bool = False,
-        row_titles: list[str] | None = None,
-        col_titles: list[str] | None = None,
+        row_titles: Sequence[str] | None = None,
+        col_titles: Sequence[str] | None = None,
     ) -> SubplotGridFormatter:
         """Tidy a subplot grid by removing redundant axis titles and optionally adding annotations.
 
@@ -656,9 +650,9 @@ class SubplotGridFormatter(_SubplotGridValidator):
             title: A string for the figure title.
             no_legend: If True, hides the legend.
             row_titles: A list of string the size of the row dimension specifying a title for each
-            row.
+                row.
             col_titles: A list of string the size of the column dimension specifying a title for
-            each column.
+                each column.
 
         Returns:
             A :obj:`SubplotGridFormatter` instance.

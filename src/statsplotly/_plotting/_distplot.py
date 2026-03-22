@@ -29,7 +29,6 @@ from statsplotly.plot_specifiers.figure import HistogramPlot, create_fig
 # Trace objects
 from statsplotly.plot_specifiers.layout import (
     AxesSpecifier,
-    HistogramBarMode,
     LegendSpecifier,
 )
 from statsplotly.plot_specifiers.trace import HistogramSpecifier, TraceMode
@@ -223,9 +222,7 @@ def distplot(
         y_range=y_range,
     )
 
-    layout = HistogramLayout.build_layout(
-        axes_specifier=axes_specifier, barmode=HistogramBarMode(barmode)
-    )
+    layout = HistogramLayout.build_layout(axes_specifier=axes_specifier, barmode=barmode)
     figure_plot = HistogramPlot.initialize(
         plot_specifier=histogram_specifier, fig=fig, row=row or 1, col=col or 1
     )

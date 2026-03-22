@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from statsplotly.plot_objects.trace import (
     BaseTrace,
     HeatmapTrace,

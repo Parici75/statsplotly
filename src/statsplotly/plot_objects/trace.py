@@ -29,7 +29,7 @@ from statsplotly.plot_specifiers.data.statistics import (
     kde_2d,
     regress,
 )
-from statsplotly.plot_specifiers.layout._core import ColoraxisReference
+from statsplotly.plot_specifiers.layout import ColoraxisReference
 from statsplotly.plot_specifiers.trace import (
     CategoricalPlotSpecifier,
     HistogramSpecifier,
