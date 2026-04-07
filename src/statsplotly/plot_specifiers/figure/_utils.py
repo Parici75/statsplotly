@@ -27,7 +27,7 @@ from statsplotly.plot_specifiers.layout import (
     ColoraxisReference,
     PlotAxis,
 )
-from statsplotly.types import AxisFormatLiteral, SharedGridAxisLiteral
+from statsplotly.types import PlotAxisLiteral, SharedGridAxisLiteral
 
 logger = logging.getLogger(__name__)
 
@@ -515,7 +515,7 @@ class SubplotGridFormatter(_SubplotGridValidator):
     def set_common_axis_limit(
         self,
         shared_grid_axis: SharedGridAxisLiteral = SharedGridAxis.ALL.value,
-        plot_axis: AxisFormatLiteral | None = None,
+        plot_axis: PlotAxisLiteral | None = None,
         common_range: bool = True,
         link_axes: bool = False,
     ) -> SubplotGridFormatter:

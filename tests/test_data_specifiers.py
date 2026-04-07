@@ -92,6 +92,8 @@ class TestDataHandler:
 
     @pytest.mark.parametrize(("backend"), ["pyarrow", "numpy"])
     def test_categorical_dtype_cast(self, dataframe_factory, backend, caplog):
+        if backend == "pyarrow":
+            pytest.importorskip("pyarrow")
         example_input_dataframe = dataframe_factory(backend=backend)
         data_handler = DataHandler.build_handler(
             data=example_input_dataframe.assign(x=example_input_dataframe["x"].astype("category")),

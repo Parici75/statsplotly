@@ -38,7 +38,7 @@ def dataframe_factory() -> Callable[[Literal["numpy", "pyarrow"]], pd.DataFrame]
 
 @pytest.fixture(scope="module")
 def example_input_dataframe(dataframe_factory) -> pd.DataFrame:
-    return dataframe_factory(backend="pyarrow")
+    return dataframe_factory(backend="numpy_nullable")
 
 
 @pytest.fixture(scope="module")

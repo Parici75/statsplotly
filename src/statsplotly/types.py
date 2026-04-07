@@ -22,3 +22,4 @@ JointplotTypeLiteral = Literal[
 
 MarginalPlotDimensionLiteral = Literal["x", "y", "all"]
 SharedGridAxisLiteral = Literal["cols", "rows", "all"]
+PlotAxisLiteral = Literal["xaxis", "yaxis", "coloraxis"]
