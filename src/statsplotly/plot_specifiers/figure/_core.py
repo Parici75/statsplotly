@@ -9,7 +9,14 @@ import plotly.graph_objs as go
 from plotly.basedatatypes import BaseTraceType
 from plotly.subplots import make_subplots
 
-from statsplotly.plot_objects.layout import SceneLayout, layout_type
+from statsplotly.plot_objects.layout import (
+    BarLayout,
+    CategoricalLayout,
+    HeatmapLayout,
+    HistogramLayout,
+    ScatterLayout,
+    SceneLayout,
+)
 from statsplotly.plot_specifiers.data import DataDimension
 from statsplotly.plot_specifiers.layout import ColoraxisReference
 from statsplotly.plot_specifiers.trace import HistogramSpecifier, JointplotSpecifier
@@ -19,6 +26,11 @@ from ._utils import FigureSubplotFormatter, SharedGridAxis, SubplotGridFormatter
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
+
+
+LayoutType = (
+    HeatmapLayout | CategoricalLayout | ScatterLayout | SceneLayout | BarLayout | HistogramLayout
+)
 
 
 class BasePlot(FigureSubplotFormatter, Generic[T], metaclass=ABCMeta):
@@ -154,7 +166,7 @@ class JointplotPlot(BasePlot[JointplotSpecifier]):
 def create_fig(  # noqa: PLR0912 C901
     fig: go.Figure | None,
     traces: dict[str, BaseTraceType],
-    layout: layout_type,
+    layout: LayoutType,
     row: int | None,
     col: int | None,
     secondary_y: bool = False,

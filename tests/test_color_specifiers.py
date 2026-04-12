@@ -87,15 +87,13 @@ class TestColorSpecifier:
         ]
         assert coloraxis.colorscale is not None
 
-    def test_format_color_data(self, caplog):
+    def test_get_marker_color(self, caplog):
         # String
-        single_string_color_data = ColorSpecifier().format_color_data(color_data="blue")
+        single_string_color_data = ColorSpecifier().get_marker_color(color_data="blue")
         assert single_string_color_data == "blue"
 
         # Direct
-        direct_color_data = ColorSpecifier().format_color_data(
-            color_data=EXAMPLE_DIRECT_COLOR_ARRAY
-        )
+        direct_color_data = ColorSpecifier().get_marker_color(color_data=EXAMPLE_DIRECT_COLOR_ARRAY)
         assert all(direct_color_data == EXAMPLE_DIRECT_COLOR_ARRAY)
         assert (
             f"{EXAMPLE_DIRECT_COLOR_ARRAY.name} values are all color-like, statsplotly will assume "
@@ -103,17 +101,17 @@ class TestColorSpecifier:
         )
 
         # Integer
-        integer_color_data = ColorSpecifier().format_color_data(EXAMPLE_VALID_INT_COLOR_DATA)
+        integer_color_data = ColorSpecifier().get_marker_color(EXAMPLE_VALID_INT_COLOR_DATA)
         assert all(integer_color_data == EXAMPLE_VALID_INT_COLOR_DATA)
 
         # Float
-        float_color_data = ColorSpecifier().format_color_data(
+        float_color_data = ColorSpecifier().get_marker_color(
             color_data=EXAMPLE_VALID_FLOAT_COLOR_DATA
         )
         assert all(float_color_data == EXAMPLE_VALID_FLOAT_COLOR_DATA)
 
         # Datetime
-        timestamp_color_data = ColorSpecifier().format_color_data(
+        timestamp_color_data = ColorSpecifier().get_marker_color(
             color_data=EXAMPLE_VALID_DATETIME_COLOR_DATA
         )
         expected_output = [1.577837e09, 1.577923e09, 1.580688e09]
@@ -124,7 +122,7 @@ class TestColorSpecifier:
         # Mapping
         mapped_color_data = ColorSpecifier.build_from_color_data(
             EXAMPLE_INT_MAPPED_COLOR_ARRAY
-        ).format_color_data(color_data=EXAMPLE_INT_MAPPED_COLOR_ARRAY)
+        ).get_marker_color(color_data=EXAMPLE_INT_MAPPED_COLOR_ARRAY)
         assert all(
             mapped_color_data
             == EXAMPLE_INT_MAPPED_COLOR_ARRAY.map(
@@ -145,10 +143,23 @@ class TestColorSpecifier:
         )
 
         with pytest.raises(StatsPlotSpecificationError) as excinfo:
-            ColorSpecifier().format_color_data(color_data=EXAMPLE_INT_MAPPED_COLOR_ARRAY)
+            ColorSpecifier().get_marker_color(color_data=EXAMPLE_INT_MAPPED_COLOR_ARRAY)
         assert (
             "No colormap defined to map discrete data onto, check ColorSpecifier instantiation"
             in str(excinfo.value)
+        )
+
+    def test_get_line_color(self, caplog):
+        # String
+        single_string_color_data = ColorSpecifier().get_line_color(color_data="blue")
+        assert single_string_color_data == "blue"
+
+        # Multiple colors select the first one but issues a warning
+        direct_color_data = ColorSpecifier().get_line_color(color_data=EXAMPLE_DIRECT_COLOR_ARRAY)
+        assert direct_color_data == EXAMPLE_DIRECT_COLOR_ARRAY[0]
+        assert (
+            f"Multiple color values found for line: {EXAMPLE_DIRECT_COLOR_ARRAY.unique().tolist()},"
+            f" the first one will be used" in caplog.text
         )
 
     def test_shared_coloraxis(self):

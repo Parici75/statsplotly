@@ -52,7 +52,6 @@ repos:
     hooks:
     -   id: mypy
         args: [--ignore-missing-imports]
-        files: ^statsplotly/
         additional_dependencies:
             - "pydantic>=2.4"
             - "numpy"

@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import datetime
 import logging
-from typing import Any, Self, TypeAlias
+from typing import Any, Self
 
 from pydantic import ValidationInfo, field_validator, model_validator
 
 from statsplotly._base import BaseModel
 
-AxisCoordinatesType: TypeAlias = float | datetime.datetime | str
+AxisCoordinatesType = float | datetime.datetime | str
 
 logger = logging.getLogger(__name__)
 

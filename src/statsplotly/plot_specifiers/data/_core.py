@@ -323,7 +323,7 @@ class DataProcessor(BaseModel):
         if jitter_amount == 0:
             return data_series
 
-        return pd.Series(rand_jitter(data_series, jitter_amount), name=data_series.name)
+        return pd.Series(rand_jitter(data_series.to_numpy(), jitter_amount), name=data_series.name)
 
     @staticmethod
     def normalize_data(data_series: pd.Series, normalizer: NormalizationType) -> pd.Series:

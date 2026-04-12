@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 import numpy as np
 import pytest
 
@@ -47,9 +49,15 @@ def test_scatter_trace(example_trace_data: TraceData):
         color_specifier=ColorSpecifier(),
         mode=None,
     )
+    assert scatter_trace.x is not None
     assert all(scatter_trace.x == example_trace_data.x_values)
+    assert scatter_trace.y is not None
     assert all(scatter_trace.y == example_trace_data.y_values)
-    assert all(scatter_trace.text == example_trace_data.text_data)
+    assert isinstance(scatter_trace.text, Iterable)
+    assert isinstance(example_trace_data.text_data, Iterable)
+    assert all(
+        a == b for a, b in zip(scatter_trace.text, example_trace_data.text_data, strict=True)
+    )
     assert scatter_trace.mode is None
     assert scatter_trace.name == TRACE_NAME
     assert scatter_trace.legendgroup == TRACE_NAME

@@ -162,8 +162,6 @@ def plot(
 
     if (color is not None or size is not None or marker is not None) and mode is None:
         mode = "markers"
-    if color is not None and mode == "lines":
-        raise ValueError("Only markers can be mapped to colormap")
     if size is not None and mode == "lines":
         raise ValueError("Size specification only applies to markers")
     if z is not None:

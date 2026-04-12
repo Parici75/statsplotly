@@ -18,7 +18,11 @@ from statsplotly._base import BaseModel
 from statsplotly.exceptions import StatsPlotSpecificationError
 from statsplotly.plot_objects.layout import ColorAxis
 from statsplotly.plot_specifiers.common import smart_legend
-from statsplotly.plot_specifiers.layout import BarMode, ColoraxisReference
+from statsplotly.plot_specifiers.layout import (
+    BarMode,
+    ColoraxisReference,
+    HistogramBarMode,
+)
 
 from ._utils import ColorSystem, compute_colorscale, rgb_string_array_from_colormap
 
@@ -26,7 +30,6 @@ logger = logging.getLogger(__name__)
 
 
 class ColorSpecifier(BaseModel):
-    barmode: BarMode | str | None = None
     coloraxis_reference: ColoraxisReference | None = None
     colormap: dict[str | np.datetime64 | bool, Any] | None = None
     logscale: float | None = None
@@ -102,6 +105,7 @@ class ColorSpecifier(BaseModel):
             )
 
         if cls._check_is_discrete_color_data_type(color_data):
+            # For consistent discrete colormapping, colormap needs to be fixed across all traces
             return dict(
                 zip(
                     color_data.dropna().unique(),
@@ -113,12 +117,12 @@ class ColorSpecifier(BaseModel):
         return None
 
     @overload
-    def format_color_data(self, color_data: str) -> str: ...
+    def get_marker_color(self, color_data: str) -> str: ...
 
     @overload
-    def format_color_data(self, color_data: pd.Series) -> pd.Series: ...
+    def get_marker_color(self, color_data: pd.Series) -> pd.Series: ...
 
-    def format_color_data(self, color_data: str | pd.Series) -> str | pd.Series:
+    def get_marker_color(self, color_data: str | pd.Series) -> str | pd.Series:
         if isinstance(color_data, str):
             return color_data
 
@@ -147,6 +151,17 @@ class ColorSpecifier(BaseModel):
             return color_data.map(self.colormap)
 
         return color_data
+
+    def get_line_color(self, color_data: str | pd.Series) -> str:
+        if isinstance(color_data, str):
+            return color_data
+
+        if len((line_colors := color_data.dropna()).unique()) > 1:
+            logger.warning(
+                "Multiple color values found for line: %s, the first one will be used",
+                line_colors.unique().tolist(),
+            )
+        return line_colors.iloc[0]
 
     def build_colorbar(self, color_values: pd.Series | None) -> dict[str, Any] | None:
         if color_values is None:
@@ -178,7 +193,7 @@ class ColorSpecifier(BaseModel):
                 ticktext = list(colormap.keys())
 
             elif self._check_is_datetime_color_data_type(color_values):
-                tickvals = self.format_color_data(color_values).iloc[[0, -1]]
+                tickvals = self.get_marker_color(color_values).iloc[[0, -1]]
                 ticktext = [
                     datum.strftime("%B %Y")
                     for datum in color_values.dropna().sort_values().iloc[[0, -1]]
@@ -205,7 +220,7 @@ class ColorSpecifier(BaseModel):
 
         # Select the appropriate color system
         if self._check_is_discrete_color_data_type(color_data):
-            _color_data = self.format_color_data(color_data)
+            _color_data = self.get_marker_color(color_data)
             n_colors = _color_data.dropna().nunique()
             color_system = ColorSystem.DISCRETE
         else:
@@ -244,7 +259,11 @@ class ColorSpecifier(BaseModel):
         colorbar = self.build_colorbar(color_data) if colorscale is not None else None
 
         return ColorAxis(
-            cmin=cmin, cmax=cmax, colorscale=colorscale, colorbar=colorbar, showscale=self.colorbar
+            cmin=cmin,
+            cmax=cmax,
+            colorscale=colorscale,
+            colorbar=colorbar,
+            showscale=self.colorbar,
         )
 
     def get_color_hues(self, n_colors: int) -> list[str]:
@@ -265,6 +284,15 @@ class ColorSpecifier(BaseModel):
 
 
 class HistogramColorSpecifier(ColorSpecifier):
+    barmode: BarMode
+
+    @field_validator("barmode", mode="before")
+    def validate_histogram_barmode(cls, value: str | None) -> HistogramBarMode:
+        if value is None:
+            return HistogramBarMode.OVERLAY
+
+        return HistogramBarMode(value)
+
     @field_validator("opacity", mode="before")
     def check_opacity(cls, value: str | float | None, info: ValidationInfo) -> float:
         if isinstance(value, str):

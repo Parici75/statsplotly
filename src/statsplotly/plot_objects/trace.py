@@ -98,6 +98,7 @@ class BaseTrace(BaseModel, metaclass=ABCMeta):
 
 class _ScatterBaseTrace(BaseTrace):
     marker: dict[str, Any] | None = None
+    line: dict[str, Any] | None = None
     mode: TraceMode | None = None
     error_x: dict[str, Any] | None = None
     error_y: dict[str, Any] | None = None
@@ -128,8 +129,8 @@ class _ScatterBaseTrace(BaseTrace):
             marker={
                 "size": trace_data.size_data,
                 "color": (
-                    color_specifier.format_color_data(trace_data.color_data)
-                    if trace_data.color_data is not None
+                    color_specifier.get_marker_color(trace_data.color_data)
+                    if trace_data.color_data is not None and mode is not TraceMode.LINES
                     else trace_color
                 ),
                 "opacity": trace_data.opacity_data,
@@ -139,6 +140,11 @@ class _ScatterBaseTrace(BaseTrace):
                     if trace_data.color_data is not None
                     else None
                 ),
+            },
+            line={
+                "color": color_specifier.get_line_color(trace_data.color_data)
+                if trace_data.color_data is not None and mode is TraceMode.LINES
+                else trace_color
             },
             legendgroup=trace_name,
         )
@@ -204,7 +210,7 @@ class HeatmapTrace(_DensityTrace, _PlotlyTraceMixin):
         return cls(
             x=trace_data.x_values,
             y=trace_data.y_values,
-            z=color_specifier.format_color_data(trace_data.z_values),
+            z=color_specifier.get_marker_color(trace_data.z_values),
             zmin=color_specifier.zmin,
             zmax=color_specifier.zmax,
             coloraxis=color_specifier.coloraxis_reference,
@@ -433,7 +439,7 @@ class _CategoricalTrace(BaseTrace):
             marker={
                 "size": trace_data.size_data,
                 "color": (
-                    color_specifier.format_color_data(trace_data.color_data)
+                    color_specifier.get_marker_color(trace_data.color_data)
                     if trace_data.color_data is not None
                     else trace_color
                 ),
@@ -576,7 +582,7 @@ class BarTrace(BaseTrace, _PlotlyTraceMixin):
             error_y=error_y_data,
             marker={
                 "color": (
-                    color_specifier.format_color_data(trace_data.color_data)
+                    color_specifier.get_marker_color(trace_data.color_data)
                     if trace_data.color_data is not None
                     else trace_color
                 ),
