@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="statsplotly.plot_specifiers.layout package" href="statsplotly.plot_specifiers.layout.html" />
 
     <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.09.10 -->
-        <title>Version 0.3.0 - statsplotly documentation</title>
+        <title>Version 0.3.1 - statsplotly documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
@@ -136,7 +136,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -189,7 +189,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.3.0</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Version 0.3.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#version-0-3-0">Version 0.3.0</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-6">Version 0.2.6</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-5">Version 0.2.5</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#version-0-2-4">Version 0.2.4</a></li>
@@ -231,13 +232,34 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="version-0-3-0">
+          <section id="version-0-3-1">
+<h1>Version 0.3.1<a class="headerlink" href="#version-0-3-1" title="Link to this heading">¶</a></h1>
+<p><strong>2026-04-12</strong></p>
+<p>The 0.3.1 release fixes a bug in pandas dtype validation.</p>
+<section id="bug-fixes">
+<h2>🐛 Bug fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Ensure proper pandas dtype validation.</p></li>
+<li><p>Restore support for direct color data specification in line plots (i.e., with <cite>~statsplotly.plot(`mode=”lines”, …)</cite>).</p></li>
+<li><p>Filter NA values when computing numeric axis limits in <cite>~statsplotly.utils.SubplotGridFormatter.set_common_axis_limit()</cite>.</p></li>
+</ul>
+</section>
+<section id="ci">
+<h2>👕 CI<a class="headerlink" href="#ci" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Drop Black and isort and rely on Ruff for code formatting.</p></li>
+<li><p>Update minimum supported Python version to 3.11.</p></li>
+<li><p>Update GitHub Actions.</p></li>
+</ul>
+</section>
+</section>
+<section id="version-0-3-0">
 <h1>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Link to this heading">¶</a></h1>
 <p><strong>2025-04-06</strong></p>
 <p>The 0.3.0 release adds support for <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataFrame</span></code></a>-compatible structure in input data.</p>
@@ -273,8 +295,8 @@ The 0.2.4 release increases performance of 2D scatter plots.</p>
 <h1>Version 0.2.2<a class="headerlink" href="#version-0-2-2" title="Link to this heading">¶</a></h1>
 <p><strong>2024-08-04</strong></p>
 <p>The 0.2.2 release fixes bugs with discrete colormaps and aggregation barplots.</p>
-<section id="bug-fixes">
-<h2>🐛 Bug fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h2>
+<section id="id2">
+<h2>🐛 Bug fixes<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fix a bug in <a class="reference internal" href="statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier" title="statsplotly.plot_specifiers.color.ColorSpecifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorSpecifier</span></code></a> with discrete colormaps.</p></li>
 <li><p>Fix a bug in <a class="reference internal" href="statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.OrientedPlotSpecifier" title="statsplotly.plot_specifiers.trace.OrientedPlotSpecifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrientedPlotSpecifier</span></code></a> with default orientation of aggregation barplots.</p></li>
@@ -328,8 +350,8 @@ The 0.2.4 release increases performance of 2D scatter plots.</p>
 <li><p>Integrate statsplotly template with plotly theming framework.</p></li>
 </ul>
 </section>
-<section id="id2">
-<h2>🐛 Bug fixes<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<section id="id3">
+<h2>🐛 Bug fixes<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fix data slice visibility inconsistencies in <a class="reference internal" href="statsplotly.html#statsplotly.heatmap" title="statsplotly.heatmap"><code class="xref py py-func docutils literal notranslate"><span class="pre">heatmap()</span></code></a>.</p></li>
 <li><p>Fix <a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxesSpecifier.scaleratio" title="statsplotly.plot_specifiers.layout.AxesSpecifier.scaleratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scaleratio</span></code></a> for <cite>axis=”id_line”</cite>.</p></li>
@@ -363,14 +385,14 @@ The 0.2.4 release increases performance of 2D scatter plots.</p>
 <h1>Version 0.1.2<a class="headerlink" href="#version-0-1-2" title="Link to this heading">¶</a></h1>
 <p><strong>2023-07-11</strong></p>
 <p>The 0.1.2 release allows to combine several subplots with different <cite>ColorAxis</cite> on the same figure, and improve axes management.</p>
-<section id="id3">
-<h2>✨ New features<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<section id="id4">
+<h2>✨ New features<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Update <cite>layout</cite> and <cite>marker</cite> attributes to preserve each subplot original coloraxis upon adding new traces with <cite>ColorAxis</cite> specification on an existing <cite>Figure</cite>.</p></li>
 </ul>
 </section>
-<section id="id4">
-<h2>🎨 Feature improvements<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<section id="id5">
+<h2>🎨 Feature improvements<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Improve consistency between axis range and axis format.</p></li>
 <li><p>Harmonize plot styling arguments.</p></li>
@@ -434,8 +456,55 @@ The 0.2.4 release increases performance of 2D scatter plots.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Version 0.3.1</a><ul>
+<li><a class="reference internal" href="#bug-fixes">🐛 Bug fixes</a></li>
+<li><a class="reference internal" href="#ci">👕 CI</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-3-0">Version 0.3.0</a></li>
+<li><a class="reference internal" href="#version-0-2-6">Version 0.2.6</a></li>
+<li><a class="reference internal" href="#version-0-2-5">Version 0.2.5</a></li>
+<li><a class="reference internal" href="#version-0-2-4">Version 0.2.4</a></li>
+<li><a class="reference internal" href="#version-0-2-3">Version 0.2.3</a></li>
+<li><a class="reference internal" href="#version-0-2-2">Version 0.2.2</a><ul>
+<li><a class="reference internal" href="#id2">🐛 Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-2-1">Version 0.2.1</a></li>
+<li><a class="reference internal" href="#version-0-2-0">Version 0.2.0</a><ul>
+<li><a class="reference internal" href="#new-features">✨ New features</a></li>
+<li><a class="reference internal" href="#feature-improvements">🎨 Feature improvements</a></li>
+<li><a class="reference internal" href="#id3">🐛 Bug fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-1-5">Version 0.1.5</a></li>
+<li><a class="reference internal" href="#version-0-1-4">Version 0.1.4</a></li>
+<li><a class="reference internal" href="#version-0-1-3">Version 0.1.3</a></li>
+<li><a class="reference internal" href="#version-0-1-2">Version 0.1.2</a><ul>
+<li><a class="reference internal" href="#id4">✨ New features</a></li>
+<li><a class="reference internal" href="#id5">🎨 Feature improvements</a></li>
+<li><a class="reference internal" href="#breaking-changes">💥 Breaking Changes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#version-0-1-1">Version 0.1.1</a></li>
+<li><a class="reference internal" href="#version-0-1-0">Version 0.1.0</a></li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
