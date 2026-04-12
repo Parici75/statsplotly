@@ -7,14 +7,16 @@ import logging
 from abc import ABCMeta, abstractmethod
 from collections.abc import Callable, Generator, Sequence
 from enum import StrEnum
-from typing import Any
+from typing import Any, Self
 
 import numpy as np
+import pandas as pd
 import plotly
 import plotly.graph_objs as go
 from numpy.typing import NDArray
 from plotly.exceptions import PlotlyKeyError
-from pydantic import Field, ValidationInfo, field_validator
+from pydantic import Field, field_validator, model_validator
+from typing_extensions import override
 
 from statsplotly import constants
 from statsplotly._base import BaseModel
@@ -161,18 +163,7 @@ class FigureSubplotFormatter(_SubplotGridValidator):
 
 class _SubplotGridCommonAxisFormatter(BaseModel, metaclass=ABCMeta):
     fig: go.Figure
-    plot_axis: PlotAxis | None
     shared_grid_axis: SharedGridAxis
-
-    @property
-    def dimension(self) -> PlotAxis | None:
-        if self.plot_axis is None:
-            if self.shared_grid_axis is SharedGridAxis.COLS:
-                return PlotAxis.XAXIS
-            if self.shared_grid_axis is SharedGridAxis.ROWS:
-                return PlotAxis.YAXIS
-
-        return self.plot_axis
 
     @property
     def _plot_groups(self) -> list[list[plotly.subplots.SubplotRef]]:
@@ -207,24 +198,6 @@ class _SubplotGridCommonAxisFormatter(BaseModel, metaclass=ABCMeta):
     ) -> list[dict[str, Any]]:
         return [axes[0].trace_kwargs for axes in plot_group]
 
-    def get_target_axes_from_target_traces(self, target_traces: list[Any]) -> list[str]:
-        if self.dimension is PlotAxis.XAXIS:
-            idx = 0
-        elif self.dimension is PlotAxis.YAXIS:
-            idx = 1
-        else:
-            raise StatsPlotSpecificationError(
-                f"Can not get target axes for plot_axis={self.plot_axis}"
-            )
-
-        return [
-            axes[0].layout_keys[idx]
-            for plot_group in self.iter_plot_groups()
-            for axes in plot_group
-            if axes[0].trace_kwargs[self.dimension.value]
-            in [trace[self.dimension.value] for trace in target_traces]
-        ]
-
     @abstractmethod
     def get_target_traces(self, plot_group: list[plotly.subplots.SubplotRef]) -> list[Any]:
         """Returns a list of plotly traces belonging to the `plot_group` to be formatted."""
@@ -232,7 +205,7 @@ class _SubplotGridCommonAxisFormatter(BaseModel, metaclass=ABCMeta):
 
     @abstractmethod
     def update_traces_and_layout(self, target_traces: list[Any]) -> None:
-        """This method updates traces and layout attributes given the formatting arguments."""
+        """Updates traces and layout attributes given the formatting arguments."""
         ...
 
     def update_along_grid_axis(self) -> None:
@@ -285,6 +258,7 @@ class _SubplotGridCommonColoraxisFormatter(_SubplotGridCommonAxisFormatter):
             and (PlotAxis.COLORAXIS in trace or trace.marker[PlotAxis.COLORAXIS] is not None)
         ]
 
+    @override
     def update_traces_and_layout(self, target_traces: list[Any]) -> None:
         # Update traces
         try:
@@ -351,18 +325,29 @@ class _SubplotGridCommonColoraxisFormatter(_SubplotGridCommonAxisFormatter):
 
 
 class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
+    plot_axis: PlotAxis | None = None
     common_range: bool
     link_axes: bool
 
-    @field_validator("shared_grid_axis", mode="after")
-    def check_shared_grid_axis(cls, value: SharedGridAxis, info: ValidationInfo) -> SharedGridAxis:
-        if value is SharedGridAxis.ALL and info.data.get("plot_axis") is None:
+    @model_validator(mode="after")
+    def check_plot_axis_specification(self) -> Self:
+        if self.shared_grid_axis is SharedGridAxis.ALL and self.plot_axis is None:
             msg = (
                 f"`plot_axis` must be specified when using `shared_grid_axis = "
                 f"{SharedGridAxis.ALL.value}`"
             )
             raise StatsPlotSpecificationError(msg)
-        return value
+        return self
+
+    @property
+    def dimension(self) -> PlotAxis | None:
+        if self.plot_axis is None:
+            if self.shared_grid_axis is SharedGridAxis.COLS:
+                return PlotAxis.XAXIS
+            if self.shared_grid_axis is SharedGridAxis.ROWS:
+                return PlotAxis.YAXIS
+
+        return self.plot_axis
 
     @staticmethod
     def _check_numeric_cast(data: NDArray[Any]) -> bool:
@@ -383,11 +368,29 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
             )
             return None
 
-        sanitized_trace_data = [datum for datum in trace_data if datum is not None]
+        sanitized_trace_data = [d for d in trace_data if not pd.isna(d)]
         if len(sanitized_trace_data) == 0:
             return None
 
-        return np.min(sanitized_trace_data), np.max(sanitized_trace_data)
+        return min(sanitized_trace_data), max(sanitized_trace_data)
+
+    def get_target_axes_from_target_traces(self, target_traces: list[Any]) -> list[str]:
+        if self.dimension is PlotAxis.XAXIS:
+            idx = 0
+        elif self.dimension is PlotAxis.YAXIS:
+            idx = 1
+        else:
+            raise StatsPlotSpecificationError(
+                f"Can not get target axes for plot_axis={self.plot_axis}"
+            )
+
+        return [
+            axes[0].layout_keys[idx]
+            for plot_group in self.iter_plot_groups()
+            for axes in plot_group
+            if axes[0].trace_kwargs[self.dimension.value]
+            in [trace[self.dimension.value] for trace in target_traces]
+        ]
 
     def get_target_traces(self, plot_group: list[plotly.subplots.SubplotRef]) -> list[Any]:
         axes_reference = self.get_plot_group_axes_reference(plot_group=plot_group)
@@ -418,14 +421,17 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
                 np.max([limit[1] if limit is not None else None for limit in axis_limits]),
             ]
 
+            logger.debug("Computed axis range: %s", [min_value, max_value])
             return AxesSpecifier.pad_axis_range(
                 axis_range=[min_value, max_value], padding_factor=constants.RANGE_PADDING_FACTOR
             )
 
         except (ValueError, TypeError):
             # No computable limits
+            logger.debug("Could not compute axis range")
             return None
 
+    @override
     def update_traces_and_layout(self, target_traces: list[Any]) -> None:
         # Update axis limits
         range_dict: dict[str, list[float] | None] = {"range": None}
@@ -522,19 +528,28 @@ class SubplotGridFormatter(_SubplotGridValidator):
         """Set common axis limits along a shared grid axis, optionally linking the axes.
 
         Args:
-            shared_grid_axis: A :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis` value.
-            plot_axis: A :obj:`~statsplotly.plot_specifiers.layout.PlotAxis` value.
+            shared_grid_axis:
+                A :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis` value.
 
-                - Default to :obj:`~statsplotly.plot_specifiers.layout.PlotAxis.YAXIS` when
-                `shared_grid_axis` = :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis.ROWS`.
-                - Default to :obj:`~statsplotly.plot_specifiers.layout.PlotAxis.XAXIS` when
-                `shared_grid_axis` = :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis.COLS`.
-                - Raises a :obj:`~statsplotly.exceptions.StatsPlotSpecificationError` when None and
-                `shared_grid_axis` = :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis.ALL`.
+            plot_axis:
+                A :obj:`~statsplotly.plot_specifiers.layout.PlotAxis` value.
 
-            common_range: If True (default), set a common range for the axes targeted by `plot_axis`
-            .
-            link_axes: If True (default to False), links the axes targeted by `plot_axis`.
+                - Defaults to :obj:`~statsplotly.plot_specifiers.layout.PlotAxis.YAXIS`
+                  when ``shared_grid_axis`` = ``rows``.
+
+                - Defaults to :obj:`~statsplotly.plot_specifiers.layout.PlotAxis.XAXIS`
+                  when ``shared_grid_axis`` = ``cols``.
+
+                - Raises a :obj:`~statsplotly.exceptions.StatsPlotSpecificationError`
+                  when ``None`` and ``shared_grid_axis`` = ``all``.
+
+            common_range:
+                If ``True`` (default), set a common range for the axes targeted
+                by ``plot_axis``.
+
+            link_axes:
+                If ``True`` (default ``False``), link the axes targeted by
+                ``plot_axis``.
 
         Returns:
             A :obj:`SubplotGridFormatter` instance.
