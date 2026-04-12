@@ -1,3 +1,22 @@
+Version 0.3.1
+=============
+**2026-04-12**
+
+The 0.3.1 release fixes a bug in pandas dtype validation.
+
+🐛 Bug fixes
+************
+- Ensure proper pandas dtype validation.
+- Restore support for direct color data specification in line plots (i.e., with `~statsplotly.plot(`mode="lines", ...)`).
+- Filter NA values when computing numeric axis limits in `~statsplotly.utils.SubplotGridFormatter.set_common_axis_limit()`.
+
+👕 CI
+*****
+- Drop Black and isort and rely on Ruff for code formatting.
+- Update minimum supported Python version to 3.11.
+- Update GitHub Actions.
+
+
 Version 0.3.0
 =============
 **2025-04-06**
