@@ -9,7 +9,7 @@
         <title>statsplotly.plot_objects package - statsplotly documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
     
@@ -302,7 +302,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.BarTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">BarTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.BarTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -311,7 +311,7 @@ methods and attributes.</p>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BarTrace.hoverinfo" title="statsplotly.plot_objects.trace.BarTrace.hoverinfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hoverinfo</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BarTrace.marker" title="statsplotly.plot_objects.trace.BarTrace.marker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">marker</span> <span class="pre">(dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BarTrace.orientation" title="statsplotly.plot_objects.trace.BarTrace.orientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orientation</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BarTrace.text" title="statsplotly.plot_objects.trace.BarTrace.text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">text</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">pandas.core.series.Series</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BarTrace.text" title="statsplotly.plot_objects.trace.BarTrace.text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">text</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">pandas.Series</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BarTrace.textposition" title="statsplotly.plot_objects.trace.BarTrace.textposition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">textposition</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 </ul>
 </dd>
@@ -385,8 +385,8 @@ methods and attributes.</p>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace.name" title="statsplotly.plot_objects.trace.BaseTrace.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace.opacity" title="statsplotly.plot_objects.trace.BaseTrace.opacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">opacity</span> <span class="pre">(float</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace.showlegend" title="statsplotly.plot_objects.trace.BaseTrace.showlegend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showlegend</span> <span class="pre">(bool</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace.x" title="statsplotly.plot_objects.trace.BaseTrace.x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span> <span class="pre">(pandas.core.series.Series</span> <span class="pre">|</span> <span class="pre">numpy.ndarray[tuple[int,</span> <span class="pre">...],</span> <span class="pre">numpy.dtype[Any]]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace.y" title="statsplotly.plot_objects.trace.BaseTrace.y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span> <span class="pre">(pandas.core.series.Series</span> <span class="pre">|</span> <span class="pre">numpy.ndarray[tuple[int,</span> <span class="pre">...],</span> <span class="pre">numpy.dtype[Any]]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace.x" title="statsplotly.plot_objects.trace.BaseTrace.x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span> <span class="pre">(pandas.Series</span> <span class="pre">|</span> <span class="pre">numpy.ndarray[tuple[Any,</span> <span class="pre">...],</span> <span class="pre">numpy.dtype[Any]]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace.y" title="statsplotly.plot_objects.trace.BaseTrace.y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span> <span class="pre">(pandas.Series</span> <span class="pre">|</span> <span class="pre">numpy.ndarray[tuple[Any,</span> <span class="pre">...],</span> <span class="pre">numpy.dtype[Any]]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -438,7 +438,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.BoxTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">BoxTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.BoxTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_OrientedTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_OrientedTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -477,7 +477,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.ContourTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">ContourTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.ContourTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_DensityTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_DensityTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -540,7 +540,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.EcdfTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">EcdfTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.EcdfTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -591,7 +591,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.HeatmapTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">HeatmapTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.HeatmapTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_DensityTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_DensityTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -647,10 +647,11 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.Histogram2dTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">Histogram2dTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.Histogram2dTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.Histogram2dTrace.coloraxis" title="statsplotly.plot_objects.trace.Histogram2dTrace.coloraxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coloraxis</span> <span class="pre">(ColoraxisReference</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.Histogram2dTrace.colorbar" title="statsplotly.plot_objects.trace.Histogram2dTrace.colorbar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colorbar</span> <span class="pre">(dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.Histogram2dTrace.colorscale" title="statsplotly.plot_objects.trace.Histogram2dTrace.colorscale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colorscale</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">list[list[str</span> <span class="pre">|</span> <span class="pre">float]]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.Histogram2dTrace.histnorm" title="statsplotly.plot_objects.trace.Histogram2dTrace.histnorm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">histnorm</span> <span class="pre">(HistogramNormType</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
@@ -661,6 +662,11 @@ methods and attributes.</p>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="statsplotly.plot_objects.trace.Histogram2dTrace.coloraxis">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coloraxis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.ColoraxisReference" title="statsplotly.plot_specifiers.layout.ColoraxisReference"><span class="pre">ColoraxisReference</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#statsplotly.plot_objects.trace.Histogram2dTrace.coloraxis" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.Histogram2dTrace.colorbar">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">colorbar</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#statsplotly.plot_objects.trace.Histogram2dTrace.colorbar" title="Link to this definition">¶</a></dt>
@@ -722,7 +728,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.HistogramLineTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">HistogramLineTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.HistogramLineTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -779,7 +785,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.HistogramTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">HistogramTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.HistogramTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -842,14 +848,13 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.KdeTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">KdeTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.KdeTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.KdeTrace.hoverinfo" title="statsplotly.plot_objects.trace.KdeTrace.hoverinfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hoverinfo</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.KdeTrace.line" title="statsplotly.plot_objects.trace.KdeTrace.line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">line</span> <span class="pre">(dict[str,</span> <span class="pre">Any])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.KdeTrace.mode" title="statsplotly.plot_objects.trace.KdeTrace.mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span> <span class="pre">(TraceMode)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.KdeTrace.showlegend" title="statsplotly.plot_objects.trace.KdeTrace.showlegend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showlegend</span> <span class="pre">(bool)</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -866,11 +871,6 @@ methods and attributes.</p>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.KdeTrace.mode">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.TraceMode" title="statsplotly.plot_specifiers.trace.TraceMode"><span class="pre">TraceMode</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">TraceMode.LINES</span></em><a class="headerlink" href="#statsplotly.plot_objects.trace.KdeTrace.mode" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="statsplotly.plot_objects.trace.KdeTrace.showlegend">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">showlegend</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#statsplotly.plot_objects.trace.KdeTrace.showlegend" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -899,7 +899,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.RugTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">RugTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.RugTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -962,7 +962,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.Scatter3DTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">Scatter3DTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.Scatter3DTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ScatterBaseTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ScatterBaseTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1013,7 +1013,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.ScatterTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">ScatterTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.ScatterTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ScatterBaseTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ScatterBaseTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1034,7 +1034,7 @@ methods and attributes.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.ScatterTrace.build_id_line">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_id_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#statsplotly.plot_objects.trace.ScatterTrace" title="statsplotly.plot_objects.trace.ScatterTrace"><span class="pre">ScatterTrace</span></a></span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.ScatterTrace.build_id_line" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_id_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.2)"><span class="pre">Series</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.2)"><span class="pre">Series</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#statsplotly.plot_objects.trace.ScatterTrace" title="statsplotly.plot_objects.trace.ScatterTrace"><span class="pre">ScatterTrace</span></a></span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.ScatterTrace.build_id_line" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1068,12 +1068,12 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.ShadedTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">ShadedTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.ShadedTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ScatterBaseTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ScatterBaseTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.ShadedTrace.fill" title="statsplotly.plot_objects.trace.ShadedTrace.fill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.ShadedTrace.fillcolor" title="statsplotly.plot_objects.trace.ShadedTrace.fillcolor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fillcolor</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.ShadedTrace.fillcolor" title="statsplotly.plot_objects.trace.ShadedTrace.fillcolor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fillcolor</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.ShadedTrace.hoverinfo" title="statsplotly.plot_objects.trace.ShadedTrace.hoverinfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hoverinfo</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#statsplotly.plot_objects.trace.ShadedTrace.line" title="statsplotly.plot_objects.trace.ShadedTrace.line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">line</span> <span class="pre">(dict[str,</span> <span class="pre">Any])</span></code></a></p></li>
 </ul>
@@ -1086,7 +1086,7 @@ methods and attributes.</p>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.ShadedTrace.fillcolor">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fillcolor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#statsplotly.plot_objects.trace.ShadedTrace.fillcolor" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fillcolor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#statsplotly.plot_objects.trace.ShadedTrace.fillcolor" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
@@ -1129,7 +1129,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.StepHistogramTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">StepHistogramTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.StepHistogramTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#statsplotly.plot_objects.trace.BaseTrace" title="statsplotly.plot_objects.trace.BaseTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTrace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1180,7 +1180,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.StripTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">StripTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.StripTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_CategoricalTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_CategoricalTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1219,7 +1219,7 @@ methods and attributes.</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="statsplotly.plot_objects.trace.ViolinTrace">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">statsplotly.plot_objects.trace.</span></span><span class="sig-name descname"><span class="pre">ViolinTrace</span></span><a class="headerlink" href="#statsplotly.plot_objects.trace.ViolinTrace" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_OrientedTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_BasePlotlyTrace</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_OrientedTrace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_PlotlyTraceMixin</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1380,6 +1380,7 @@ methods and attributes.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#statsplotly.plot_objects.trace.Histogram2dTrace"><code class="docutils literal notranslate"><span class="pre">Histogram2dTrace</span></code></a><ul>
+<li><a class="reference internal" href="#statsplotly.plot_objects.trace.Histogram2dTrace.coloraxis"><code class="docutils literal notranslate"><span class="pre">Histogram2dTrace.coloraxis</span></code></a></li>
 <li><a class="reference internal" href="#statsplotly.plot_objects.trace.Histogram2dTrace.colorbar"><code class="docutils literal notranslate"><span class="pre">Histogram2dTrace.colorbar</span></code></a></li>
 <li><a class="reference internal" href="#statsplotly.plot_objects.trace.Histogram2dTrace.colorscale"><code class="docutils literal notranslate"><span class="pre">Histogram2dTrace.colorscale</span></code></a></li>
 <li><a class="reference internal" href="#statsplotly.plot_objects.trace.Histogram2dTrace.histnorm"><code class="docutils literal notranslate"><span class="pre">Histogram2dTrace.histnorm</span></code></a></li>
@@ -1414,7 +1415,6 @@ methods and attributes.</p>
 <li><a class="reference internal" href="#statsplotly.plot_objects.trace.KdeTrace.hoverinfo"><code class="docutils literal notranslate"><span class="pre">KdeTrace.hoverinfo</span></code></a></li>
 <li><a class="reference internal" href="#statsplotly.plot_objects.trace.KdeTrace.line"><code class="docutils literal notranslate"><span class="pre">KdeTrace.line</span></code></a></li>
 <li><a class="reference internal" href="#statsplotly.plot_objects.trace.KdeTrace.mode"><code class="docutils literal notranslate"><span class="pre">KdeTrace.mode</span></code></a></li>
-<li><a class="reference internal" href="#statsplotly.plot_objects.trace.KdeTrace.showlegend"><code class="docutils literal notranslate"><span class="pre">KdeTrace.showlegend</span></code></a></li>
 <li><a class="reference internal" href="#statsplotly.plot_objects.trace.KdeTrace.build_trace"><code class="docutils literal notranslate"><span class="pre">KdeTrace.build_trace()</span></code></a></li>
 <li><a class="reference internal" href="#statsplotly.plot_objects.trace.KdeTrace.model_post_init"><code class="docutils literal notranslate"><span class="pre">KdeTrace.model_post_init()</span></code></a></li>
 </ul>

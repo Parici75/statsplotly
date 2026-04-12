@@ -7,7 +7,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.09.10 --><title>Index - statsplotly documentation</title>
 <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
     
@@ -296,7 +296,7 @@
         <ul>
           <li><a href="source/statsplotly.plot_objects.layout.html#statsplotly.plot_objects.layout.HistogramLayout.barmode">(statsplotly.plot_objects.layout.HistogramLayout attribute)</a>
 </li>
-          <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.barmode">(statsplotly.plot_specifiers.color.ColorSpecifier attribute)</a>
+          <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.HistogramColorSpecifier.barmode">(statsplotly.plot_specifiers.color.HistogramColorSpecifier attribute)</a>
 </li>
         </ul></li>
         <li><a href="source/statsplotly.html#statsplotly.barplot">barplot() (in module statsplotly)</a>
@@ -313,15 +313,17 @@
 </li>
         <li><a href="source/statsplotly.plot_objects.layout.html#statsplotly.plot_objects.layout.CategoricalLayout.boxmode">boxmode (statsplotly.plot_objects.layout.CategoricalLayout attribute)</a>
 </li>
-        <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.AggregationTraceData.build_aggregation_trace_data">build_aggregation_trace_data() (statsplotly.plot_specifiers.data.AggregationTraceData class method)</a>
-</li>
         <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.build_coloraxis">build_coloraxis() (statsplotly.plot_specifiers.color.ColorSpecifier method)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.build_colorbar">build_colorbar() (statsplotly.plot_specifiers.color.ColorSpecifier method)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.build_colorscale">build_colorscale() (statsplotly.plot_specifiers.color.ColorSpecifier method)</a>
 </li>
+        <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.AggregationTraceData.build_from_aggregated_data">build_from_aggregated_data() (statsplotly.plot_specifiers.data.AggregationTraceData class method)</a>
+</li>
         <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.build_from_color_data">build_from_color_data() (statsplotly.plot_specifiers.color.ColorSpecifier class method)</a>
+</li>
+        <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.TraceData.build_from_data">build_from_data() (statsplotly.plot_specifiers.data.TraceData class method)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataHandler.build_handler">build_handler() (statsplotly.plot_specifiers.data.DataHandler class method)</a>
 </li>
@@ -383,8 +385,6 @@
           <li><a href="source/statsplotly.plot_objects.html#statsplotly.plot_objects.trace.ViolinTrace.build_trace">(statsplotly.plot_objects.trace.ViolinTrace class method)</a>
 </li>
         </ul></li>
-        <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.TraceData.build_trace_data">build_trace_data() (statsplotly.plot_specifiers.data.TraceData class method)</a>
-</li>
         <li><a href="source/statsplotly.plot_objects.html#statsplotly.plot_objects.trace.ShadedTrace.build_upper_error_trace">build_upper_error_trace() (statsplotly.plot_objects.trace.ShadedTrace class method)</a>
 </li>
     </ul></td>
@@ -437,8 +437,6 @@
 </li>
         <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataPointer.check_missing_dimension">check_missing_dimension() (statsplotly.plot_specifiers.data.DataPointer method)</a>
 </li>
-        <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataProcessor.check_normalizer">check_normalizer() (statsplotly.plot_specifiers.data.DataProcessor class method)</a>
-</li>
         <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.check_opacity">check_opacity() (statsplotly.plot_specifiers.color.ColorSpecifier class method)</a>
 
         <ul>
@@ -463,14 +461,14 @@
           <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.cmin">(statsplotly.plot_specifiers.color.ColorSpecifier property)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataPointer.color">color (statsplotly.plot_specifiers.data.DataPointer attribute)</a>
 
         <ul>
           <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataTypes.color">(statsplotly.plot_specifiers.data.DataTypes attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.color_limits">color_limits (statsplotly.plot_specifiers.color.ColorSpecifier attribute)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.color_palette">color_palette (statsplotly.plot_specifiers.color.ColorSpecifier attribute)</a>
@@ -479,6 +477,8 @@
 
         <ul>
           <li><a href="source/statsplotly.plot_objects.layout.html#statsplotly.plot_objects.layout.SceneLayout.coloraxis">(statsplotly.plot_objects.layout.SceneLayout attribute)</a>
+</li>
+          <li><a href="source/statsplotly.plot_objects.html#statsplotly.plot_objects.trace.Histogram2dTrace.coloraxis">(statsplotly.plot_objects.trace.Histogram2dTrace attribute)</a>
 </li>
         </ul></li>
         <li><a href="source/statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.PlotAxis.COLORAXIS">COLORAXIS (statsplotly.plot_specifiers.layout.PlotAxis attribute)</a>
@@ -519,7 +519,7 @@
 </li>
         <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.statistics.compute_ssquares">compute_ssquares() (in module statsplotly.plot_specifiers.data.statistics)</a>
 </li>
-        <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataHandler.convert_categorical_dtype_columns">convert_categorical_dtype_columns() (statsplotly.plot_specifiers.data.DataHandler class method)</a>
+        <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataHandler.convert_categorical_columns">convert_categorical_columns() (statsplotly.plot_specifiers.data.DataHandler class method)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.convert_datetime_to_timestamp">convert_datetime_to_timestamp() (statsplotly.plot_specifiers.color.ColorSpecifier static method)</a>
 </li>
@@ -637,15 +637,13 @@
         </ul></li>
         <li><a href="source/statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.LegendSpecifier.figure_title">figure_title (statsplotly.plot_specifiers.layout.LegendSpecifier property)</a>
 </li>
-        <li><a href="source/statsplotly.plot_objects.html#statsplotly.plot_objects.trace.ShadedTrace.fill">fill (statsplotly.plot_objects.trace.ShadedTrace attribute)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="source/statsplotly.plot_objects.html#statsplotly.plot_objects.trace.ShadedTrace.fill">fill (statsplotly.plot_objects.trace.ShadedTrace attribute)</a>
+</li>
         <li><a href="source/statsplotly.plot_objects.html#statsplotly.plot_objects.trace.ShadedTrace.fillcolor">fillcolor (statsplotly.plot_objects.trace.ShadedTrace attribute)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxisFormat.FIXED_RATIO">FIXED_RATIO (statsplotly.plot_specifiers.layout.AxisFormat attribute)</a>
-</li>
-        <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.format_color_data">format_color_data() (statsplotly.plot_specifiers.color.ColorSpecifier method)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.AggregationType.FRACTION">FRACTION (statsplotly.plot_specifiers.data.AggregationType attribute)</a>
 </li>
@@ -669,15 +667,19 @@
 </li>
         <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataHandler.get_data">get_data() (statsplotly.plot_specifiers.data.DataHandler method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="source/statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.HistogramSpecifier.get_distribution_max_value">get_distribution_max_value() (statsplotly.plot_specifiers.trace.HistogramSpecifier method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="source/statsplotly.plot_objects.html#statsplotly.plot_objects.trace.BaseTrace.get_error_bars">get_error_bars() (statsplotly.plot_objects.trace.BaseTrace static method)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.HistogramSpecifier.get_histogram_bin_edges">get_histogram_bin_edges() (statsplotly.plot_specifiers.trace.HistogramSpecifier method)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.statistics.get_iqr">get_iqr() (in module statsplotly.plot_specifiers.data.statistics)</a>
+</li>
+        <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.get_line_color">get_line_color() (statsplotly.plot_specifiers.color.ColorSpecifier method)</a>
+</li>
+        <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.get_marker_color">get_marker_color() (statsplotly.plot_specifiers.color.ColorSpecifier method)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataHandler.get_mean">get_mean() (statsplotly.plot_specifiers.data.DataHandler method)</a>
 </li>
@@ -989,6 +991,8 @@
 </li>
           <li><a href="source/statsplotly.plot_specifiers.html#module-statsplotly.plot_specifiers.trace">statsplotly.plot_specifiers.trace</a>
 </li>
+          <li><a href="source/statsplotly.html#module-statsplotly.types">statsplotly.types</a>
+</li>
           <li><a href="source/statsplotly.html#module-statsplotly.utils">statsplotly.utils</a>
 </li>
         </ul></li>
@@ -1026,8 +1030,6 @@
 
         <ul>
           <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.ColorSpecifier.opacity">(statsplotly.plot_specifiers.color.ColorSpecifier attribute)</a>
-</li>
-          <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.HistogramColorSpecifier.opacity">(statsplotly.plot_specifiers.color.HistogramColorSpecifier attribute)</a>
 </li>
           <li><a href="source/statsplotly.plot_specifiers.data.html#statsplotly.plot_specifiers.data.DataPointer.opacity">(statsplotly.plot_specifiers.data.DataPointer attribute)</a>
 </li>
@@ -1201,8 +1203,6 @@
         <ul>
           <li><a href="source/statsplotly.plot_objects.html#statsplotly.plot_objects.trace.HistogramLineTrace.showlegend">(statsplotly.plot_objects.trace.HistogramLineTrace attribute)</a>
 </li>
-          <li><a href="source/statsplotly.plot_objects.html#statsplotly.plot_objects.trace.KdeTrace.showlegend">(statsplotly.plot_objects.trace.KdeTrace attribute)</a>
-</li>
           <li><a href="source/statsplotly.plot_objects.html#statsplotly.plot_objects.trace.RugTrace.showlegend">(statsplotly.plot_objects.trace.RugTrace attribute)</a>
 </li>
         </ul></li>
@@ -1236,14 +1236,14 @@
 </li>
         <li><a href="source/statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxisFormat.SQUARE">SQUARE (statsplotly.plot_specifiers.layout.AxisFormat attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="source/statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.BarMode.STACK">STACK (statsplotly.plot_specifiers.layout.BarMode attribute)</a>
 
         <ul>
           <li><a href="source/statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.HistogramBarMode.STACK">(statsplotly.plot_specifiers.layout.HistogramBarMode attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     statsplotly
 
@@ -1343,6 +1343,13 @@
 </li>
         </ul></li>
         <li>
+    statsplotly.types
+
+        <ul>
+          <li><a href="source/statsplotly.html#module-statsplotly.types">module</a>
+</li>
+        </ul></li>
+        <li>
     statsplotly.utils
 
         <ul>
@@ -1438,13 +1445,17 @@
         <li><a href="source/statsplotly.plot_specifiers.layout.html#statsplotly.plot_specifiers.layout.AxesSpecifier.validate_axis_range_format">validate_axis_range_format() (statsplotly.plot_specifiers.layout.AxesSpecifier class method)</a>
 </li>
         <li><a href="source/statsplotly.plot_objects.layout.html#statsplotly.plot_objects.layout.HistogramLayout.validate_histogram_barmode">validate_histogram_barmode() (statsplotly.plot_objects.layout.HistogramLayout class method)</a>
+
+        <ul>
+          <li><a href="source/statsplotly.plot_specifiers.color.html#statsplotly.plot_specifiers.color.HistogramColorSpecifier.validate_histogram_barmode">(statsplotly.plot_specifiers.color.HistogramColorSpecifier class method)</a>
 </li>
+        </ul></li>
         <li><a href="source/statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.ScatterSpecifier.validate_mode">validate_mode() (statsplotly.plot_specifiers.trace.ScatterSpecifier class method)</a>
-</li>
-        <li><a href="source/statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.CategoricalPlotSpecifier.validate_model">validate_model() (statsplotly.plot_specifiers.trace.CategoricalPlotSpecifier method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="source/statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.CategoricalPlotSpecifier.validate_model">validate_model() (statsplotly.plot_specifiers.trace.CategoricalPlotSpecifier method)</a>
+</li>
         <li><a href="source/statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.CategoricalPlotSpecifier.validate_plot_type">validate_plot_type() (statsplotly.plot_specifiers.trace.CategoricalPlotSpecifier class method)</a>
 </li>
         <li><a href="source/statsplotly.plot_specifiers.html#statsplotly.plot_specifiers.trace.PlotOrientation.VERTICAL">VERTICAL (statsplotly.plot_specifiers.trace.PlotOrientation attribute)</a>
