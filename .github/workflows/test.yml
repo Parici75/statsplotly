@@ -12,12 +12,12 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -26,6 +26,6 @@ jobs:
 
       - name: Run ci
         run: |
-          poetry self add "poetry-dynamic-versioning[plugin]"
+          pip install poetry-dynamic-versioning
           poetry install --without docs
           make ci
