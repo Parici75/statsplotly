@@ -9,7 +9,7 @@
 
 [![Documentation](https://img.shields.io/website?label=docs&url=https://parici75.github.io/statsplotly)](https://parici75.github.io/statsplotly)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/statsplotly)
-[![linting - Ruff](https://img.shields.io/badge/Linting-Ruff-yellow)](https://docs.astral.sh/ruff/)
+[![linting - Ruff](https://img.shields.io/badge/Linting_&_Formatting-Ruff-151B54)](https://docs.astral.sh/ruff/)
 [![mypy](https://img.shields.io/badge/mypy-checked-blue)](https://mypy.readthedocs.io/en/stable/index.html#)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
 [![CI](https://github.com/Parici75/statsplotly/actions/workflows/test.yml/badge.svg)](https://github.com/Parici75/statsplotly/actions/workflows/test.yml)
