@@ -11,6 +11,11 @@ jobs:
         python-version: ['3.11', '3.12', '3.13']
 
     runs-on: ${{ matrix.os }}
+
+    env:
+      POETRY_VIRTUALENVS_IN_PROJECT: "true"
+      POETRY_CACHE_DIR: ${{ github.workspace }}/.cache/poetry
+
     steps:
       - uses: actions/checkout@v6
         with:
