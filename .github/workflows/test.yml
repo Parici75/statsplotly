@@ -31,6 +31,5 @@ jobs:
 
       - name: Run ci
         run: |
-          pip install poetry-dynamic-versioning
           poetry install --without docs
           make ci
