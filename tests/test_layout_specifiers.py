@@ -1,4 +1,5 @@
 import logging
+import re
 
 import numpy as np
 import pandas as pd
@@ -7,6 +8,7 @@ import pytest
 from statsplotly.plot_specifiers.data import DataPointer, TraceData
 from statsplotly.plot_specifiers.layout import (
     AxesSpecifier,
+    AxisFormat,
     LegendSpecifier,
     set_horizontal_colorbar,
 )
@@ -34,13 +36,13 @@ class TestAxesSpecifier:
     legend_specifier = LegendSpecifier(data_pointer=DataPointer(x="x", y="y", text="z"))
 
     def test_invalid_range(self):
-        trace_data = TraceData.build_trace_data(
+        trace_data = TraceData.build_from_data(
             data=EXAMPLE_DATAFRAME, pointer=DataPointer(x="x", y="y", text="z")
         )
 
         with pytest.raises(ValueError) as excinfo:
             AxesSpecifier(
-                axis_format="square",
+                axis_format=AxisFormat("square"),
                 traces=[trace_data],
                 legend=self.legend_specifier,
                 x_range=["a", "b"],
@@ -48,37 +50,40 @@ class TestAxesSpecifier:
             assert "Value error, Axis range must be numeric or `datetime`" in str(excinfo.value)
 
     def test_equal_range(self):
-        trace_data = TraceData.build_trace_data(
+        trace_data = TraceData.build_from_data(
             data=EXAMPLE_DATAFRAME.assign(x=np.arange(6, 9)),
             pointer=DataPointer(x="x", y="y", text="z"),
         )
 
         axes_specifier = AxesSpecifier(
-            axis_format="equal", traces=[trace_data], legend=self.legend_specifier
+            axis_format=AxisFormat("equal"), traces=[trace_data], legend=self.legend_specifier
         )
         assert axes_specifier.yaxis_range == [0.0, 8.8]
 
     def test_datetime_range(self, caplog):
-        trace_data = TraceData.build_trace_data(
+        trace_data = TraceData.build_from_data(
             data=EXAMPLE_DATETIME_DATAFRAME,
             pointer=DataPointer(x="x", y="y", text="z"),
         )
         axes_specifier = AxesSpecifier(
-            axis_format="equal", traces=[trace_data], legend=self.legend_specifier
+            axis_format=AxisFormat("equal"), traces=[trace_data], legend=self.legend_specifier
         )
         assert axes_specifier.yaxis_range == [
             np.datetime64("2020-01-01T00:00:00.000000000"),
             np.datetime64("2020-01-04T00:00:00.000000000"),
         ]
-        assert "Can not pad a common range for values of type = 'datetime64[ns]'" in caplog.text
+        assert re.search(
+            r"Can not pad a common range for values of type = 'datetime64\[\w+\]'",
+            caplog.text,
+        )
 
     def test_incompatible_axes(self, caplog):
-        trace_data = TraceData.build_trace_data(
+        trace_data = TraceData.build_from_data(
             data=EXAMPLE_DATAFRAME.assign(y=pd.date_range("2020-01-01", "2020-01-03", freq="D")),
             pointer=DataPointer(x="x", y="y", text="z"),
         )
         axes_specifier = AxesSpecifier(
-            axis_format="equal", traces=[trace_data], legend=self.legend_specifier
+            axis_format=AxisFormat("equal"), traces=[trace_data], legend=self.legend_specifier
         )
         assert axes_specifier.xaxis_range is None
         assert "Can not calculate a common range for values of type = 'object'" in caplog.text

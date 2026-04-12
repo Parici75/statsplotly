@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 import numpy as np
 import pytest
 
@@ -11,6 +13,7 @@ from statsplotly.plot_objects.trace import (
 )
 from statsplotly.plot_specifiers.color import ColorSpecifier
 from statsplotly.plot_specifiers.data import DataDimension, HistogramNormType
+from statsplotly.plot_specifiers.data._core import TraceData
 from statsplotly.plot_specifiers.trace import HistogramSpecifier, TraceMode
 
 TRACE_NAME = "dummy_name"
@@ -38,7 +41,7 @@ def test_heatmap_trace(example_3dtrace_data):
     assert heatmap_trace.colorscale is None
 
 
-def test_scatter_trace(example_trace_data):
+def test_scatter_trace(example_trace_data: TraceData):
     scatter_trace = ScatterTrace.build_trace(
         trace_data=example_trace_data,
         trace_name=TRACE_NAME,
@@ -46,15 +49,21 @@ def test_scatter_trace(example_trace_data):
         color_specifier=ColorSpecifier(),
         mode=None,
     )
+    assert scatter_trace.x is not None
     assert all(scatter_trace.x == example_trace_data.x_values)
+    assert scatter_trace.y is not None
     assert all(scatter_trace.y == example_trace_data.y_values)
-    assert all(scatter_trace.text == example_trace_data.text_data)
+    assert isinstance(scatter_trace.text, Iterable)
+    assert isinstance(example_trace_data.text_data, Iterable)
+    assert all(
+        a == b for a, b in zip(scatter_trace.text, example_trace_data.text_data, strict=True)
+    )
     assert scatter_trace.mode is None
     assert scatter_trace.name == TRACE_NAME
     assert scatter_trace.legendgroup == TRACE_NAME
     assert scatter_trace.showlegend is None
     assert scatter_trace.marker == {
-        "size": None,
+        "size": example_trace_data.size_data,
         "color": None,
         "opacity": None,
         "symbol": None,

@@ -9,8 +9,7 @@
 
 [![Documentation](https://img.shields.io/website?label=docs&url=https://parici75.github.io/statsplotly)](https://parici75.github.io/statsplotly)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/statsplotly)
-[![Black](https://img.shields.io/badge/Code%20style-Black-black)](https://black.readthedocs.io/en/stable/)
-[![linting - Ruff](https://img.shields.io/badge/Linting-Ruff-yellow)](https://docs.astral.sh/ruff/)
+[![linting - Ruff](https://img.shields.io/badge/Linting_&_Formatting-Ruff-151B54)](https://docs.astral.sh/ruff/)
 [![mypy](https://img.shields.io/badge/mypy-checked-blue)](https://mypy.readthedocs.io/en/stable/index.html#)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
 [![CI](https://github.com/Parici75/statsplotly/actions/workflows/test.yml/badge.svg)](https://github.com/Parici75/statsplotly/actions/workflows/test.yml)
@@ -95,7 +94,7 @@ On the Jupyter server, select the created kernel in “Kernel” -> “Change ke
 The Makefile provides several targets to assist in development and code quality :
 
 - `init` creates a project-specific virtual environment and installs the dependencies of the `poetry.lock` file.
-- `ci` launches Black, Ruff, mypy and pytest on your source code.
+- `ci` launches Ruff, mypy and pytest on your source code.
 - `pre-commit` set up and run pre-commit hooks (see pre-commit [documentation](https://pre-commit.com/)).
 - `update-doc` and `build-doc` generates documentation from source code and builds it with [Sphinx](https://www.sphinx-doc.org/en/master/index.html).
 - `coverage` generates code [coverage](https://coverage.readthedocs.io/en/7.6.4/) report.

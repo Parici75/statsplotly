@@ -5,16 +5,18 @@ from __future__ import annotations
 import functools
 import logging
 from abc import ABCMeta, abstractmethod
-from collections.abc import Callable, Generator
-from enum import Enum
-from typing import Any
+from collections.abc import Callable, Generator, Sequence
+from enum import StrEnum
+from typing import Any, Self
 
 import numpy as np
+import pandas as pd
 import plotly
 import plotly.graph_objs as go
 from numpy.typing import NDArray
 from plotly.exceptions import PlotlyKeyError
-from pydantic import ValidationInfo, field_validator
+from pydantic import Field, field_validator, model_validator
+from typing_extensions import override
 
 from statsplotly import constants
 from statsplotly._base import BaseModel
@@ -27,16 +29,17 @@ from statsplotly.plot_specifiers.layout import (
     ColoraxisReference,
     PlotAxis,
 )
+from statsplotly.types import PlotAxisLiteral, SharedGridAxisLiteral
 
 logger = logging.getLogger(__name__)
 
 
-class GridAxis(str, Enum):
+class GridAxis(StrEnum):
     COLS = "cols"
     ROWS = "rows"
 
 
-class SharedGridAxis(str, Enum):
+class SharedGridAxis(StrEnum):
     COLS = "cols"
     ROWS = "rows"
     ALL = "all"
@@ -45,8 +48,8 @@ class SharedGridAxis(str, Enum):
 AXIS_TO_DATA_MAP = {PlotAxis.XAXIS: DataDimension.X, PlotAxis.YAXIS: DataDimension.Y}
 
 
-class FigureLayoutFormatter(BaseModel):
-    fig: go.Figure
+class _FigureLayoutFormatter(BaseModel):
+    fig: go.Figure = Field(..., kw_only=False)
 
     @property
     def coloraxis_references(self) -> NDArray[Any]:
@@ -96,8 +99,7 @@ class FigureLayoutFormatter(BaseModel):
                             trace.marker = trace.marker.update({"coloraxis": new_coloraxis_ref})
 
 
-class _SubplotGridValidator(FigureLayoutFormatter):
-
+class _SubplotGridValidator(_FigureLayoutFormatter):
     @field_validator("fig")
     def validate_subplot_grid(cls, fig: go.Figure) -> go.Figure:
         if fig._grid_ref is None:
@@ -161,18 +163,7 @@ class FigureSubplotFormatter(_SubplotGridValidator):
 
 class _SubplotGridCommonAxisFormatter(BaseModel, metaclass=ABCMeta):
     fig: go.Figure
-    plot_axis: PlotAxis | None
     shared_grid_axis: SharedGridAxis
-
-    @property
-    def dimension(self) -> PlotAxis | None:
-        if self.plot_axis is None:
-            if self.shared_grid_axis is SharedGridAxis.COLS:
-                return PlotAxis.XAXIS
-            if self.shared_grid_axis is SharedGridAxis.ROWS:
-                return PlotAxis.YAXIS
-
-        return self.plot_axis
 
     @property
     def _plot_groups(self) -> list[list[plotly.subplots.SubplotRef]]:
@@ -207,37 +198,15 @@ class _SubplotGridCommonAxisFormatter(BaseModel, metaclass=ABCMeta):
     ) -> list[dict[str, Any]]:
         return [axes[0].trace_kwargs for axes in plot_group]
 
-    def get_target_axes_from_target_traces(
-        self, target_traces: list[plotly.basedatatypes.BaseTraceType]
-    ) -> list[str]:
-        if self.dimension is PlotAxis.XAXIS:
-            idx = 0
-        elif self.dimension is PlotAxis.YAXIS:
-            idx = 1
-        else:
-            raise StatsPlotSpecificationError(
-                f"Can not get target axes for plot_axis={self.plot_axis}"
-            )
-
-        return [
-            axes[0].layout_keys[idx]
-            for plot_group in self.iter_plot_groups()
-            for axes in plot_group
-            if axes[0].trace_kwargs[self.dimension.value]
-            in [trace[self.dimension.value] for trace in target_traces]
-        ]
+    @abstractmethod
+    def get_target_traces(self, plot_group: list[plotly.subplots.SubplotRef]) -> list[Any]:
+        """Returns a list of plotly traces belonging to the `plot_group` to be formatted."""
+        ...
 
     @abstractmethod
-    def get_target_traces(
-        self, plot_group: list[plotly.subplots.SubplotRef]
-    ) -> list[plotly.basedatatypes.BaseTraceType]:
-        """This method returns a list of plotly traces belonging to the `plot_group` and relevant to the formatter."""
-
-    @abstractmethod
-    def update_traces_and_layout(
-        self, target_traces: list[plotly.basedatatypes.BaseTraceType]
-    ) -> None:
-        """This method updates traces and layout attributes given the formatting arguments."""
+    def update_traces_and_layout(self, target_traces: list[Any]) -> None:
+        """Updates traces and layout attributes given the formatting arguments."""
+        ...
 
     def update_along_grid_axis(self) -> None:
         for plot_group in self.iter_plot_groups():
@@ -253,7 +222,7 @@ class _SubplotGridCommonColoraxisFormatter(_SubplotGridCommonAxisFormatter):
 
     @staticmethod
     def _get_heatmap_trace_colorlimit(
-        trace: plotly.basedatatypes.BaseTraceType,
+        trace: Any,
     ) -> tuple[float, float]:
         if trace.zmin is not None:
             z_min = trace.zmin
@@ -269,14 +238,11 @@ class _SubplotGridCommonColoraxisFormatter(_SubplotGridCommonAxisFormatter):
 
     @staticmethod
     def _get_scatter_trace_colorlimit(
-        trace: plotly.basedatatypes.BaseTraceType,
+        trace: Any,
     ) -> tuple[float, float]:
-
         return np.min(trace.marker.color), np.max(trace.marker.color)
 
-    def get_target_traces(
-        self, plot_group: list[plotly.subplots.SubplotRef]
-    ) -> list[plotly.basedatatypes.BaseTraceType]:
+    def get_target_traces(self, plot_group: list[plotly.subplots.SubplotRef]) -> list[Any]:
         axes_reference = self.get_plot_group_axes_reference(plot_group=plot_group)
 
         return [
@@ -292,26 +258,23 @@ class _SubplotGridCommonColoraxisFormatter(_SubplotGridCommonAxisFormatter):
             and (PlotAxis.COLORAXIS in trace or trace.marker[PlotAxis.COLORAXIS] is not None)
         ]
 
-    def update_traces_and_layout(
-        self, target_traces: list[plotly.basedatatypes.BaseTraceType]
-    ) -> None:
+    @override
+    def update_traces_and_layout(self, target_traces: list[Any]) -> None:
         # Update traces
         try:
             reference_coloraxis = target_traces[-1][PlotAxis.COLORAXIS]
             color_limit_function = self._get_heatmap_trace_colorlimit
             self.fig.for_each_trace(
-                lambda trace, reference_coloraxis=reference_coloraxis, target_traces=target_traces: (
-                    trace.update(coloraxis=reference_coloraxis) if trace in target_traces else ()
+                lambda trace, ref_coloraxis=reference_coloraxis, target_traces=target_traces: (
+                    trace.update(coloraxis=ref_coloraxis) if trace in target_traces else ()
                 )
             )
         except PlotlyKeyError:
             reference_coloraxis = target_traces[-1].marker[PlotAxis.COLORAXIS]
             color_limit_function = self._get_scatter_trace_colorlimit
             self.fig.for_each_trace(
-                lambda trace, reference_coloraxis=reference_coloraxis, target_traces=target_traces: (
-                    trace.update(marker_coloraxis=reference_coloraxis)
-                    if trace in target_traces
-                    else ()
+                lambda trace, ref_coloraxis=reference_coloraxis, target_traces=target_traces: (
+                    trace.update(marker_coloraxis=ref_coloraxis) if trace in target_traces else ()
                 )
             )
 
@@ -362,29 +325,39 @@ class _SubplotGridCommonColoraxisFormatter(_SubplotGridCommonAxisFormatter):
 
 
 class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
+    plot_axis: PlotAxis | None = None
     common_range: bool
     link_axes: bool
 
-    @field_validator("shared_grid_axis", mode="after")
-    def check_shared_grid_axis(cls, value: SharedGridAxis, info: ValidationInfo) -> SharedGridAxis:
-        if value is SharedGridAxis.ALL and info.data.get("plot_axis") is None:
-            raise StatsPlotSpecificationError(
-                f"`plot_axis` must be specified when using `shared_grid_axis = {SharedGridAxis.ALL.value}`"
+    @model_validator(mode="after")
+    def check_plot_axis_specification(self) -> Self:
+        if self.shared_grid_axis is SharedGridAxis.ALL and self.plot_axis is None:
+            msg = (
+                f"`plot_axis` must be specified when using `shared_grid_axis = "
+                f"{SharedGridAxis.ALL.value}`"
             )
-        return value
+            raise StatsPlotSpecificationError(msg)
+        return self
+
+    @property
+    def dimension(self) -> PlotAxis | None:
+        if self.plot_axis is None:
+            if self.shared_grid_axis is SharedGridAxis.COLS:
+                return PlotAxis.XAXIS
+            if self.shared_grid_axis is SharedGridAxis.ROWS:
+                return PlotAxis.YAXIS
+
+        return self.plot_axis
 
     @staticmethod
     def _check_numeric_cast(data: NDArray[Any]) -> bool:
         try:
             data.astype("float")
             return True
-        except (ValueError, AttributeError):
+        except (TypeError, AttributeError):
             return False
 
-    def _get_trace_axis_limit(
-        self, trace: plotly.basedatatypes.BaseTraceType
-    ) -> tuple[float, float] | None:
-
+    def _get_trace_axis_limit(self, trace: Any) -> tuple[float, float] | None:
         if (trace_data := trace[AXIS_TO_DATA_MAP[self.dimension]]) is None:  # type: ignore
             logger.info(f"Axis limits of {trace.name} of type {type(trace)} can not be extracted")
             return None
@@ -395,15 +368,31 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
             )
             return None
 
-        sanitized_trace_data = [datum for datum in trace_data if datum is not None]
+        sanitized_trace_data = [d for d in trace_data if not pd.isna(d)]
         if len(sanitized_trace_data) == 0:
             return None
 
-        return np.min(sanitized_trace_data), np.max(sanitized_trace_data)
+        return min(sanitized_trace_data), max(sanitized_trace_data)
 
-    def get_target_traces(
-        self, plot_group: list[plotly.subplots.SubplotRef]
-    ) -> list[plotly.basedatatypes.BaseTraceType]:
+    def get_target_axes_from_target_traces(self, target_traces: list[Any]) -> list[str]:
+        if self.dimension is PlotAxis.XAXIS:
+            idx = 0
+        elif self.dimension is PlotAxis.YAXIS:
+            idx = 1
+        else:
+            raise StatsPlotSpecificationError(
+                f"Can not get target axes for plot_axis={self.plot_axis}"
+            )
+
+        return [
+            axes[0].layout_keys[idx]
+            for plot_group in self.iter_plot_groups()
+            for axes in plot_group
+            if axes[0].trace_kwargs[self.dimension.value]
+            in [trace[self.dimension.value] for trace in target_traces]
+        ]
+
+    def get_target_traces(self, plot_group: list[plotly.subplots.SubplotRef]) -> list[Any]:
         axes_reference = self.get_plot_group_axes_reference(plot_group=plot_group)
         if self.dimension not in [PlotAxis.XAXIS, PlotAxis.YAXIS]:
             raise StatsPlotSpecificationError(
@@ -432,17 +421,18 @@ class _SubplotGridCommonXYAxisFormatter(_SubplotGridCommonAxisFormatter):
                 np.max([limit[1] if limit is not None else None for limit in axis_limits]),
             ]
 
+            logger.debug("Computed axis range: %s", [min_value, max_value])
             return AxesSpecifier.pad_axis_range(
                 axis_range=[min_value, max_value], padding_factor=constants.RANGE_PADDING_FACTOR
             )
 
         except (ValueError, TypeError):
             # No computable limits
+            logger.debug("Could not compute axis range")
             return None
 
-    def update_traces_and_layout(
-        self, target_traces: list[plotly.basedatatypes.BaseTraceType]
-    ) -> None:
+    @override
+    def update_traces_and_layout(self, target_traces: list[Any]) -> None:
         # Update axis limits
         range_dict: dict[str, list[float] | None] = {"range": None}
         if self.common_range:
@@ -482,7 +472,6 @@ class SubplotGridFormatter(_SubplotGridValidator):
     def _reduce_axis_ticks_union(
         self, axes_reference_function: Callable[[int], list[str]]
     ) -> Callable[[int], list[str]]:
-
         def _get_common_ticks(subplot_idx: int) -> list[str]:
             return list(
                 functools.reduce(
@@ -513,8 +502,8 @@ class SubplotGridFormatter(_SubplotGridValidator):
         except TypeError:
             return True
 
-    def set_common_coloraxis(self, shared_grid_axis: str) -> SubplotGridFormatter:
-        """Set a common coloraxis along a shared grid axis
+    def set_common_coloraxis(self, shared_grid_axis: SharedGridAxis) -> SubplotGridFormatter:
+        """Set a common coloraxis along a shared grid axis.
 
         Args:
             shared_grid_axis: A :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis` value.
@@ -531,23 +520,36 @@ class SubplotGridFormatter(_SubplotGridValidator):
 
     def set_common_axis_limit(
         self,
-        shared_grid_axis: str = SharedGridAxis.ALL,
-        plot_axis: str | None = None,
+        shared_grid_axis: SharedGridAxisLiteral = SharedGridAxis.ALL.value,
+        plot_axis: PlotAxisLiteral | None = None,
         common_range: bool = True,
         link_axes: bool = False,
     ) -> SubplotGridFormatter:
-        """Set common axis limits of a plot axis along a shared grid axis, optionally linking the axes.
+        """Set common axis limits along a shared grid axis, optionally linking the axes.
 
         Args:
-            shared_grid_axis: A :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis` value.
-            plot_axis: A :obj:`~statsplotly.plot_specifiers.layout.PlotAxis` value.
+            shared_grid_axis:
+                A :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis` value.
 
-                - Default to :obj:`~statsplotly.plot_specifiers.layout.PlotAxis.YAXIS` when `shared_grid_axis` = :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis.ROWS`.
-                - Default to :obj:`~statsplotly.plot_specifiers.layout.PlotAxis.XAXIS` when `shared_grid_axis` = :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis.COLS`.
-                - Raises a :obj:`~statsplotly.exceptions.StatsPlotSpecificationError` when None and `shared_grid_axis` = :obj:`~statsplotly.plot_specifiers.figure.SharedGridAxis.ALL`.
+            plot_axis:
+                A :obj:`~statsplotly.plot_specifiers.layout.PlotAxis` value.
 
-            common_range: If True (default), set a common range for the axes targeted by `plot_axis`.
-            link_axes: If True (default to False), links the axes targeted by `plot_axis`.
+                - Defaults to :obj:`~statsplotly.plot_specifiers.layout.PlotAxis.YAXIS`
+                  when ``shared_grid_axis`` = ``rows``.
+
+                - Defaults to :obj:`~statsplotly.plot_specifiers.layout.PlotAxis.XAXIS`
+                  when ``shared_grid_axis`` = ``cols``.
+
+                - Raises a :obj:`~statsplotly.exceptions.StatsPlotSpecificationError`
+                  when ``None`` and ``shared_grid_axis`` = ``all``.
+
+            common_range:
+                If ``True`` (default), set a common range for the axes targeted
+                by ``plot_axis``.
+
+            link_axes:
+                If ``True`` (default ``False``), link the axes targeted by
+                ``plot_axis``.
 
         Returns:
             A :obj:`SubplotGridFormatter` instance.
@@ -602,7 +604,8 @@ class SubplotGridFormatter(_SubplotGridValidator):
         def _apply_grid_titles(titles: str) -> None:
             if grid_axis_length != len(titles):
                 raise StatsPlotSpecificationError(
-                    f"Received {len(titles)} subplot titles for a {grid_axis.value} of length = {grid_axis_length}"
+                    f"Received {len(titles)} subplot titles for a {grid_axis.value} of length = "
+                    f"{grid_axis_length}"
                 )
 
             for i, title in enumerate(titles, 1):
@@ -626,7 +629,6 @@ class SubplotGridFormatter(_SubplotGridValidator):
                     row < len(self.fig._grid_ref) - 1
                     and self.fig.layout[xaxis_ref].matches is not None
                 ):
-
                     self.fig.update_layout(
                         {
                             xaxis_ref: {
@@ -639,7 +641,6 @@ class SubplotGridFormatter(_SubplotGridValidator):
                     )
 
                 if col > 0 and self.fig.layout[yaxis_ref].matches is not None:
-
                     self.fig.update_layout(
                         {
                             yaxis_ref: {
@@ -655,16 +656,18 @@ class SubplotGridFormatter(_SubplotGridValidator):
         self,
         title: str | None = None,
         no_legend: bool = False,
-        row_titles: list[str] | None = None,
-        col_titles: list[str] | None = None,
+        row_titles: Sequence[str] | None = None,
+        col_titles: Sequence[str] | None = None,
     ) -> SubplotGridFormatter:
         """Tidy a subplot grid by removing redundant axis titles and optionally adding annotations.
 
         Args:
             title: A string for the figure title.
             no_legend: If True, hides the legend.
-            row_titles: A list of string the size of the row dimension specifying a title for each row.
-            col_titles: A list of string the size of the column dimension specifying a title for each column.
+            row_titles: A list of string the size of the row dimension specifying a title for each
+                row.
+            col_titles: A list of string the size of the column dimension specifying a title for
+                each column.
 
         Returns:
             A :obj:`SubplotGridFormatter` instance.

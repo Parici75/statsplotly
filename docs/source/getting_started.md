@@ -15,7 +15,7 @@ This independence allows to leverage the powerful interactivity offered by [plot
 
 All plotting functions return a {obj}`plotly.graph_objects.Figure` object, and must be supplied with :
 
-- a {obj}`pandas.DataFrame`-comptatible data structure. Dictionaries or tidy (i.e., [long-form](https://en.wikipedia.org/wiki/Wide_and_narrow_data)) DataFrames are the recommended entry point. Note that hierarchical indexes are supported only on DataFrame's {obj}`~pandas.DataFrame.index`.
+- a {obj}`pandas.DataFrame`-compatible data structure. Dictionaries or tidy (i.e., [long-form](https://en.wikipedia.org/wiki/Wide_and_narrow_data)) DataFrames are the recommended entry point. Note that hierarchical indexes are supported only on a DataFrame's {obj}`~pandas.DataFrame.index`.
 - column or index identifiers to specify `x`, `y` and `z` -when applicable- plotting dimensions.
 
 > 💡 Read more on [tidy data](https://aeturrell.github.io/python4DS/data-tidy.html).

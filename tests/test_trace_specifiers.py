@@ -1,11 +1,8 @@
-import datetime
-
 import numpy as np
 import pandas as pd
 import pytest
 from pydantic import ValidationError
 
-from statsplotly.exceptions import StatsPlotSpecificationError
 from statsplotly.plot_specifiers.data import (
     DataDimension,
     DataHandler,
@@ -129,7 +126,10 @@ class TestCategoricalPlotSpecifier:
         )
         with pytest.raises(
             ValueError,
-            match="Only slice-level color data can be specified with `boxplot`, got marker-level argument `color` of type int64",
+            match=(
+                "Only slice-level color data can be specified with `boxplot`, got marker-level "
+                "argument `color` of type int64"
+            ),
         ):
             CategoricalPlotSpecifier(
                 plot_type="boxplot",
@@ -232,7 +232,6 @@ class TestHistogramSpecifier:
 
 
 class TestJointplotSpecifier:
-
     def test_jointplot_specifier(self, caplog):
         jointplot_specifier = JointplotSpecifier(
             plot_type="kde",

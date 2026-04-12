@@ -38,11 +38,10 @@ def test_inverse_func():
     result = inverse_func(x, a, b)
     expected = np.array([9.0, 7.0, 6.333333])
 
-    assert np.allclose(result, expected), f"Expected {expected_output} but got {result}"
+    assert np.allclose(result, expected), f"Expected {expected} but got {result}"
 
 
 def test_affine_func():
-    """Test for affine function"""
     x = np.array([1, 2, 3])
     a = 0.5
     b = 2

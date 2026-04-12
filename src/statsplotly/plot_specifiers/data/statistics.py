@@ -25,17 +25,17 @@ def compute_ssquares(y: NDArray[Any], yhat: NDArray[Any]) -> tuple[float, float,
 
 
 def inverse_func(x: NDArray[Any], a: float, b: float) -> NDArray[Any]:
-    """The reciprocal function"""
+    """The reciprocal function."""
     return b + a / x
 
 
 def affine_func(x: NDArray[Any], a: float, b: float) -> NDArray[Any]:
-    """The affine function"""
+    """The affine function."""
     return a * x + b
 
 
-def logarithmic_func(x: NDArray[Any], a: float, b: float) -> float:
-    """The logarithmic function"""
+def logarithmic_func(x: NDArray[Any], a: float, b: float) -> NDArray[Any]:
+    """The logarithmic function."""
     return b + a * np.log(x)
 
 
@@ -63,7 +63,7 @@ def regress(
 def exponential_regress(
     x: NDArray[Any], y: NDArray[Any]
 ) -> tuple[NDArray[Any], float, tuple[NDArray[Any], NDArray[Any]]]:
-    """Exponential regression via linear regression of the logarithm"""
+    """Exponential regression via linear regression of the logarithm."""
     # For fitting y = AeBx, take the logarithm of both side gives
     # log y = log A + Bx. So fit (log y) against x
     # We weigh the points by the square root of their magnitude

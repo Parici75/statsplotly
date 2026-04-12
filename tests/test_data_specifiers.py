@@ -8,6 +8,7 @@ from statsplotly import constants
 from statsplotly.plot_specifiers.data import (
     AggregationSpecifier,
     AggregationTraceData,
+    AggregationType,
     DataDimension,
     DataHandler,
     DataPointer,
@@ -16,6 +17,7 @@ from statsplotly.plot_specifiers.data import (
     NormalizationType,
     TraceData,
 )
+from statsplotly.plot_specifiers.data._core import ErrorBarType
 from statsplotly.plot_specifiers.data.statistics import sem
 
 logging.getLogger().setLevel(logging.DEBUG)
@@ -38,6 +40,13 @@ class TestDataHandler:
         )
         assert all(data_handler.get_data("x") == pd.Series(np.array((2, 2))))
 
+    def test_numpy_backend(self, dataframe_factory):
+        example_input_dataframe = dataframe_factory(backend="numpy")
+        DataHandler.build_handler(
+            data=example_input_dataframe,
+            data_pointer=DataPointer(x="x", y="y", slicer="z"),
+        )
+
     def test_no_slicer(self, example_input_data_dict):
         data_handler = DataHandler.build_handler(
             data=example_input_data_dict, data_pointer=DataPointer(x="x", y="y")
@@ -52,6 +61,7 @@ class TestDataHandler:
             slice_order=[0, 2, 1],
         )
         assert data_handler.n_slices == 3
+        assert data_handler.get_data("y") is not None
         assert (data_handler.get_data("y").to_numpy() == np.arange(3)).all()
         assert data_handler.slice_levels == [str(x) for x in [0, 2, 1]]
         assert [level for level, trace in list(data_handler.iter_slices())] == ["0", "2", "1"]
@@ -63,6 +73,7 @@ class TestDataHandler:
             slice_order=[0, 1],
         )
         assert data_handler.n_slices == 2
+        assert data_handler.get_data("y") is not None
         assert (data_handler.get_data("y").to_numpy() == np.arange(3)).all()
         assert data_handler.slice_levels == [str(x) for x in [0, 1]]
         assert [level for level, trace in list(data_handler.iter_slices())] == ["0", "1"]
@@ -79,23 +90,16 @@ class TestDataHandler:
                 slice_order=[0, 1, "non_existing_slice_id"],
             )
 
-    def test_data_types(self, example_input_data_dict, example_input_dataframe):
-        data_handler = DataHandler.build_handler(
-            data=example_input_data_dict,
-            data_pointer=DataPointer(x="x", y="y", slicer="z"),
-        )
-        assert all(
-            example_input_dataframe.dtypes.to_dict()[getattr(data_handler.data_pointer, key)] == val
-            for (key, val) in data_handler.data_types.model_dump().items()
-            if val is not None
-        )
-
-    def test_categorical_dtype_cast(self, example_input_dataframe, caplog):
+    @pytest.mark.parametrize(("backend"), ["pyarrow", "numpy"])
+    def test_categorical_dtype_cast(self, dataframe_factory, backend, caplog):
+        if backend == "pyarrow":
+            pytest.importorskip("pyarrow")
+        example_input_dataframe = dataframe_factory(backend=backend)
         data_handler = DataHandler.build_handler(
             data=example_input_dataframe.assign(x=example_input_dataframe["x"].astype("category")),
             data_pointer=DataPointer(x="x", y="y", slicer="z"),
         )
-        assert data_handler.data_types.x is np.dtype("object")
+        assert isinstance(data_handler.data_types.x, pd.StringDtype)
         assert "Casting categorical 'x' data to string" in caplog.text
 
     def test_datetime_dtype(self, example_input_datetime_dataframe):
@@ -103,7 +107,7 @@ class TestDataHandler:
             data=example_input_datetime_dataframe,
             data_pointer=DataPointer(x="x", y="y", slicer="z"),
         )
-        assert data_handler.data_types.x == np.dtype("datetime64[ns]")
+        assert np.issubdtype(data_handler.data_types.x, np.datetime64)
 
     def test_slicer_groupby_mean_aggregation(self, example_input_data_dict):
         agg_df = DataHandler.build_handler(
@@ -122,7 +126,7 @@ class TestDataHandler:
         assert len(agg_df.index.tolist()) == 1
 
     def test_invalid_pointer(self, example_input_data_dict):
-        with pytest.raises(ValueError, match=rf"u is not present in Index\("):
+        with pytest.raises(ValueError, match=r"u is not present in Index\("):
             DataHandler.build_handler(
                 data=example_input_data_dict,
                 data_pointer=DataPointer(x="u"),
@@ -132,7 +136,10 @@ class TestDataHandler:
     def test_invalid_dataframe(self):
         with pytest.raises(
             ValueError,
-            match="Multi-indexed columns are not supported, flatten the header before calling statsplotly",
+            match=(
+                "Multi-indexed columns are not supported, flatten the header before calling"
+                " statsplotly"
+            ),
         ):
             DataHandler.build_handler(
                 data=pd.DataFrame(columns=pd.MultiIndex.from_arrays((np.arange(3), np.arange(3)))),
@@ -157,10 +164,7 @@ class TestDataProcessor:
         assert data_processor.normalizer[DataDimension.X] is NormalizationType.ZSCORE
 
     def test_invalid_normalizer(self):
-        with pytest.raises(
-            ValueError,
-            match="1 validation error for DataProcessor\nnormalizer.x\n  Input should be 'center', 'minmax' or 'zscore'",
-        ):
+        with pytest.raises(ValueError, match="Input should be 'center', 'minmax' or 'zscore'"):
             DataProcessor(
                 jitter_settings={DataDimension.X: 0.2},
                 normalizer={DataDimension.X: "awesome_scaling"},
@@ -173,8 +177,8 @@ class TestDataProcessor:
         processed_data = data_processor.process_trace_data({"x_values": example_input_dataframe.x})
         assert (processed_data["x_values"] == example_input_dataframe.x).all()
         assert (
-            f"Dimension {DataDimension.X.value} of type {example_input_dataframe.x.dtype} can not be"
-            f" normalized with {NormalizationType.ZSCORE.value}" in caplog.text
+            f"Dimension {DataDimension.X.value} of type {example_input_dataframe.x.dtype} can not "
+            f"be normalized with {NormalizationType.ZSCORE.value}" in caplog.text
         )
 
     def test_unjitterable_data(self, example_input_dataframe, caplog):
@@ -184,8 +188,8 @@ class TestDataProcessor:
         processed_data = data_processor.process_trace_data({"x_values": example_input_dataframe.x})
         assert (processed_data["x_values"] == example_input_dataframe.x).all()
         assert (
-            f"Dimension {DataDimension.X.value} of type {example_input_dataframe.x.dtype} can not be"
-            " jittered" in caplog.text
+            f"Dimension {DataDimension.X.value} of type {example_input_dataframe.x.dtype} can not "
+            "be jittered" in caplog.text
         )
 
     def test_normalize_data(self, example_input_dataframe):
@@ -197,8 +201,8 @@ class TestDataProcessor:
 
 
 class TestTraceData:
-    def test_build_trace_data(self, example_data_handler):
-        trace_data = TraceData.build_trace_data(
+    def test_build_trace_data(self, example_data_handler: DataHandler):
+        trace_data = TraceData.build_from_data(
             data=example_data_handler.data, pointer=example_data_handler.data_pointer
         )
         assert (trace_data.x_values == example_data_handler.data.x).all()
@@ -211,18 +215,21 @@ class TestTraceData:
             )
         ).all()
 
-    def test_invalid_error_data(self, example_data_handler):
+    def test_invalid_error_data(self, example_data_handler: DataHandler):
         with pytest.raises(ValueError, match="x error data must be numeric"):
-            TraceData.build_trace_data(
+            TraceData.build_from_data(
                 data=example_data_handler.data,
                 pointer=DataPointer(x="x", y="y", error_x="x"),
             )
 
         with pytest.raises(
             ValueError,
-            match="error_z error data must be bidirectional to be plotted relative to the underlying data",
+            match=(
+                "error_z error data must be bidirectional to be plotted relative to the "
+                "underlying data"
+            ),
         ):
-            TraceData.build_trace_data(
+            TraceData.build_from_data(
                 data=example_data_handler.data.copy().assign(
                     error_z=example_data_handler.data.z.apply(lambda x: [x])
                 ),
@@ -233,8 +240,8 @@ class TestTraceData:
 class TestAggregationSpecifier:
     def test_mean_agg_specifier(self):
         agg_specifier = AggregationSpecifier(
-            aggregation_func="mean",
-            aggregated_dimension="y",
+            aggregation_func=AggregationType.MEAN,
+            aggregated_dimension=DataDimension.Y,
             data_pointer=DataPointer(x="x", y="y"),
             data_types=DataTypes(x=np.dtype(float), y=np.dtype(float)),
         )
@@ -245,19 +252,18 @@ class TestAggregationSpecifier:
         assert agg_specifier.aggregation_plot_dimension is DataDimension.Y
 
     def test_no_agg_dimension(self):
-        with pytest.raises(ValueError) as excinfo:
+        with pytest.raises(ValueError, match="aggregation dimension `y` not found in the data"):
             AggregationSpecifier(
-                aggregation_func="mean",
-                aggregated_dimension="y",
+                aggregation_func=AggregationType.MEAN,
+                aggregated_dimension=DataDimension.Y,
                 data_pointer=DataPointer(x="x"),
                 data_types=DataTypes(x=np.dtype(float), y=np.dtype(float)),
             )
-            assert "aggregation dimension `y` not found in the data"
 
     def test_count_agg_specifier(self):
         agg_specifier = AggregationSpecifier(
-            aggregation_func="count",
-            aggregated_dimension="x",
+            aggregation_func=AggregationType.COUNT,
+            aggregated_dimension=DataDimension.X,
             data_pointer=DataPointer(x="x"),
             data_types=DataTypes(x=np.dtype(float)),
         )
@@ -267,7 +273,7 @@ class TestAggregationSpecifier:
     def test_invalid_count_agg_specifier(self):
         with pytest.raises(ValueError) as excinfo:
             AggregationSpecifier(
-                aggregation_func="count",
+                aggregation_func=AggregationType.COUNT,
                 data_pointer=DataPointer(x="x", y="y"),
                 data_types=DataTypes(x=np.dtype(float), y=np.dtype(float)),
             )
@@ -276,17 +282,18 @@ class TestAggregationSpecifier:
 
 class TestAggregationTraceData:
     def test_build_trace_data_with_sem(self, example_data_handler):
-        trace_data = AggregationTraceData.build_aggregation_trace_data(
+        trace_data = AggregationTraceData.build_from_aggregated_data(
             data=example_data_handler.data,
             aggregation_specifier=AggregationSpecifier(
-                aggregation_func="mean",
-                aggregated_dimension="y",
-                error_bar="sem",
+                aggregation_func=AggregationType.MEAN,
+                aggregated_dimension=DataDimension.Y,
+                error_bar=ErrorBarType.SEM,
                 data_pointer=DataPointer(x="x", y="y"),
                 data_types=example_data_handler.data_types,
             ),
         )
         assert (trace_data.y_values == example_data_handler.data.groupby("x")["y"].mean()).all()
+        assert trace_data.error_y is not None
         assert (
             trace_data.error_y.tolist()
             == example_data_handler.data.groupby("x")["y"]
@@ -300,34 +307,38 @@ class TestAggregationTraceData:
         )
 
     def test_build_count_trace_data(self, example_data_handler):
-        trace_data = AggregationTraceData.build_aggregation_trace_data(
+        trace_data = AggregationTraceData.build_from_aggregated_data(
             data=example_data_handler.data,
             aggregation_specifier=AggregationSpecifier(
-                aggregation_func="count",
-                aggregated_dimension="y",
+                aggregation_func=AggregationType.COUNT,
+                aggregated_dimension=DataDimension.Y,
                 data_pointer=DataPointer(y="y"),
                 data_types=example_data_handler.data_types,
             ),
         )
+        assert trace_data.x_values is not None
         assert (
             trace_data.x_values.tolist() == example_data_handler.data.groupby("y")["y"].count()
         ).all()
+        assert trace_data.y_values is not None
         assert (trace_data.y_values.tolist() == example_data_handler.data["y"].unique()).all()
 
     def test_build_percent_trace_data(self, example_data_handler):
-        trace_data = AggregationTraceData.build_aggregation_trace_data(
+        trace_data = AggregationTraceData.build_from_aggregated_data(
             data=example_data_handler.data,
             aggregation_specifier=AggregationSpecifier(
-                aggregation_func="percent",
-                aggregated_dimension="y",
+                aggregation_func=AggregationType.PERCENT,
+                aggregated_dimension=DataDimension.Y,
                 data_pointer=DataPointer(y="y"),
                 data_types=example_data_handler.data_types,
             ),
         )
+        assert trace_data.x_values is not None
         assert (
             trace_data.x_values.tolist()
             == example_data_handler.data.groupby("y")["y"].count()
             / example_data_handler.data["y"].notnull().sum()
             * 100
         ).all()
+        assert trace_data.y_values is not None
         assert (trace_data.y_values.tolist() == example_data_handler.data["y"].unique()).all()

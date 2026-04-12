@@ -1,7 +1,7 @@
 import logging
 import re
-from enum import Enum
-from typing import Any, TypeAlias, cast
+from enum import StrEnum
+from typing import Any, cast
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -16,16 +16,16 @@ from statsplotly.exceptions import StatsPlotSpecificationError, UnsupportedColor
 
 logger = logging.getLogger(__name__)
 
-Cmap_specs: TypeAlias = str | list[str] | list[tuple[float, float, float]]
+CmapSpecs = str | list[str] | list[tuple[float, float, float]]
 
 
-class ColorSystem(str, Enum):
+class ColorSystem(StrEnum):
     LINEAR = "linear"
     LOGARITHMIC = "logarithmic"
     DISCRETE = "discrete"
 
 
-def get_colorarray_from_seaborn(cmap: Cmap_specs | None, n_colors: int) -> NDArray[Any]:
+def get_colorarray_from_seaborn(cmap: CmapSpecs | None, n_colors: int) -> NDArray[Any]:
     try:
         return sns.color_palette(cmap, n_colors=n_colors)
     except ValueError as exc:
@@ -35,7 +35,7 @@ def get_colorarray_from_seaborn(cmap: Cmap_specs | None, n_colors: int) -> NDArr
 
 
 def get_colorarray_from_matplotlib(
-    cmap: Cmap_specs | None,
+    cmap: CmapSpecs | None,
     n_colors: int,
 ) -> NDArray[Any]:
     if isinstance(cmap, list):
@@ -49,7 +49,7 @@ def get_colorarray_from_matplotlib(
     return mpl_cmap(np.linspace(0, 1, n_colors))
 
 
-def get_colorarray_from_plotly(cmap: Cmap_specs, n_colors: int) -> NDArray[Any]:
+def get_colorarray_from_plotly(cmap: CmapSpecs, n_colors: int) -> NDArray[Any]:
     if n_colors == 1:
         return plotly.colors.sample_colorscale(cmap, samplepoints=0.5, colortype="tuple")
 
@@ -58,7 +58,7 @@ def get_colorarray_from_plotly(cmap: Cmap_specs, n_colors: int) -> NDArray[Any]:
 
 def cmap_to_array(
     n_colors: int,
-    cmap: Cmap_specs | matplotlib.colors.Colormap | None,
+    cmap: CmapSpecs | matplotlib.colors.Colormap | None,
 ) -> NDArray[Any]:
     """Returns n_colors linearly spaced values on the colormap specified from cmap."""
 
@@ -85,7 +85,7 @@ def cmap_to_array(
 
 
 def to_rgb_string(color_reference: tuple[float, float, float] | str) -> str:
-    """Transforms a color reference into a plotly-compatible rgb string"""
+    """Transforms a color reference into a plotly-compatible rgb string."""
     if isinstance(color_reference, str):
         color_reference = to_rgb(color_reference)
 
@@ -93,11 +93,12 @@ def to_rgb_string(color_reference: tuple[float, float, float] | str) -> str:
 
 
 def rgb_string_array_from_colormap(
-    n_colors: int, color_palette: Cmap_specs | matplotlib.colors.Colormap | None
+    n_colors: int, color_palette: CmapSpecs | matplotlib.colors.Colormap | None
 ) -> list[str]:
     """Returns a list of RGB string given `n_colors` and a `color_palette` reference.
 
-    This function attempts to extract RGB color values from built-in Plotly, Seaborn and finally Matplotlib colormaps.
+    This function attempts to extract RGB color values from built-in Plotly, Seaborn and finally
+    Matplotlib colormaps.
 
     """
     rgb_array = cmap_to_array(n_colors, color_palette)
@@ -110,7 +111,7 @@ def compute_colorscale(  # noqa PLR0912 C901
     n_colors: int,
     color_system: ColorSystem,
     logscale: float | None = 10,
-    color_palette: Cmap_specs | matplotlib.colors.Colormap | None = None,
+    color_palette: CmapSpecs | matplotlib.colors.Colormap | None = None,
 ) -> str | list[list[float | str]]:
     """Returns a plotly-compatible colorscale depending on the color system
     chosen by user.

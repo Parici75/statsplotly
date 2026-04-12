@@ -8,7 +8,6 @@ from plotly.subplots import make_subplots
 from pydantic import ValidationError
 
 from statsplotly import constants, heatmap
-from statsplotly.exceptions import StatsPlotSpecificationError
 from statsplotly.plot_objects.layout import ScatterLayout
 from statsplotly.plot_objects.layout._axis import ColorAxis
 from statsplotly.plot_objects.trace import ScatterTrace
@@ -20,23 +19,24 @@ from statsplotly.plot_specifiers.figure._utils import (
     SubplotGridFormatter,
 )
 from statsplotly.plot_specifiers.layout import AxesSpecifier
+from statsplotly.plot_specifiers.trace import TraceMode
 
 
 @pytest.fixture
 def example_figure_layout_traces():
     fig = make_subplots(rows=2, cols=2)
     fig.add_trace(
-        go.Scatter(x=[1, 2, 3], y=[4, 5, 6], marker=dict(color=[7, 8, 9], coloraxis="coloraxis"))
+        go.Scatter(x=[1, 2, 3], y=[4, 5, 6], marker={"color": [7, 8, 9], "coloraxis": "coloraxis"})
     )
     fig.update_layout({"coloraxis": {}, "coloraxis2": {}})
 
     layout_dict = {"coloraxis": {}}
     traces = {
         "new_trace_with_coloraxis": go.Scatter(
-            x=[4, 5, 6], y=[7, 8, 9], marker=dict(color=[10, 11, 12], coloraxis="coloraxis")
+            x=[4, 5, 6], y=[7, 8, 9], marker={"color": [10, 11, 12], "coloraxis": "coloraxis"}
         ),
         "new_trace_without_coloraxis": go.Scatter(
-            x=[7, 8, 9], y=[10, 11, 12], marker=dict(color=[13, 14, 15])
+            x=[7, 8, 9], y=[10, 11, 12], marker={"color": [13, 14, 15]}
         ),
     }
     return fig, layout_dict, traces
@@ -76,7 +76,7 @@ def example_figure_data(example_trace_data, example_legend):
             trace_name="A",
             trace_color="red",
             color_specifier=ColorSpecifier(),
-            mode="markers",
+            mode=TraceMode.MARKERS,
         ).model_dump()
     )
 
@@ -90,7 +90,6 @@ def example_figure_data(example_trace_data, example_legend):
 
 
 class TestCreateFig:
-
     def test_create_fig(self, example_figure_data):
         traces, layout = example_figure_data
         # Create a figure with traces and layout
@@ -111,7 +110,7 @@ class TestCreateFig:
     def test_error_on_create_subplot(self, example_figure_data):
         traces, layout = example_figure_data
         # Trying to add a plot to a figure object without a subplot grid raises a ValidationError
-        with pytest.raises(ValidationError) as excinfo:
+        with pytest.raises(ValidationError):
             create_fig(fig=go.Figure(), traces=traces, layout=layout, row=1, col=1)
 
     def test_add_fig_to_existing_layout(self, example_figure_data):
@@ -127,7 +126,7 @@ class TestCreateFig:
         # Assert that the figure contains the expected traces and updated layout
         assert len(fig.data) == 2
         assert "xaxis2" in fig.layout and "yaxis2" in fig.layout
-        assert fig.layout.xaxis.title.text == None
+        assert fig.layout.xaxis.title.text is None
         assert fig.layout.xaxis2.title.text == "X"
 
 
@@ -179,7 +178,7 @@ def test_format_colorbar_in_subplots_layout(example_figure_layout_traces):
 class TestSetCommonColoraxis:
     def test_all_common_coloraxis(self, example_heatmap_subplots):
         SubplotGridFormatter(fig=example_heatmap_subplots).set_common_coloraxis(SharedGridAxis.ALL)
-        assert all([trace.coloraxis == "coloraxis5" for trace in example_heatmap_subplots.data])
+        assert all(trace.coloraxis == "coloraxis5" for trace in example_heatmap_subplots.data)
         assert example_heatmap_subplots.layout["coloraxis5"]["cmin"] == 0
         assert example_heatmap_subplots.layout["coloraxis5"]["cmax"] == 12
 
@@ -187,10 +186,8 @@ class TestSetCommonColoraxis:
         # Set common color axis for columns
         SubplotGridFormatter(fig=example_heatmap_subplots).set_common_coloraxis(SharedGridAxis.COLS)
         assert all(
-            [
-                trace.coloraxis in ["coloraxis4", "coloraxis5"]
-                for trace in example_heatmap_subplots.data
-            ]
+            trace.coloraxis in ["coloraxis4", "coloraxis5"]
+            for trace in example_heatmap_subplots.data
         )
         assert example_heatmap_subplots.layout["coloraxis4"]["cmin"] == 0
         assert example_heatmap_subplots.layout["coloraxis4"]["cmax"] == 8
@@ -206,10 +203,8 @@ class TestSetCommonColoraxis:
         # Set common color axis for rows
         SubplotGridFormatter(fig=example_heatmap_subplots).set_common_coloraxis(SharedGridAxis.ROWS)
         assert all(
-            [
-                trace.coloraxis in ["coloraxis3", "coloraxis5"]
-                for trace in example_heatmap_subplots.data
-            ]
+            trace.coloraxis in ["coloraxis3", "coloraxis5"]
+            for trace in example_heatmap_subplots.data
         )
         assert example_heatmap_subplots.layout["coloraxis3"]["cmin"] == 0
         assert example_heatmap_subplots.layout["coloraxis3"]["cmax"] == 8
@@ -236,9 +231,8 @@ class TestSetCommonAxisLimits:
             SubplotGridFormatter(fig=example_heatmap_subplots).set_common_axis_limit(
                 shared_grid_axis=SharedGridAxis.ALL
             )
-            assert (
-                f"`plot_axis` must be specified when using `shared_grid_axis = {SharedGridAxis.ALL.value}`"
-                in str(excinfo.value)
+            assert "`plot_axis` must be specified when using `shared_grid_axis = all`" in str(
+                excinfo.value
             )
 
     def test_columns_common_axis_limits(self, example_heatmap_subplots):

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, overload
 
 import numpy as np
 import pandas as pd
@@ -18,7 +18,11 @@ from statsplotly._base import BaseModel
 from statsplotly.exceptions import StatsPlotSpecificationError
 from statsplotly.plot_objects.layout import ColorAxis
 from statsplotly.plot_specifiers.common import smart_legend
-from statsplotly.plot_specifiers.layout import BarMode, ColoraxisReference
+from statsplotly.plot_specifiers.layout import (
+    BarMode,
+    ColoraxisReference,
+    HistogramBarMode,
+)
 
 from ._utils import ColorSystem, compute_colorscale, rgb_string_array_from_colormap
 
@@ -26,7 +30,6 @@ logger = logging.getLogger(__name__)
 
 
 class ColorSpecifier(BaseModel):
-    barmode: BarMode | None = None
     coloraxis_reference: ColoraxisReference | None = None
     colormap: dict[str | np.datetime64 | bool, Any] | None = None
     logscale: float | None = None
@@ -90,17 +93,19 @@ class ColorSpecifier(BaseModel):
 
     @classmethod
     def _register_colormap(
-        cls, color_data: pd.Series
+        cls, color_data: pd.Series | None
     ) -> dict[str | np.datetime64 | bool, Any] | None:
         if color_data is None:
             return None
 
         if cls._check_is_direct_color_specification(color_data):
             logger.debug(
-                f"{color_data.name} values are all color-like, statsplotly will assume direct color specification"
+                "%s values are all color-like, statsplotly will assume direct color specification",
+                color_data,
             )
 
         if cls._check_is_discrete_color_data_type(color_data):
+            # For consistent discrete colormapping, colormap needs to be fixed across all traces
             return dict(
                 zip(
                     color_data.dropna().unique(),
@@ -111,34 +116,59 @@ class ColorSpecifier(BaseModel):
 
         return None
 
-    def format_color_data(self, color_data: str | pd.Series) -> pd.Series:
+    @overload
+    def get_marker_color(self, color_data: str) -> str: ...
+
+    @overload
+    def get_marker_color(self, color_data: pd.Series) -> pd.Series: ...
+
+    def get_marker_color(self, color_data: str | pd.Series) -> str | pd.Series:
+        if isinstance(color_data, str):
+            return color_data
+
         if self._check_is_direct_color_specification(color_data):
             logger.debug(
-                f"{color_data.name} values are all color-like, statsplotly will assume direct color specification"  # type: ignore
+                "%s values are all color-like, statsplotly will assume direct color specification",
+                color_data.name,
             )
             return color_data
 
         if self._check_is_datetime_color_data_type(color_data):
-            return color_data.map(self.convert_datetime_to_timestamp)  # type: ignore
-
+            return color_data.map(self.convert_datetime_to_timestamp)
         if self._check_is_discrete_color_data_type(color_data):
             logger.debug(
-                f"{color_data.name} values of type='{color_data.dtype}' are not continuous type, statsplotly will map it to colormap"  # type: ignore
+                "%s values of type='%s' are not continuous type, statsplotly will map it to "
+                "colormap",
+                color_data.name,
+                color_data.dtype,
             )
             if self.colormap is None:
-                raise StatsPlotSpecificationError(
-                    f"No colormap attribute to map discrete data onto, check {ColorSpecifier.__name__} instantiation"
+                msg = (
+                    f"No colormap defined to map discrete data onto, check "
+                    f"{self.__class__.__name__} instantiation"
                 )
-            return color_data.map(self.colormap)  # type: ignore
+                raise StatsPlotSpecificationError(msg)
+            return color_data.map(self.colormap)
 
         return color_data
+
+    def get_line_color(self, color_data: str | pd.Series) -> str:
+        if isinstance(color_data, str):
+            return color_data
+
+        if len((line_colors := color_data.dropna()).unique()) > 1:
+            logger.warning(
+                "Multiple color values found for line: %s, the first one will be used",
+                line_colors.unique().tolist(),
+            )
+        return line_colors.iloc[0]
 
     def build_colorbar(self, color_values: pd.Series | None) -> dict[str, Any] | None:
         if color_values is None:
             return None
 
         colorbar_dict = {
-            "title": smart_legend(color_values.name),
+            "title": smart_legend(str(color_values.name)),
             "len": 1,
             "xanchor": "left",
             "yanchor": "middle",
@@ -163,7 +193,7 @@ class ColorSpecifier(BaseModel):
                 ticktext = list(colormap.keys())
 
             elif self._check_is_datetime_color_data_type(color_values):
-                tickvals = self.format_color_data(color_values).iloc[[0, -1]]
+                tickvals = self.get_marker_color(color_values).iloc[[0, -1]]
                 ticktext = [
                     datum.strftime("%B %Y")
                     for datum in color_values.dropna().sort_values().iloc[[0, -1]]
@@ -185,12 +215,12 @@ class ColorSpecifier(BaseModel):
             return None
 
         if self._check_is_direct_color_specification(color_data):
-            logger.debug(f"{color_data.name} data is all color-like, returning no colorscale")
+            logger.debug("%s data is all color-like, returning no colorscale", color_data.name)
             return None
 
         # Select the appropriate color system
         if self._check_is_discrete_color_data_type(color_data):
-            _color_data = self.format_color_data(color_data)
+            _color_data = self.get_marker_color(color_data)
             n_colors = _color_data.dropna().nunique()
             color_system = ColorSystem.DISCRETE
         else:
@@ -199,10 +229,11 @@ class ColorSpecifier(BaseModel):
 
         if self.logscale is not None:
             if color_system is ColorSystem.DISCRETE:
-                raise ValueError(
-                    f"{ColorSystem.LOGARITHMIC.value} color system is not compatible with"
-                    f" {ColorSystem.DISCRETE.value} colormapping"
+                msg = (
+                    f"{ColorSystem.LOGARITHMIC.value} color system is not compatible with "
+                    f"{ColorSystem.DISCRETE.value} colormapping"
                 )
+                raise ValueError(msg)
             color_system = ColorSystem.LOGARITHMIC
 
         colorscale = compute_colorscale(
@@ -228,7 +259,11 @@ class ColorSpecifier(BaseModel):
         colorbar = self.build_colorbar(color_data) if colorscale is not None else None
 
         return ColorAxis(
-            cmin=cmin, cmax=cmax, colorscale=colorscale, colorbar=colorbar, showscale=self.colorbar
+            cmin=cmin,
+            cmax=cmax,
+            colorscale=colorscale,
+            colorbar=colorbar,
+            showscale=self.colorbar,
         )
 
     def get_color_hues(self, n_colors: int) -> list[str]:
@@ -237,7 +272,7 @@ class ColorSpecifier(BaseModel):
     @classmethod
     def build_from_color_data(
         cls,
-        color_data: pd.Series,
+        color_data: pd.Series | None,
         **kwargs: Any,
     ) -> ColorSpecifier:
         colormap = cls._register_colormap(color_data=color_data)
@@ -249,7 +284,14 @@ class ColorSpecifier(BaseModel):
 
 
 class HistogramColorSpecifier(ColorSpecifier):
-    opacity: float
+    barmode: BarMode
+
+    @field_validator("barmode", mode="before")
+    def validate_histogram_barmode(cls, value: str | None) -> HistogramBarMode:
+        if value is None:
+            return HistogramBarMode.OVERLAY
+
+        return HistogramBarMode(value)
 
     @field_validator("opacity", mode="before")
     def check_opacity(cls, value: str | float | None, info: ValidationInfo) -> float:
@@ -259,7 +301,9 @@ class HistogramColorSpecifier(ColorSpecifier):
         if value is None:
             if info.data.get("barmode") is BarMode.OVERLAY:
                 logger.info(
-                    f"Setting up histogram opacity to {constants.DEFAULT_OVERLAID_HISTOGRAM_OPACITY} for `barmode={BarMode.OVERLAY.value}`"
+                    f"Setting up histogram opacity to "
+                    f"{constants.DEFAULT_OVERLAID_HISTOGRAM_OPACITY} "
+                    f"for `barmode={BarMode.OVERLAY.value}`"
                 )
                 return constants.DEFAULT_OVERLAID_HISTOGRAM_OPACITY
 

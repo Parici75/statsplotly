@@ -1,6 +1,8 @@
 """Helper modules for plotting routines."""
 
-import plotly
+from typing import Any
+
+from plotly.basedatatypes import BaseTraceType
 
 from statsplotly.plot_objects.trace import (
     ContourTrace,
@@ -31,10 +33,10 @@ def plot_jointplot_main_traces(
     trace_color: str,
     color_specifier: ColorSpecifier,
     jointplot_specifier: JointplotSpecifier,
-) -> dict[str, plotly.basedatatypes.BaseTraceType]:
+) -> dict[str, Any]:
     """Constructs the main traces of a jointplot layout."""
 
-    traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
+    traces: dict[str, BaseTraceType] = {}
     if jointplot_specifier.plot_kde:
         contour_trace = ContourTrace.build_trace(
             trace_data=trace_data,
@@ -69,7 +71,8 @@ def plot_jointplot_main_traces(
             jointplot_specifier=jointplot_specifier,
         )
         # Make colorbars horizontal
-        # TODO: Get read of this one when we use _SubplotGridCommonColoraxisFormatter class for managing coloraxis
+        # TODO: Get read of this one when we use _SubplotGridCommonColoraxisFormatter class
+        # for managing coloraxis
         if heatmap_trace.colorbar is not None:
             heatmap_trace.colorbar = set_horizontal_colorbar(heatmap_trace.colorbar)
 
@@ -84,10 +87,10 @@ def plot_scatter_traces(
     trace_color: str,
     color_specifier: ColorSpecifier,
     scatter_specifier: ScatterSpecifier,
-) -> dict[str, plotly.basedatatypes.BaseTraceType]:
+) -> dict[str, Any]:
     """Constructs scatter traces."""
 
-    traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
+    traces: dict[str, BaseTraceType] = {}
     traces[trace_name] = ScatterTrace.build_trace(
         trace_data=trace_data,
         trace_name=trace_name,
@@ -129,10 +132,10 @@ def plot_distplot_traces(
     trace_color: str,
     color_specifier: ColorSpecifier,
     histogram_specifier: HistogramSpecifier,
-) -> dict[str, plotly.basedatatypes.BaseTraceType]:
+) -> dict[str, BaseTraceType]:
     """Constructs distplot traces."""
 
-    traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
+    traces: dict[str, BaseTraceType] = {}
     if histogram_specifier.dimension is None:
         raise ValueError("`histogram_specifier.dimension` can not be `None`")
 

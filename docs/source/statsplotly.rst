@@ -34,6 +34,14 @@ statsplotly.exceptions module
    :undoc-members:
    :show-inheritance:
 
+statsplotly.types module
+------------------------
+
+.. automodule:: statsplotly.types
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 statsplotly.utils module
 ------------------------
 

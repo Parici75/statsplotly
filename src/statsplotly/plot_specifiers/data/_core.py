@@ -2,14 +2,16 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable, Generator, Sequence
-from enum import Enum
-from functools import wraps
-from typing import Any, TypeAlias, TypeVar
+from enum import StrEnum
+from functools import cached_property, wraps
+from typing import Any, ParamSpec, TypeAlias, TypeVar
 
 import numpy as np
 import pandas as pd
 import scipy as sc
-from numpy.typing import ArrayLike, NDArray
+from numpy.typing import NDArray
+from pandas.api.extensions import ExtensionDtype
+from pandas.core.groupby import DataFrameGroupBy
 from pydantic import ValidationInfo, field_validator, model_validator
 
 from statsplotly import constants
@@ -25,30 +27,30 @@ from .statistics import range_normalize, sem
 logger = logging.getLogger(__name__)
 
 
-class DataDimension(str, Enum):
+class DataDimension(StrEnum):
     X = "x"
     Y = "y"
     Z = "z"
 
 
-class SliceTraceType(str, Enum):
+class SliceTraceType(StrEnum):
     ALL_DATA = "all data"
     SLICE = "slice"
 
 
-class NormalizationType(str, Enum):
+class NormalizationType(StrEnum):
     CENTER = "center"
     MIN_MAX = "minmax"
     ZSCORE = "zscore"
 
 
-class RegressionType(str, Enum):
+class RegressionType(StrEnum):
     LINEAR = "linear"
     EXPONENTIAL = "exponential"
     INVERSE = "inverse"
 
 
-class AggregationType(str, Enum):
+class AggregationType(StrEnum):
     MEAN = "mean"
     GEO_MEAN = "geo_mean"
     COUNT = "count"
@@ -58,12 +60,12 @@ class AggregationType(str, Enum):
     SUM = "sum"
 
 
-class CentralTendencyType(str, Enum):
+class CentralTendencyType(StrEnum):
     MEAN = "mean"
     MEDIAN = "median"
 
 
-class ErrorBarType(str, Enum):
+class ErrorBarType(StrEnum):
     SEM = "sem"
     IQR = "iqr"
     STD = "std"
@@ -71,7 +73,7 @@ class ErrorBarType(str, Enum):
     BOOTSTRAP = "bootstrap"
 
 
-class HistogramNormType(str, Enum):
+class HistogramNormType(StrEnum):
     COUNT = ""
     PERCENT = "percent"
     PROBABILITY = "probability"
@@ -92,7 +94,7 @@ TRACE_DIMENSION_MAP = dict(
     )
 )
 
-AGG_DIMENSION_TO_ERROR_DIMENSION = dict(
+AGG_DIMENSION_TO_ERROR_DIMENSION_MAP = dict(
     zip(
         DataDimension,
         ["_".join(("error", dimension.value)) for dimension in DataDimension],
@@ -100,21 +102,22 @@ AGG_DIMENSION_TO_ERROR_DIMENSION = dict(
     )
 )
 
-
 F = TypeVar("F", bound=Callable[..., Any])
+P = ParamSpec("P")
 
-_Dtype: TypeAlias = np.dtype[Any] | pd.ArrowDtype
-DataFormat: TypeAlias = pd.DataFrame | dict[str, Sequence[ArrayLike]] | ArrayLike
+
+DataFormat: TypeAlias = pd.DataFrame | dict[str, Sequence[NDArray[Any]]] | NDArray[Any]
+_DType: TypeAlias = ExtensionDtype | np.dtype[Any]
 
 
 class DataTypes(BaseModel):
-    x: _Dtype | None = None
-    y: _Dtype | None = None
-    z: _Dtype | None = None
-    color: _Dtype | None = None
-    marker: _Dtype | None = None
-    size: _Dtype | None = None
-    text: _Dtype | None = None
+    x: _DType | None = None
+    y: _DType | None = None
+    z: _DType | None = None
+    color: _DType | None = None
+    marker: _DType | None = None
+    size: _DType | None = None
+    text: _DType | None = None
 
 
 class DataPointer(BaseModel):
@@ -148,7 +151,7 @@ class DataPointer(BaseModel):
 class DataHandler(BaseModel):
     data: pd.DataFrame
     data_pointer: DataPointer
-    slice_order: list[str] | None = None
+    slice_order: list[Any] | None = None
     slice_logical_indices: dict[str, NDArray[Any]] | None = None
 
     @model_validator(mode="after")
@@ -172,7 +175,7 @@ class DataHandler(BaseModel):
         return value
 
     @field_validator("data")
-    def convert_categorical_dtype_columns(cls, value: pd.DataFrame) -> pd.DataFrame:
+    def convert_categorical_columns(cls, value: pd.DataFrame) -> pd.DataFrame:
         for column in value.columns:
             if isinstance(value[column].dtype, pd.CategoricalDtype):
                 logger.debug(f"Casting categorical '{column}' data to string")
@@ -191,7 +194,7 @@ class DataHandler(BaseModel):
             return len(self.slice_logical_indices)
         return 1
 
-    @property
+    @cached_property
     def data_types(self) -> DataTypes:
         dtypes = self.data.dtypes
         data_types: dict[str, Any] = {}
@@ -202,20 +205,20 @@ class DataHandler(BaseModel):
         return DataTypes.model_validate(data_types)
 
     @property
-    def _slicer_groupby_data(self) -> pd.DataFrame | pd.Grouper:
+    def _slicer_groupby_data(self) -> pd.DataFrame | DataFrameGroupBy:
         if self.data_pointer.slicer is not None:
             return self.data.groupby(self.data_pointer.slicer, sort=False)
         return self.data
 
     @staticmethod
     def _get_data_slice_indices(
-        slice_ids: pd.Series, slice_order: list[str] | None
+        slice_ids: pd.Series, slice_order: list[Any] | None
     ) -> dict[str, NDArray[Any]]:
         if slice_order is not None:
             if len(excluded_slices := set(slice_ids.unique()).difference(set(slice_order))) > 0:
                 logger.info(
-                    f"{np.array([*excluded_slices])} slices are not present in slices {slice_order} and"
-                    " will not be plotted"
+                    f"{np.array([*excluded_slices])} slices are not present in slices "
+                    f"{slice_order} and will not be plotted"
                 )
             slices: list[str] = []
             for slice_id in slice_order:
@@ -226,7 +229,7 @@ class DataHandler(BaseModel):
                     )
                 slices.append(str(slice_id))
         else:
-            slices = slice_ids.dropna().unique().astype(str)
+            slices = slice_ids.dropna().unique().astype(str).tolist()
 
         logical_indices: dict[str, NDArray[Any]] = {}
         for slice_id in slices:
@@ -235,11 +238,11 @@ class DataHandler(BaseModel):
         return logical_indices
 
     @staticmethod
-    def to_dataframe(function: F) -> pd.DataFrame:
-        @wraps(function)
+    def to_dataframe(func: Callable[P, pd.DataFrame]) -> Callable[P, pd.DataFrame]:
+        @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> pd.DataFrame:
-            pandas_output = function(*args, **kwargs)
-            if len(pandas_output.shape) == 1:
+            pandas_output = func(*args, **kwargs)
+            if isinstance(pandas_output, pd.Series):
                 return pandas_output.to_frame().transpose()
             return pandas_output
 
@@ -250,7 +253,7 @@ class DataHandler(BaseModel):
         cls,
         data: DataFormat,
         data_pointer: DataPointer,
-        slice_order: list[str] | None = None,
+        slice_order: list[Any] | None = None,
     ) -> DataHandler:
         slice_logical_indices = None
 
@@ -313,25 +316,14 @@ class DataHandler(BaseModel):
 class DataProcessor(BaseModel):
     data_values_map: dict[DataDimension, dict[str, Any]] | None = None
     jitter_settings: dict[DataDimension, float] | None = None
-    normalizer: dict[DataDimension, NormalizationType] | None = None
-
-    @field_validator("normalizer", mode="before")
-    def check_normalizer(
-        cls, value: dict[DataDimension, Any]
-    ) -> dict[DataDimension, NormalizationType]:
-        validated_norm: dict[DataDimension, NormalizationType] = {}
-        for dimension, normalization in value.items():
-            if normalization is not None:
-                validated_norm.update({dimension: normalization})
-
-        return validated_norm
+    normalizer: dict[DataDimension, NormalizationType | None] | None = None
 
     @staticmethod
     def jitter_data(data_series: pd.Series, jitter_amount: float) -> pd.Series:
         if jitter_amount == 0:
             return data_series
 
-        return pd.Series(rand_jitter(data_series, jitter_amount), name=data_series.name)
+        return pd.Series(rand_jitter(data_series.to_numpy(), jitter_amount), name=data_series.name)
 
     @staticmethod
     def normalize_data(data_series: pd.Series, normalizer: NormalizationType) -> pd.Series:
@@ -349,7 +341,7 @@ class DataProcessor(BaseModel):
                     name=data_series.name,
                 )
 
-    def process_trace_data(self, trace_data: dict[str, pd.Series]) -> pd.Series:
+    def process_trace_data(self, trace_data: dict[str, pd.Series]) -> dict[str, pd.Series]:
         if self.data_values_map is not None:
             for dimension, values_map in self.data_values_map.items():
                 trace_data[TRACE_DIMENSION_MAP[dimension]] = (
@@ -417,7 +409,8 @@ class AggregationSpecifier(BaseModel):
         if (aggregation_func := self.aggregation_func) is not None:
             if getattr(self.data_pointer, self.aggregated_dimension) is None:
                 raise StatsPlotSpecificationError(
-                    f"aggregation dimension `{self.aggregated_dimension}` not found in the data"
+                    f"aggregation dimension `{self.aggregated_dimension.value}` not found in the "
+                    f"data"
                 )
 
             # text can not be displayed along aggregation trace
@@ -500,8 +493,9 @@ class _BaseTraceData(BaseModel):
 
         if not all(
             value.apply(
-                lambda x: np.issubdtype(np.asarray(x).dtype, np.number)
-                or any(xx is None for xx in x)
+                lambda x: (
+                    np.issubdtype(np.asarray(x).dtype, np.number) or any(xx is None for xx in x)
+                )
             )
         ):
             raise ValueError(f"{value.name} error data must be numeric")
@@ -518,7 +512,7 @@ class _BaseTraceData(BaseModel):
     def assemble_hover_text(
         cls, data: pd.DataFrame, text_pointers: list[str] | None
     ) -> pd.Series | None:
-        """Converts text columns of a DataFrame into plotly text box"""
+        """Converts text columns of a DataFrame into plotly text box."""
         if text_pointers is None:
             return None
         lines = []
@@ -562,14 +556,19 @@ class _BaseTraceData(BaseModel):
             data[pointer.color] if pointer.color in data.columns else pointer.color
         )
         trace_data["size_data"] = (
-            range_normalize(
-                data[pointer.size], constants.MIN_MARKER_SIZE, constants.MAX_MARKER_SIZE
+            pd.Series(
+                range_normalize(
+                    data[pointer.size].to_numpy(),
+                    constants.MIN_MARKER_SIZE,
+                    constants.MAX_MARKER_SIZE,
+                ),
+                name=pointer.size,
             )
             if pointer.size in data.columns
             else pointer.size
         )
         trace_data["opacity_data"] = (
-            range_normalize(data[pointer.opacity], 0, 1)
+            pd.Series(range_normalize(data[pointer.opacity].to_numpy(), 0, 1), name=pointer.opacity)
             if pointer.opacity in data.columns
             else pointer.opacity
         )
@@ -579,7 +578,7 @@ class _BaseTraceData(BaseModel):
 
 class TraceData(_BaseTraceData):
     @classmethod
-    def build_trace_data(
+    def build_from_data(
         cls,
         data: pd.DataFrame,
         pointer: DataPointer,
@@ -593,12 +592,11 @@ class TraceData(_BaseTraceData):
 
 
 class AggregationTraceData(TraceData):
-
     @classmethod
     def _compute_error_bar(
         cls,
-        data_group: pd.Grouper,
-        agg_function: F,
+        data_group: DataFrameGroupBy,
+        agg_function: Callable[[Any], float],
         error_bar: ErrorBarType | Callable[[Any], NDArray[Any]],
     ) -> pd.Series:
         if error_bar in (ErrorBarType.STD, ErrorBarType.SEM):
@@ -609,8 +607,11 @@ class AggregationTraceData(TraceData):
 
                 case ErrorBarType.SEM:
                     error_data = data_group.apply(
-                        lambda series: sem(series, 1 - constants.CI_ALPHA)
+                        lambda series: sem(series.to_numpy(), 1 - constants.CI_ALPHA)
                     )
+                case _:
+                    msg = f"Unsupported error bar type: {error_bar}"
+                    raise StatsPlotMissingImplementationError(msg)
 
             return pd.Series(
                 zip(data_agg - error_data, data_agg + error_data, strict=True),
@@ -640,7 +641,7 @@ class AggregationTraceData(TraceData):
                 )
             )
 
-        if isinstance(error_bar, Callable):  # type: ignore
+        if callable(error_bar):
             return data_group.apply(error_bar)
 
         raise StatsPlotMissingImplementationError(f"Unsupported error bar type: {error_bar}")
@@ -713,7 +714,7 @@ class AggregationTraceData(TraceData):
 
             if aggregation_specifier.error_bar is not None:
                 trace_data[
-                    AGG_DIMENSION_TO_ERROR_DIMENSION[aggregation_specifier.aggregated_dimension]
+                    AGG_DIMENSION_TO_ERROR_DIMENSION_MAP[aggregation_specifier.aggregated_dimension]
                 ] = cls._compute_error_bar(
                     data.groupby(aggregation_specifier.reference_data, sort=False)[
                         aggregation_specifier.aggregated_data
@@ -725,7 +726,7 @@ class AggregationTraceData(TraceData):
         return trace_data
 
     @classmethod
-    def build_aggregation_trace_data(
+    def build_from_aggregated_data(
         cls, data: pd.DataFrame, aggregation_specifier: AggregationSpecifier
     ) -> AggregationTraceData:
         trace_data = cls._build_aggregation_data_from_pointer(data, aggregation_specifier)

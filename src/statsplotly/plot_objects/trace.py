@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import logging
 from abc import ABCMeta, abstractmethod
-from collections.abc import Callable
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 import pandas as pd
-import plotly
 import plotly.graph_objects as go
 from numpy.typing import NDArray
 from pydantic.v1.utils import deep_update
@@ -31,6 +29,7 @@ from statsplotly.plot_specifiers.data.statistics import (
     kde_2d,
     regress,
 )
+from statsplotly.plot_specifiers.layout import ColoraxisReference
 from statsplotly.plot_specifiers.trace import (
     CategoricalPlotSpecifier,
     HistogramSpecifier,
@@ -44,10 +43,10 @@ from statsplotly.plot_specifiers.trace import (
 logger = logging.getLogger(__name__)
 
 
-class _BasePlotlyTrace(BaseModel):
-    _PLOTLY_GRAPH_FCT: Callable[[Any], Any]
+class _PlotlyTraceMixin(BaseModel):
+    _PLOTLY_GRAPH_FCT: ClassVar[type]
 
-    def to_plotly_trace(self) -> plotly.basedatatypes.BaseTraceType:
+    def to_plotly_trace(self) -> Any:
         return self._PLOTLY_GRAPH_FCT(self.model_dump())
 
 
@@ -99,6 +98,7 @@ class BaseTrace(BaseModel, metaclass=ABCMeta):
 
 class _ScatterBaseTrace(BaseTrace):
     marker: dict[str, Any] | None = None
+    line: dict[str, Any] | None = None
     mode: TraceMode | None = None
     error_x: dict[str, Any] | None = None
     error_y: dict[str, Any] | None = None
@@ -129,8 +129,8 @@ class _ScatterBaseTrace(BaseTrace):
             marker={
                 "size": trace_data.size_data,
                 "color": (
-                    color_specifier.format_color_data(trace_data.color_data)
-                    if trace_data.color_data is not None
+                    color_specifier.get_marker_color(trace_data.color_data)
+                    if trace_data.color_data is not None and mode is not TraceMode.LINES
                     else trace_color
                 ),
                 "opacity": trace_data.opacity_data,
@@ -140,6 +140,11 @@ class _ScatterBaseTrace(BaseTrace):
                     if trace_data.color_data is not None
                     else None
                 ),
+            },
+            line={
+                "color": color_specifier.get_line_color(trace_data.color_data)
+                if trace_data.color_data is not None and mode is TraceMode.LINES
+                else trace_color
             },
             legendgroup=trace_name,
         )
@@ -153,7 +158,7 @@ class _DensityTrace(BaseTrace):
     text: str | pd.Series | None = None
 
 
-class HeatmapTrace(_DensityTrace, _BasePlotlyTrace):
+class HeatmapTrace(_DensityTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Heatmap
 
     hoverinfo: str = "x+y+z+text"
@@ -199,10 +204,13 @@ class HeatmapTrace(_DensityTrace, _BasePlotlyTrace):
         trace_name: str,
         color_specifier: ColorSpecifier,
     ) -> HeatmapTrace:
+        if trace_data.z_values is None:
+            msg = "`z_values` can not be `None`"
+            raise ValueError(msg)
         return cls(
             x=trace_data.x_values,
             y=trace_data.y_values,
-            z=color_specifier.format_color_data(trace_data.z_values),
+            z=color_specifier.get_marker_color(trace_data.z_values),
             zmin=color_specifier.zmin,
             zmax=color_specifier.zmax,
             coloraxis=color_specifier.coloraxis_reference,
@@ -213,13 +221,13 @@ class HeatmapTrace(_DensityTrace, _BasePlotlyTrace):
         )
 
 
-class ShadedTrace(_ScatterBaseTrace, _BasePlotlyTrace):
+class ShadedTrace(_ScatterBaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Scatter
 
     hoverinfo: str = "x+y+name+text"
     line: dict[str, Any]
     fill: str
-    fillcolor: str
+    fillcolor: str | None
 
     @classmethod
     def build_lower_error_trace(
@@ -269,7 +277,7 @@ class ShadedTrace(_ScatterBaseTrace, _BasePlotlyTrace):
         )
 
 
-class ScatterTrace(_ScatterBaseTrace, _BasePlotlyTrace):
+class ScatterTrace(_ScatterBaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Scattergl
 
     hoverinfo: str = "x+y+name+text"
@@ -307,13 +315,19 @@ class ScatterTrace(_ScatterBaseTrace, _BasePlotlyTrace):
             raise ValueError("`trace_data.x_values` and `trace_data.x_values` can not be `None`")
 
         if regression_type is RegressionType.LINEAR:
-            p, r2, (x_grid, y_fit) = regress(trace_data.x_values, trace_data.y_values, affine_func)
+            p, r2, (x_grid, y_fit) = regress(
+                trace_data.x_values.to_numpy(), trace_data.y_values.to_numpy(), affine_func
+            )
             regression_legend = f"alpha={p[0]:.2f}, r={np.sqrt(r2):.2f}"
         elif regression_type is RegressionType.EXPONENTIAL:
-            p, r2, (x_grid, y_fit) = exponential_regress(trace_data.x_values, trace_data.y_values)
+            p, r2, (x_grid, y_fit) = exponential_regress(
+                trace_data.x_values.to_numpy(), trace_data.y_values.to_numpy()
+            )
             regression_legend = f"R2={r2:.2f}"
         elif regression_type is RegressionType.INVERSE:
-            p, r2, (x_grid, y_fit) = regress(trace_data.x_values, trace_data.y_values, inverse_func)
+            p, r2, (x_grid, y_fit) = regress(
+                trace_data.x_values.to_numpy(), trace_data.y_values.to_numpy(), inverse_func
+            )
             regression_legend = f"R2={r2:.2f}"
 
         return cls(
@@ -350,7 +364,7 @@ class ScatterTrace(_ScatterBaseTrace, _BasePlotlyTrace):
         )
 
 
-class Scatter3DTrace(_ScatterBaseTrace, _BasePlotlyTrace):
+class Scatter3DTrace(_ScatterBaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Scatter3d
 
     hoverinfo: str = "x+y+z+name+text"
@@ -425,7 +439,7 @@ class _CategoricalTrace(BaseTrace):
             marker={
                 "size": trace_data.size_data,
                 "color": (
-                    color_specifier.format_color_data(trace_data.color_data)
+                    color_specifier.get_marker_color(trace_data.color_data)
                     if trace_data.color_data is not None
                     else trace_color
                 ),
@@ -435,7 +449,7 @@ class _CategoricalTrace(BaseTrace):
         )
 
 
-class StripTrace(_CategoricalTrace, _BasePlotlyTrace):
+class StripTrace(_CategoricalTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Scattergl
 
     mode: str = TraceMode.MARKERS
@@ -449,7 +463,6 @@ class StripTrace(_CategoricalTrace, _BasePlotlyTrace):
         color_specifier: ColorSpecifier,
         categorical_plot_specifier: CategoricalPlotSpecifier,
     ) -> StripTrace:
-
         categorical_trace = _CategoricalTrace.build_trace(
             trace_data, trace_name, trace_color, color_specifier, categorical_plot_specifier
         )
@@ -478,7 +491,6 @@ class _OrientedTrace(_CategoricalTrace):
         color_specifier: ColorSpecifier,
         categorical_plot_specifier: CategoricalPlotSpecifier,
     ) -> _OrientedTrace:
-
         categorical_trace = _CategoricalTrace.build_trace(
             trace_data, trace_name, trace_color, color_specifier, categorical_plot_specifier
         )
@@ -491,7 +503,7 @@ class _OrientedTrace(_CategoricalTrace):
         )
 
 
-class BoxTrace(_OrientedTrace, _BasePlotlyTrace):
+class BoxTrace(_OrientedTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Box
 
     boxmean: bool = True
@@ -512,7 +524,7 @@ class BoxTrace(_OrientedTrace, _BasePlotlyTrace):
         )
 
 
-class ViolinTrace(_OrientedTrace, _BasePlotlyTrace):
+class ViolinTrace(_OrientedTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Violin
 
     meanline_visible: bool = True
@@ -534,7 +546,7 @@ class ViolinTrace(_OrientedTrace, _BasePlotlyTrace):
         )
 
 
-class BarTrace(BaseTrace, _BasePlotlyTrace):
+class BarTrace(BaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Bar
 
     hoverinfo: str = "x+y+name+text"
@@ -570,7 +582,7 @@ class BarTrace(BaseTrace, _BasePlotlyTrace):
             error_y=error_y_data,
             marker={
                 "color": (
-                    color_specifier.format_color_data(trace_data.color_data)
+                    color_specifier.get_marker_color(trace_data.color_data)
                     if trace_data.color_data is not None
                     else trace_color
                 ),
@@ -581,7 +593,7 @@ class BarTrace(BaseTrace, _BasePlotlyTrace):
         )
 
 
-class StepHistogramTrace(BaseTrace, _BasePlotlyTrace):
+class StepHistogramTrace(BaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Scatter
 
     line: dict[str, Any]
@@ -617,7 +629,7 @@ class StepHistogramTrace(BaseTrace, _BasePlotlyTrace):
         )
 
 
-class RugTrace(BaseTrace, _BasePlotlyTrace):
+class RugTrace(BaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Scatter
 
     hoverinfo: str
@@ -676,7 +688,7 @@ class RugTrace(BaseTrace, _BasePlotlyTrace):
         )
 
 
-class HistogramTrace(BaseTrace, _BasePlotlyTrace):
+class HistogramTrace(BaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Histogram
 
     marker: dict[str, Any] | None = None
@@ -714,7 +726,7 @@ class HistogramTrace(BaseTrace, _BasePlotlyTrace):
         )
 
 
-class EcdfTrace(BaseTrace, _BasePlotlyTrace):
+class EcdfTrace(BaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Scatter
 
     line: dict[str, Any]
@@ -747,12 +759,13 @@ class EcdfTrace(BaseTrace, _BasePlotlyTrace):
         )
 
 
-class Histogram2dTrace(BaseTrace, _BasePlotlyTrace):
+class Histogram2dTrace(BaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Histogram2d
 
     marker: dict[str, Any] | None = None
     xbins: dict[str, Any] | None = None
     ybins: dict[str, Any] | None = None
+    coloraxis: ColoraxisReference | None = None
     colorbar: dict[str, Any] | None = None
     colorscale: str | list[list[str | float]] | None = None
     histnorm: HistogramNormType | None = None
@@ -800,13 +813,12 @@ class Histogram2dTrace(BaseTrace, _BasePlotlyTrace):
         )
 
 
-class KdeTrace(BaseTrace, _BasePlotlyTrace):
+class KdeTrace(BaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Scatter
 
     hoverinfo: str = "x+y"
     line: dict[str, Any]
     mode: TraceMode = TraceMode.LINES
-    showlegend: bool = False
 
     @classmethod
     def build_trace(
@@ -837,10 +849,11 @@ class KdeTrace(BaseTrace, _BasePlotlyTrace):
             name=f"{trace_name} pdf",
             line={"color": line_color},
             legendgroup=trace_name,
+            showlegend=False,
         )
 
 
-class HistogramLineTrace(BaseTrace, _BasePlotlyTrace):
+class HistogramLineTrace(BaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Scatter
 
     hoverinfo: str
@@ -904,7 +917,7 @@ class HistogramLineTrace(BaseTrace, _BasePlotlyTrace):
         )
 
 
-class ContourTrace(_DensityTrace, _BasePlotlyTrace):
+class ContourTrace(_DensityTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Contour
 
     colorscale: str | list[list[str | float]] | None = None

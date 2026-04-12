@@ -1,13 +1,14 @@
-"""Jointplots"""
+"""Jointplots."""
 
 import logging
 from collections.abc import Sequence
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
-import plotly
 import plotly.graph_objs as go
 import plotly.io as pio
 from pandas.api.types import is_numeric_dtype
+from plotly.basedatatypes import BaseTraceType
 from pydantic import ValidationError
 
 from statsplotly import constants
@@ -27,6 +28,8 @@ from statsplotly.plot_specifiers.data import (
     TraceData,
 )
 from statsplotly.plot_specifiers.figure import JointplotPlot, create_fig
+
+# Trace objects
 from statsplotly.plot_specifiers.layout import (
     AxesSpecifier,
     AxisFormat,
@@ -35,15 +38,23 @@ from statsplotly.plot_specifiers.layout import (
     add_update_menu,
     adjust_jointplot_legends,
 )
-
-# Trace objects
 from statsplotly.plot_specifiers.trace import (
     HistogramSpecifier,
     JointplotSpecifier,
     JointplotType,
     MarginalPlotDimension,
     ScatterSpecifier,
-    TraceMode,
+)
+from statsplotly.types import (
+    AxisFormatLiteral,
+    CentralTendencyTypeLiteral,
+    HistogramBarModeLiteral,
+    HistogramNormTypeLiteral,
+    JointplotTypeLiteral,
+    MarginalPlotDimensionLiteral,
+    NormalizationTypeLiteral,
+    RegressionTypeLiteral,
+    TraceModeLiteral,
 )
 
 # Helpers
@@ -64,7 +75,7 @@ def jointplot(
     x: str | None = None,
     y: str | None = None,
     slicer: str | None = None,
-    slice_order: list[str] | None = None,
+    slice_order: list[Any] | None = None,
     color: str | None = None,
     color_palette: list[str] | str | None = None,
     shared_coloraxis: bool = False,
@@ -73,9 +84,9 @@ def jointplot(
     colorbar: bool = True,
     text: str | None = None,
     marker: str | None = None,
-    mode: str | None = TraceMode.MARKERS,
-    axis: str | None = None,
-    marginal_plot: str | None = MarginalPlotDimension.ALL,
+    mode: TraceModeLiteral | None = "markers",
+    axis: AxisFormatLiteral | None = None,
+    marginal_plot: MarginalPlotDimensionLiteral | None = "all",
     kde_color_palette: list[str] | str = constants.DEFAULT_KDE_COLOR_PALETTE,
     hist: bool = True,
     rug: bool | None = None,
@@ -86,26 +97,26 @@ def jointplot(
     equal_bins_y: bool | None = None,
     bins_x: Sequence[float] | int | str = constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD,
     bins_y: Sequence[float] | int | str = constants.DEFAULT_HISTOGRAM_BIN_COMPUTATION_METHOD,
-    histnorm: str | None = None,
-    central_tendency: str | None = None,
-    barmode: str | None = None,
-    plot_type: str = JointplotType.SCATTER,
+    histnorm: HistogramNormTypeLiteral | None = None,
+    central_tendency: CentralTendencyTypeLiteral | None = None,
+    barmode: HistogramBarModeLiteral | None = None,
+    plot_type: JointplotTypeLiteral = JointplotType.SCATTER.value,
     opacity: float = constants.DEFAULT_HISTOGRAM_OPACITY,
     jitter_x: float = 0,
     jitter_y: float = 0,
-    normalizer_x: str | None = None,
-    normalizer_y: str | None = None,
+    normalizer_x: NormalizationTypeLiteral | None = None,
+    normalizer_y: NormalizationTypeLiteral | None = None,
     shaded_error: str | None = None,
     error_x: str | None = None,
     error_y: str | None = None,
-    fit: str | None = None,
+    fit: RegressionTypeLiteral | None = None,
     size: float | str | None = None,
     x_label: str | None = None,
     y_label: str | None = None,
     title: str | None = None,
     x_range: Sequence[float | str] | None = None,
     y_range: Sequence[float | str] | None = None,
-    fig: go.Figure = None,
+    fig: go.Figure | None = None,
     row: int | None = None,
     col: int | None = None,
 ) -> go.Figure:
@@ -115,23 +126,28 @@ def jointplot(
         data: A :obj:`pandas.DataFrame`-compatible structure of data
         x: The name of the `x` dimension column in `data`.
         y: The name of the `y` dimension column in `data`.
-        slicer: The name of the column in `data` with values to slice the data : one trace is drawn for each level of the `slicer` dimension.
+        slicer: The name of the column in `data` with values to slice the data : one trace is drawn
+        for each level of the `slicer` dimension.
         slice_order: A list of identifiers to order and/or subset data slices specified by `slicer`.
-        color: The name of the column in `data` with values to map onto the colormap. Specifying a `color` along with `marginal != None` raises a `StatsPlotSpecificationError`.
+        color: The name of the column in `data` with values to map onto the colormap. Specifying a
+        `color` along with `marginal != None` raises a `StatsPlotSpecificationError`.
         color_palette:
             - A string refering to a built-in `plotly`, `seaborn` or `matplotlib` colormap.
             - A list of CSS color names or HTML color codes.
 
             The color palette is used, by order of precedence :
-                - To map color data specified by the `color` parameter onto the corresponding colormap.
+                - To map color data specified by the `color` parameter onto the corresponding
+                colormap.
                 - To assign discrete colors to `slices` of data.
 
         shared_coloraxis: If True, colorscale limits are shared across slices of data.
         color_limits: A tuple specifying the (min, max) values of the colormap.
         logscale: A float specifying the log base to use for colorscaling.
         colorbar: If True, draws a colorbar.
-        text: A string or the name of the column in `data` with values to appear in the hover tooltip. Column names can be concatenated with '+' to display values from multiple columns.
-        marker: A valid marker symbol or the name of the column in `data` with values to assign marker symbols.
+        text: A string or the name of the column in `data` with values to appear in the hover
+        tooltip. Column names can be concatenated with '+' to display values from multiple columns.
+        marker: A valid marker symbol or the name of the column in `data` with values to assign
+        marker symbols.
         mode: A :obj:`~statsplotly.plot_specifiers.trace.TraceMode` value.
         axis: A :obj:`~statsplotly.plot_specifiers.layout.AxisFormat` value.
         opacity: A numeric value in the (0, 1) interval to specify bar and line opacity.
@@ -144,8 +160,10 @@ def jointplot(
         step: If True, plot a step histogram instead of a standard histogram bars.
         equal_bins_x: If True, uses the same bins for the `x` dimension of all `slices` in the data.
         equal_bins_y: If True, uses the same bins for the `y` dimension of all `slices` in the data.
-        bins_x: A string, integer, or sequence specifying the `bins` parameter for the `x` dimension for :func:`numpy.histogram`.
-        bins_y: A string, integer, or sequence specifying the `bins` parameter for the `y` dimension  for :func:`numpy.histogram`.
+        bins_x: A string, integer, or sequence specifying the `bins` parameter for the `x` dimension
+            for :func:`numpy.histogram`.
+        bins_y: A string, integer, or sequence specifying the `bins` parameter for the `y` dimension
+            for :func:`numpy.histogram`.
         histnorm: A :obj:`~statsplotly.plot_specifiers.data.HistogramNormType` value.
         central_tendency: A :obj:`~statsplotly.plot_specifiers.data.CentralTendencyType` value.
         barmode: A :obj:`~statsplotly.plot_specifiers.layout.BarMode` value.
@@ -153,19 +171,25 @@ def jointplot(
         opacity: A numeric value in the (0, 1) interval to specify marker opacity.
         jitter_x: A numeric value to specify jitter amount on the `x` dimension.
         jitter_y: A numeric value to specify jitter amount on the `y` dimension.
-        normalizer_x: The normalizer for the `x` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
-        normalizer_y: The normalizer for the `y` dimension. A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value.
+        normalizer_x: A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value to
+            normalize the `x` dimension.
+        normalizer_y: A :obj:`~statsplotly.plot_specifiers.data.NormalizationType` value to
+            normalize the `y` dimension.
         shaded_error: The name of the column in `data` with values to plot continuous error shade.
-        error_x: The name of the column in `data` with values to plot error bar in the `x` dimension.
-        error_y: The name of the column in `data` with values to plot error bar in the `y` dimension.
-        fit: A :obj:`~statsplotly.plot_specifiers.data.RegressionType` value. Computes and plot the corresponding regression.
+        error_x: The name of the column in `data` with values to plot error bar in the `x` dimension
+            .
+        error_y: The name of the column in `data` with values to plot error bar in the `y` dimension
+            .
+        fit: A :obj:`~statsplotly.plot_specifiers.data.RegressionType` value. Computes and plot the
+        corresponding regression.
         size: A numeric value or the name of the column in `data` with values to assign mark sizes.
         x_label: A string to label the x_axis in place of the corresponding column name in `data`.
         y_label: A string to label the y_axis in place of the corresponding column name in `data`.
         title: A string for the title of the plot.
         x_range: A tuple defining the (min_range, max_range) of the x_axis.
         y_range: A tuple defining the (min_range, max_range) of the y_axis.
-        fig: A :obj:`plotly.graph_obj.Figure` to add the plot to. Use in conjunction with row and col.
+        fig: A :obj:`plotly.graph_obj.Figure` to add the plot to. Use in conjunction with row and
+            col.
         row: An integer identifying the row to add the plot to.
         col: An integer identifying the column to add the plot to.
 
@@ -205,7 +229,8 @@ def jointplot(
     if data_handler.data_pointer.color is not None:
         if jointplot_specifier.plot_type in (JointplotType.HISTOGRAM, JointplotType.KDE):
             logger.warning(
-                f"Color mapping have no effect with `plot_type={jointplot_specifier.plot_type.value}`"
+                "Color mapping have no effect with `plot_type=%s`",
+                jointplot_specifier.plot_type.value,
             )
 
     def specify_marginal_histogram(
@@ -227,9 +252,11 @@ def jointplot(
                 dimension=dimension,
             )
         except ValidationError as exc:
-            raise StatsPlotSpecificationError(
-                f"Error when initializing marginal histogram for {dimension.value} dimension, try to change `marginal_plot` argument"
-            ) from exc
+            msg = (
+                f"Error when initializing marginal histogram for {dimension.value} dimension, try "
+                f"to change `marginal_plot` argument"
+            )
+            raise StatsPlotSpecificationError(msg) from exc
 
         if equal_bins:
             histogram_specifier.bin_edges = histogram_specifier.get_histogram_bin_edges(
@@ -295,10 +322,10 @@ def jointplot(
         },
     )
 
-    global_main_traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
-    slices_main_traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
-    slices_marginal_traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
-    preplotted_traces: dict[str, plotly.basedatatypes.BaseTraceType] = {}
+    global_main_traces: dict[str, BaseTraceType] = {}
+    slices_main_traces: dict[str, BaseTraceType] = {}
+    slices_marginal_traces: dict[str, BaseTraceType] = {}
+    preplotted_traces: dict[str, BaseTraceType] = {}
 
     traces_data: list[TraceData] = []
 
@@ -306,7 +333,7 @@ def jointplot(
     if data_handler.n_slices > 1:
         global_main_traces.update(
             plot_jointplot_main_traces(
-                trace_data=TraceData.build_trace_data(
+                trace_data=TraceData.build_from_data(
                     data=data_handler.data,
                     pointer=data_handler.data_pointer,
                     processor=data_processor,
@@ -324,7 +351,7 @@ def jointplot(
         sliced_data_color_specifier.get_color_hues(n_colors=data_handler.n_slices),
         strict=True,
     ):
-        trace_data = TraceData.build_trace_data(
+        trace_data = TraceData.build_from_data(
             data=slice_data,
             pointer=data_handler.data_pointer,
             processor=data_processor,
@@ -398,7 +425,7 @@ def jointplot(
     )
 
     figure_plot = JointplotPlot.initialize(
-        plot_specifier=jointplot_specifier, fig=fig, row=row, col=col
+        plot_specifier=jointplot_specifier, fig=fig, row=row or 1, col=col or 1
     )
     preplotted_traces.update({trace.name: trace for trace in figure_plot.fig.data})
 
@@ -419,15 +446,15 @@ def jointplot(
         marginal_row = figure_plot.main_row if dimension is DataDimension.Y else figure_plot.row
         marginal_col = figure_plot.col + 1 if dimension is DataDimension.Y else figure_plot.col
 
-        _data_pointer = data_handler.data_pointer.copy()
+        _data_pointer = data_handler.data_pointer.model_copy()
+        if TYPE_CHECKING:
+            assert jointplot_specifier.histogram_specifier is not None
         if dimension is DataDimension.Y:
             _data_pointer.x = None
             _data_pointer.y = y
             _legend_specifier = LegendSpecifier(
                 data_pointer=_data_pointer,
-                x_transformation=jointplot_specifier.histogram_specifier[
-                    DataDimension.Y
-                ].histnorm,  # type: ignore
+                x_transformation=jointplot_specifier.histogram_specifier[DataDimension.Y].histnorm,
             )
 
         elif dimension is DataDimension.X:
@@ -435,10 +462,12 @@ def jointplot(
             _data_pointer.y = None
             _legend_specifier = LegendSpecifier(
                 data_pointer=_data_pointer,
-                y_transformation=jointplot_specifier.histogram_specifier[
-                    DataDimension.X
-                ].histnorm,  # type: ignore
+                y_transformation=jointplot_specifier.histogram_specifier[DataDimension.X].histnorm,
             )
+
+        else:
+            msg = f"Unsupported marginal dimension: {dimension}"
+            raise StatsPlotSpecificationError(msg)
 
         axes_specifier = AxesSpecifier(
             traces=traces_data,
