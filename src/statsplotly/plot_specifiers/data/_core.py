@@ -556,13 +556,17 @@ class _BaseTraceData(BaseModel):
             data[pointer.color] if pointer.color in data.columns else pointer.color
         )
         trace_data["size_data"] = (
-            pd.Series(
-                range_normalize(
-                    data[pointer.size].to_numpy(),
-                    constants.MIN_MARKER_SIZE,
-                    constants.MAX_MARKER_SIZE,
-                ),
-                name=pointer.size,
+            (
+                pd.Series(
+                    range_normalize(
+                        data[pointer.size].to_numpy(),
+                        constants.MIN_MARKER_SIZE,
+                        constants.MAX_MARKER_SIZE,
+                    ),
+                    name=pointer.size,
+                )
+                if data[pointer.size].max() > constants.MAX_MARKER_SIZE
+                else data[pointer.size]
             )
             if pointer.size in data.columns
             else pointer.size

@@ -94,7 +94,7 @@ def test_scatter3d_trace(example_3dtrace_data):
         "opacity": None,
         "symbol": None,
         "coloraxis": None,
-        "line": {"color": "grey", "width": 2},
+        "line": {"color": "white", "width": 1},
     }
 
 

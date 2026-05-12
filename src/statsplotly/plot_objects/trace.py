@@ -104,7 +104,6 @@ class _ScatterBaseTrace(BaseTrace):
     error_y: dict[str, Any] | None = None
     text: str | pd.Series | None = None
     textposition: str | None = None
-    hoverinfo: str = "x+y+name+text"
 
     @classmethod
     def build_trace(
@@ -225,7 +224,7 @@ class ShadedTrace(_ScatterBaseTrace, _PlotlyTraceMixin):
     _PLOTLY_GRAPH_FCT = go.Scatter
 
     hoverinfo: str = "x+y+name+text"
-    line: dict[str, Any]
+    line: dict[str, Any] | None = None
     fill: str
     fillcolor: str | None
 
@@ -398,8 +397,8 @@ class Scatter3DTrace(_ScatterBaseTrace, _PlotlyTraceMixin):
                 "error_z": error_z_data,
                 "marker": {
                     "line": {
-                        "color": constants.DEFAULT_MARKER_LINE_COLOR,
-                        "width": constants.DEFAULT_MARKER_LINE_WIDTH,
+                        "color": constants.DEFAULT_SCATTER3D_MARKER_LINE_COLOR,
+                        "width": constants.DEFAULT_SCATTER3D_MARKER_LINE_WIDTH,
                     }
                 },
             },
