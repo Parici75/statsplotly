@@ -1,3 +1,24 @@
+Version 0.3.2
+=============
+**2026-05-13**
+
+The 0.3.2 release fixes a bug in scatter marker size range normalization.
+
+🐛 Bug fixes
+************
+- Marker size ranges are normalized only if maximum size exceeds a threshold (24 units by default).
+This avoids unwanted marker size distortion when size data is already in a reasonable plotting range.
+- Scatter3D hover info is corrected to display triplet coordinates
+
+🎨 Improvements
+***************
+- Scatter3D marker line color is changed to "white" with width of 1 unit to improve visibility by default of markers in 3D space.
+
+👕 CI
+*****
+- Fix Sphinx autosection label settings.
+
+
 Version 0.3.1
 =============
 **2026-04-12**
@@ -7,8 +28,8 @@ The 0.3.1 release fixes a bug in pandas dtype validation.
 🐛 Bug fixes
 ************
 - Ensure proper pandas dtype validation.
-- Restore support for direct color data specification in line plots (i.e., with `~statsplotly.plot(`mode="lines", ...)`).
-- Filter NA values when computing numeric axis limits in `~statsplotly.utils.SubplotGridFormatter.set_common_axis_limit()`.
+- Restore support for direct color data specification in line plots (i.e., when calling :func:`~statsplotly.plot(`mode="lines", ...)`).
+- Filter NA values when computing numeric axis limits in :func:`~statsplotly.utils.SubplotGridFormatter.set_common_axis_limit()`.
 
 👕 CI
 *****
